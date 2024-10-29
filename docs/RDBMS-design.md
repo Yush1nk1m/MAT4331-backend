@@ -36,6 +36,7 @@
 - `CHATROOM`: 채팅방 정보
   - `id`(PK): 고유 식별자
   - `game_id`(FK): 채팅방이 속한 경기의 고유 식별자
+  - `member_id`(FK): 채팅방을 생성한 회원의 고유 식별자
   - `title`: 채팅방 이름
   - `prefer_team`: 응원하는 팀
   - `participant_count`: 참여 중인 회원 수
