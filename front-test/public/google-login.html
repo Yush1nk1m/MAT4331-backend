@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Login</title>
+  </head>
+  <body>
+    <h1>Google Login Demo</h1>
+    <button id="google-login-button">Login with Google</button>
+
+    <script>
+      document
+        .getElementById("google-login-button")
+        .addEventListener("click", () => {
+          // Open Google OAuth2 login in a new tab
+          const newWindow = window.open(
+            "http://localhost:8080/auth/v1/login/oauth2/google",
+            "_blank"
+          );
+
+          // Polling to check if the new window has been closed and handle response
+          const checkWindowClosed = setInterval(() => {
+            if (newWindow.closed) {
+              clearInterval(checkWindowClosed);
+
+              // Fetch the response from the backend to get the redirect URL
+              fetch(
+                "http://localhost:8080/auth/v1/login/oauth2/google/response"
+              )
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.redirect) {
+                    window.location.href = data.redirect;
+                  } else {
+                    alert("Login failed. Please try again.");
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error fetching the redirect URL:", error);
+                  alert("An error occurred. Please try again.");
+                });
+            }
+          }, 500);
+        });
+    </script>
+  </body>
+</html>

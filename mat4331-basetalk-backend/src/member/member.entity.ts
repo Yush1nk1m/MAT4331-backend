@@ -30,7 +30,7 @@ export class Member {
 
   @Column({ length: 255, nullable: true })
   @ApiProperty({ description: 'The bio message of the member' })
-  bio: string;
+  bio: string = '';
 
   // prefer team
   @Column({

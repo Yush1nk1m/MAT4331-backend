@@ -1,0 +1,20 @@
+@startuml OAuth2
+actor Client
+participant Frontend
+participant Backend
+participant "OAuth Provider" as OAuth
+
+Client -> Frontend: Click "Login with Google"
+Frontend -> Backend: Redirect to /auth/v1/login/oauth2/google
+Backend -> OAuth: Redirect to Google OAuth Login Page
+OAuth -> Client: Show Google Login Page
+
+Client -> OAuth: Enter credentials and login
+OAuth -> Backend: Redirect to /auth/v1/login/oauth2/google/callback with Authorization Code
+Backend -> OAuth: Exchange Authorization Code for Access Token
+OAuth -> Backend: Return Access Token
+
+Backend -> Backend: Create Session or Issue JWT
+Backend -> Frontend: Redirect to /welcome or pass token
+Frontend -> Client: Show Welcome Page
+@enduml

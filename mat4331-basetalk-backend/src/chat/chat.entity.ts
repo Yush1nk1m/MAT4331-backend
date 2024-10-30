@@ -25,13 +25,11 @@ export class Chat {
 
   @ManyToOne(() => Chatroom)
   @JoinColumn({ name: 'chatroom_id' })
-  @Column({ nullable: true })
   @ApiProperty({ description: 'The identifier of the chat room it belonged' })
   chatroom: Chatroom;
 
   @ManyToOne(() => Member)
   @JoinColumn({ name: 'member_id' })
-  @Column({ nullable: true })
   @ApiProperty({ description: 'The identifier of the writer' })
   writer: Member;
 
