@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: mat4331-postgres-db
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpw
+      POSTGRES_DB: development
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - postgres-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: mat4331-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dev.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5050:80'
+    networks:
+      - postgres-network
+    depends_on:
+      - postgres
+
+networks:
+  postgres-network:
+    driver: bridge
