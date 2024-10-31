@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -11,7 +11,7 @@ services:
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
+      - "5432:5432"
     networks:
       - postgres-network
 
@@ -22,12 +22,42 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@dev.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - '5050:80'
+      - "5050:80"
     networks:
       - postgres-network
     depends_on:
       - postgres
 
+  mongodb:
+    image: mongo:latest
+    container_name: mat4331-mongo-db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongouser
+      - MONGO_INITDB_ROOT_PASSWORD=mongopw
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data:/data/db
+    networks:
+      - mongo-network
+
+  mongo-express:
+    image: mongo-express
+    container_name: mat4331-mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=mongouser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=mongopw
+      - ME_CONFIG_MONGODB_URL=mongodb://mongouser:mongopw@mat4331-mongo-db:27017/?authSource=admin
+    networks:
+      - mongo-network
+    depends_on:
+      - mongodb
+
 networks:
   postgres-network:
+    driver: bridge
+  mongo-network:
     driver: bridge

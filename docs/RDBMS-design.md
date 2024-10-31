@@ -1,6 +1,6 @@
 # Relational DBMS Design Documentation
 
-본 문서는 `Basetalk` 서비스의 관계형 데이터베이스 설계 문서이다.
+본 문서는 `Basetalk` 메인 서비스의 관계형 데이터베이스 설계 문서이다.
 
 ## Required Entities
 
