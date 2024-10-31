@@ -21,15 +21,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       scope: ['email', 'profile'],
     });
   }
+
   async validate(
     accessToken: string,
     refreshToken: string,
     profile: Profile,
     done: VerifyCallback,
   ): Promise<any> {
-    this.logger.verbose(
-      'OAuth2 login request has been passed to the controller.',
-    );
+    this.logger.verbose('OAuth2 login request has been passed.');
 
     // extract google account's information
     const { name, emails, photos } = profile;

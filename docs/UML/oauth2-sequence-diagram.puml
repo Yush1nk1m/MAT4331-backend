@@ -4,17 +4,14 @@ participant Frontend
 participant Backend
 participant "OAuth Provider" as OAuth
 
-Client -> Frontend: Click "Login with Google"
-Frontend -> Backend: Redirect to /auth/v1/login/oauth2/google
-Backend -> OAuth: Redirect to Google OAuth Login Page
-OAuth -> Client: Show Google Login Page
+Client -> Frontend: 구글 로그인 버튼 클릭
+Frontend -> Backend: 구글 로그인 페이지 요청
+Backend -> Frontend: 구글 로그인 페이지 리다이렉션
+Frontend -> Client: 구글 로그인 페이지 이동
+Client -> OAuth: 로그인하고 동의 버튼 클릭
+OAuth -> Backend: 사용자 정보 전달
+Backend -> Backend: 사용자 정보 처리
+Backend -> Frontend: 인증 완료 응답
+Frontend -> Client: 로그인 완료 처리
 
-Client -> OAuth: Enter credentials and login
-OAuth -> Backend: Redirect to /auth/v1/login/oauth2/google/callback with Authorization Code
-Backend -> OAuth: Exchange Authorization Code for Access Token
-OAuth -> Backend: Return Access Token
-
-Backend -> Backend: Create Session or Issue JWT
-Backend -> Frontend: Redirect to /welcome or pass token
-Frontend -> Client: Show Welcome Page
 @enduml
