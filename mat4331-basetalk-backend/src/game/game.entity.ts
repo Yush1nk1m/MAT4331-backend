@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { KBOTeam } from '../common/types/KBO-team.type';
-import { GameStatus } from './types/game-status.type';
+import { KBOTeam } from '../common/types/KBO-team.enum';
+import { GameStatus } from './types/game-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
@@ -49,7 +49,7 @@ export class Game {
   @Column({
     type: 'enum',
     enum: GameStatus,
-    default: GameStatus.CONFIRMED,
+    default: GameStatus.SCHEDULED,
   })
   @ApiProperty({
     description: "The game's status indicating if it is canceled or confirmed",

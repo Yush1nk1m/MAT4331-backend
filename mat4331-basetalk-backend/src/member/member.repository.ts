@@ -4,7 +4,7 @@ import { Member } from './member.entity';
 import { Repository } from 'typeorm';
 import { EmailDto } from './types/email.dto';
 import { GoogleProfileDto } from '../auth/dto/google-profile.dto';
-import { MemberType } from './types/member-type.type';
+import { MemberType } from './types/member-type.enum';
 
 @Injectable()
 export class MemberRepository {

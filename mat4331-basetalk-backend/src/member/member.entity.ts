@@ -6,9 +6,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { KBOTeam } from '../common/types/KBO-team.type';
-import { MemberType } from './types/member-type.type';
-import { AccountStatus } from './types/account-status.type';
+import { KBOTeam } from '../common/types/KBO-team.enum';
+import { MemberType } from './types/member-type.enum';
+import { AccountStatus } from './types/account-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**

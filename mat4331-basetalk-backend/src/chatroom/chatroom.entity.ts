@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Game } from '../game/game.entity';
 import { Member } from '../member/member.entity';
-import { KBOTeam } from '../common/types/KBO-team.type';
+import { KBOTeam } from '../common/types/KBO-team.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
