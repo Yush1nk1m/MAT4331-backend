@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { GameStatus } from './types/game-status.enum';
-import { KBOTeam } from './types/KBO-team.enum';
+import { GameStatus } from '../common/types/game-status.enum';
+import { KBOTeam } from '../common/types/KBO-team.enum';
 import { BatStats } from './bat-stats.schema';
 import { PitchStats } from './pitch-stats.schema';
 
@@ -41,4 +41,4 @@ export class Games extends Document {
   pitch_stats_away: PitchStats;
 }
 
-export const GameSchema = SchemaFactory.createForClass(Games);
+export const GamesSchema = SchemaFactory.createForClass(Games);

@@ -1,22 +1,18 @@
-import { Controller, Get, Logger } from '@nestjs/common';
-import puppeteer from 'puppeteer';
+import { Controller, Get, Logger, Post } from '@nestjs/common';
+import { CrawlerService } from './crawler.service';
 
-@Controller('crawler')
+@Controller('crawler/v1')
 export class CrawlerController {
   private readonly logger = new Logger(CrawlerController.name);
 
-  @Get()
-  async test(): Promise<void> {
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
+  constructor(private readonly crawlerService: CrawlerService) {}
 
-    await page.goto('https://www.naver.com');
-
-    const data = await page.evaluate(() => {
-      const anyElement = document.querySelector('a');
-      return anyElement ? anyElement.href : 'No a tag found';
-    });
-
-    this.logger.verbose(`data: ${data}`);
+  /**
+   * on-demand API for loading annual data
+   * it needs to be called when the application is initiated
+   */
+  @Get('games/load')
+  async loadAnnualData(): Promise<void> {
+    await this.crawlerService.loadAnnualGames(2024);
   }
 }

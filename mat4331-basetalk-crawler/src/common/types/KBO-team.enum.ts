@@ -9,4 +9,5 @@ export enum KBOTeam {
   SAMSUNG = '삼성',
   HANHWA = '한화',
   KIWOOM = '키움',
+  NONE = '없음',
 }
