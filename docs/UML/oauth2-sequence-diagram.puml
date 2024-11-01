@@ -1,17 +1,14 @@
 @startuml OAuth2
 actor Client
-participant Frontend
 participant Backend
 participant "OAuth Provider" as OAuth
 
-Client -> Frontend: 구글 로그인 버튼 클릭
-Frontend -> Backend: 구글 로그인 페이지 요청
-Backend -> Frontend: 구글 로그인 페이지 리다이렉션
-Frontend -> Client: 구글 로그인 페이지 이동
-Client -> OAuth: 로그인하고 동의 버튼 클릭
-OAuth -> Backend: 사용자 정보 전달
-Backend -> Backend: 사용자 정보 처리
-Backend -> Frontend: 인증 완료 응답
-Frontend -> Client: 로그인 완료 처리
+Client -> Backend: [A-01] 구글 로그인 페이지 요청
+Backend -> Client: [A-01] 구글 로그인 페이지 리다이렉션
+Client -> OAuth: [A-02] 로그인 및 개인정보 수집 동의
+OAuth -> Backend: [A-02] 사용자 정보 전달
+Backend -> Backend: [A-02] 사용자 정보 처리
+Backend -> Client: [A-02] 인증 완료 응답
+Client -> Client: 로그인 완료 처리
 
 @enduml
