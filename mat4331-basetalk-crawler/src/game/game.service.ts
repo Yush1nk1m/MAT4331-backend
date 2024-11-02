@@ -32,7 +32,6 @@ export class GameService {
     session.startTransaction();
 
     try {
-      let game;
       // if it has teams' statistics (finished game)
       if (teamStats) {
         // create bat statistics
@@ -64,16 +63,14 @@ export class GameService {
           pitch_stats_away: awayPitchStats._id as mongoose.Types.ObjectId,
           pitch_stats_home: homePitchStats._id as mongoose.Types.ObjectId,
         };
-        game = await this.gamesRepository.createGames(createGamesDto);
+        await this.gamesRepository.createGames(createGamesDto);
       } else {
         const createGamesDto = {
           game_id: gameId,
           ...gameInfo,
         };
-        game = await this.gamesRepository.createGames(createGamesDto);
+        await this.gamesRepository.createGames(createGamesDto);
       }
-      // log
-      this.logger.debug('A game has been saved.', game);
 
       await session.commitTransaction();
     } catch (error) {

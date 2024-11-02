@@ -79,6 +79,8 @@ export class CrawlerService {
           // generate Date object indicating the games' date
           const day = $(td).find('span.day').text().trim();
           const game_date = new Date(`${year}-${month}-${day}`);
+
+          // declare away/home team, game status
           let away_team: KBOTeam = KBOTeam.NONE;
           let home_team: KBOTeam = KBOTeam.NONE;
           let game_status: GameStatus;
@@ -93,6 +95,18 @@ export class CrawlerService {
               throw new NotFoundException('Game id has not been found.');
             }
 
+            // find team names
+            const awayName = $(a).find('span.team').eq(0).text().trim();
+            const homeName = $(a).find('span.team').eq(1).text().trim();
+
+            // check team names are valid and store them
+            if (isKBOTeam(awayName) && isKBOTeam(homeName)) {
+              away_team = awayName as KBOTeam;
+              home_team = homeName as KBOTeam;
+            } else {
+              throw new NotFoundException('KBO team name has not been found.');
+            }
+
             // if the game has been canceled
             if ($(a).find('.weather.rain').length > 0) {
               game_status = GameStatus.CANCELED;
@@ -103,17 +117,6 @@ export class CrawlerService {
                * this is almost a mocking
                */
               game_status = GameStatus.FINISHED;
-              // find each team's names and store them
-              const awayName = $(a).find('span.team').eq(0).text().trim();
-              const homeName = $(a).find('span.team').eq(1).text().trim();
-              if (isKBOTeam(awayName) && isKBOTeam(homeName)) {
-                away_team = awayName as KBOTeam;
-                home_team = homeName as KBOTeam;
-              } else {
-                throw new NotFoundException(
-                  'KBO team name has not been found.',
-                );
-              }
             }
 
             // generate GameInfo object and store it to the Map
@@ -266,6 +269,10 @@ export class CrawlerService {
     return teamStats;
   }
 
+  /**
+   * method for getting annual games' datum and store them to MongoDB
+   * @param year target year
+   */
   async loadAnnualGames(year: number): Promise<void> {
     // get annual game information mapped by game id
     const gameInfoMap = await this.getAnnualGameInfos(year);

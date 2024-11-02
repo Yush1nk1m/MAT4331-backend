@@ -1,4 +1,4 @@
-import { Controller, Get, Logger, Post } from '@nestjs/common';
+import { Controller, Logger, Post } from '@nestjs/common';
 import { CrawlerService } from './crawler.service';
 
 @Controller('crawler/v1')
@@ -11,8 +11,8 @@ export class CrawlerController {
    * on-demand API for loading annual data
    * it needs to be called when the application is initiated
    */
-  @Get('games/load')
+  @Post('games/load')
   async loadAnnualData(): Promise<void> {
-    await this.crawlerService.loadAnnualGames(2024);
+    await this.crawlerService.loadAnnualGames(new Date().getFullYear());
   }
 }
