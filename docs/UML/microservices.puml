@@ -1,0 +1,31 @@
+@startuml Microservices
+
+!$ICONURL = "https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons"
+!include $ICONURL/common.puml
+!include $ICONURL/devicons2/nestjs_original.puml
+!include $ICONURL/devicons2/fastapi.puml
+!include $ICONURL/devicons2/rabbitmq_original.puml
+!include $ICONURL/font-awesome/user.puml
+
+skinparam defaultTextAlignment center
+skinparam linetype ortho
+
+DEV2_NESTJS_ORIGINAL(MainService, Main Service, node, #E0234E) #White
+DEV2_NESTJS_ORIGINAL(CrawlerService, Crawler Service, node, #E0234E) #White
+DEV2_FASTAPI(AIService, AI Service, node, #009688) #White
+DEV2_RABBITMQ_ORIGINAL(RabbitMQ, RabbitMQ, QUEUE, #FF6600) #White
+FA_USER(User, User, rectangle, SkyBlue) #White
+
+User -up-> MainService
+MainService -down-> User
+
+MainService -up-> RabbitMQ
+RabbitMQ -down-> MainService
+
+CrawlerService -left-> RabbitMQ
+RabbitMQ -right-> CrawlerService
+
+AIService -right-> RabbitMQ
+RabbitMQ -left-> AIService
+
+@enduml
