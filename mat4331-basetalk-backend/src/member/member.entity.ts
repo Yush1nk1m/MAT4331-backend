@@ -24,6 +24,10 @@ export class Member {
   @ApiProperty({ description: 'The email of the member' })
   email: string;
 
+  @Column({ length: 64, nullable: true })
+  @ApiProperty({ description: 'The password of the member' })
+  password?: string;
+
   @Column({ length: 20 })
   @ApiProperty({ description: 'The nickname of the member' })
   nickname: string;

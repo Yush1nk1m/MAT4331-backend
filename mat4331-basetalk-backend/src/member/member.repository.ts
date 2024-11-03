@@ -38,6 +38,9 @@ export class MemberRepository {
     // extract dto
     const { email, firstName, lastName, picture } = googleProfileDto;
     // save the member on DB and return
+
+    // TODO: salt and hash password
+
     const member = this.repository.create({
       email,
       nickname: `${lastName} ${firstName}`,

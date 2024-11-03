@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Game } from './game.entity';
 import { GameRepository } from './game.repository';
 import { ClientsModule } from '@nestjs/microservices';
-import { rmqMainToCrawlerOption } from 'config/rmq.option';
+import { rmqMainToCrawlerOption } from 'src/config/rmq.option';
 
 @Module({
   imports: [
