@@ -16,12 +16,16 @@ import { PitchInfo } from '../common/types/pitch-info.type';
 import { GameStatsDto } from '../common/dto/game-stats.dto';
 import { GameService } from '../game/game.service';
 import { plainToClass } from 'class-transformer';
+import { GamesRepository } from 'src/repository/games.repository';
 
 @Injectable()
 export class CrawlerService {
   private logger = new Logger(CrawlerService.name);
 
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private readonly gamesRepository: GamesRepository,
+  ) {}
 
   /**
    * method for getting STATIZ game schedule URL
@@ -280,12 +284,20 @@ export class CrawlerService {
     // parallelly crawling game statistics
     const teamStatsList: (TeamStats | null)[] = await Promise.all(
       // from game information map, extract game id and game information
-      Array.from(gameInfoMap.entries()).map(([gameId, gameInfo]) => {
+      Array.from(gameInfoMap.entries()).map(async ([gameId, gameInfo]) => {
         // if the game has not been finished, its statistics does not exist
         if (gameInfo.game_status !== GameStatus.FINISHED) {
           // so, just return null to match results array's index to the gameInfoMap's index
           return Promise.resolve(null);
         }
+
+        // if the game's information has already been stored
+        const game = await this.gamesRepository.findGameByGameId(gameId);
+        // and its game status has already been stored as the same
+        if (game && game.game_status === gameInfo.game_status) {
+          return Promise.resolve(null);
+        }
+
         // or else additionally do crawling to get its statistics
         return this.getTeamStatsByGameId(gameId);
       }),

@@ -1,4 +1,5 @@
 export enum GameStatus {
-  CANCELED = '취소',
-  SCHEDULED = '진행',
+  FINISHED = 'finished',
+  CANCELED = 'canceled',
+  SCHEDULED = 'scheduled',
 }

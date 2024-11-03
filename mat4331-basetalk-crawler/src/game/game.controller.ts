@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   HttpStatus,
   Inject,
   Logger,
@@ -13,11 +12,11 @@ import { ClientProxy } from '@nestjs/microservices';
 export class GameController {
   private readonly logger = new Logger(GameController.name);
   constructor(
-    @Inject('DATA_SERVICE')
+    @Inject('CrawlerToMain')
     private readonly client: ClientProxy,
   ) {}
 
-  // test method
+  // rmq test method
   @Post()
   async sendData(@Body() data: any) {
     this.logger.debug('Producer received data:', data);

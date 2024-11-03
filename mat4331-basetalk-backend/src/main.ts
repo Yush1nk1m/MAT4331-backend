@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { rmqOption } from '../config/rmq.option';
+import { rmqCrawlerToMainOption } from 'config/rmq.option';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,7 +22,7 @@ async function bootstrap() {
   });
 
   // RabbitMQ Microservice
-  app.connectMicroservice(rmqOption);
+  app.connectMicroservice(rmqCrawlerToMainOption);
 
   // start microservices
   await app.startAllMicroservices();

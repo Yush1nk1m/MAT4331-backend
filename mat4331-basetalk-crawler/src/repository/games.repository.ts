@@ -16,10 +16,23 @@ export class GamesRepository {
    * @param createGamesDto total game information
    * @returns saved Games document
    */
-  async createGames(createGamesDto: CreateGamesDto): Promise<Games> {
-    const game = new this.model({
-      ...createGamesDto,
-    });
-    return game.save();
+  async upsertGames(createGamesDto: CreateGamesDto): Promise<Games> {
+    return this.model.findOneAndUpdate(
+      { game_id: createGamesDto.game_id }, // filter
+      { ...createGamesDto }, // target document
+      {
+        new: true, // return the updated document
+        upsert: true, // create the document if it doesn't exist
+      },
+    );
+  }
+
+  /**
+   * method for finding Games type document by its game_id
+   * @param game_id game id of the game
+   * @returns single Games document
+   */
+  async findGameByGameId(game_id: string): Promise<Games> {
+    return this.model.findOne({ game_id }).exec();
   }
 }

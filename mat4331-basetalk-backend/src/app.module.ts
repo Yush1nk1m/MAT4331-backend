@@ -10,6 +10,7 @@ import { ChatroomModule } from './chatroom/chatroom.module';
 import { MemberChatroomModule } from './member-chatroom/member-chatroom.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -18,6 +19,8 @@ import { AuthModule } from './auth/auth.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
+    // Scheduler module configuration
+    ScheduleModule.forRoot(),
     MemberModule,
     GameModule,
     ChatModule,

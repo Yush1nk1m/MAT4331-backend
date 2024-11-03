@@ -60,7 +60,7 @@ export class Chat {
 
   @Column({ nullable: true })
   @ApiProperty({ description: "The chat's filtered date" })
-  filteredAt: Date;
+  filteredAt?: Date;
 
   @CreateDateColumn()
   @ApiProperty({ description: "The chat's created date" })

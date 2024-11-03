@@ -32,19 +32,19 @@ export class Game {
 
   @Column({ nullable: true })
   @ApiProperty({ description: 'The result score of home team' })
-  homeScore: number;
+  homeScore?: number;
 
   @Column({ nullable: true })
   @ApiProperty({ description: 'The result score of away team' })
-  awayScore: number;
+  awayScore?: number;
 
   @Column({ nullable: true })
   @ApiProperty({ description: 'The model predicted score of home team' })
-  predictedHomeScore: number;
+  predictedHomeScore?: number;
 
   @Column({ nullable: true })
   @ApiProperty({ description: 'The model predicted score of away team' })
-  predictedAwayScore: number;
+  predictedAwayScore?: number;
 
   @Column({
     type: 'enum',
