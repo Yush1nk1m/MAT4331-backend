@@ -23,17 +23,4 @@ export class GameService {
     const game = await this.gameRepository.upsertGame(emissionGameDto);
     this.logger.debug('Upserted game', game);
   }
-
-  /**
-   * Event emission method for Events.GAME_RELOAD
-   * reload annual games' information and get the updated information through updateCrawledGame() above
-   * it runs once at a day and renew the data
-   */
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  async notifyGameReload(): Promise<void> {
-    this.logger.debug(
-      'Main service has notified crawler service to reload game information',
-    );
-    this.client.emit(Events.GAME_RELOAD, {});
-  }
 }

@@ -1,15 +1,18 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModuleAsyncOptions, JwtModuleOptions } from '@nestjs/jwt';
+import { JwtSignOptions } from '@nestjs/jwt';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-export const jwtConfig: JwtModuleAsyncOptions = {
-  imports: [ConfigModule],
-  inject: [ConfigService],
-  useFactory: async (
-    configService: ConfigService,
-  ): Promise<JwtModuleOptions> => ({
-    secret: configService.get<string>('JWT_SECRET'),
-    signOptions: {
-      expiresIn: '7d',
-    },
-  }),
+export const jwtAccessOptions: JwtSignOptions = {
+  secret: process.env.JWT_ACCESS_SECRET,
+  expiresIn: '7d',
+};
+
+export const jwtRefreshOptions: JwtSignOptions = {
+  secret: process.env.JWT_REFRESH_SECRET,
+  expiresIn: '30d',
+};
+
+export const jwtGrantCodeOptions: JwtSignOptions = {
+  secret: process.env.JWT_GRANT_SECRET,
+  expiresIn: '1m',
 };

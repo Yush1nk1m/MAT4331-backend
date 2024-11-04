@@ -1,7 +1,7 @@
 import { FactoryProvider } from '@nestjs/common';
 import Redis from 'ioredis';
 
-export const redisClientFactory: FactoryProvider<Redis> = {
+export const RedisClientFactory: FactoryProvider<Redis> = {
   provide: 'RedisClient',
   useFactory: () => {
     const redisInstance = new Redis({

@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { KBOTeam } from '../common/types/KBO-team.enum';
-import { MemberType } from './types/member-type.enum';
-import { AccountStatus } from './types/account-status.enum';
+import { MemberType } from '../common/types/member-type.enum';
+import { AccountStatus } from '../common/types/account-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**

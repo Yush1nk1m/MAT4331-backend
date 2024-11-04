@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 import { Chatroom } from '../chatroom/chatroom.entity';
 import { Member } from '../member/member.entity';
-import { ChatType } from './types/chat-type.enum';
-import { ChatStatus } from './types/chat-status.enum';
+import { ChatType } from '../common/types/chat-type.enum';
+import { ChatStatus } from '../common/types/chat-status.enum';
 
 /**
  * chat's entity

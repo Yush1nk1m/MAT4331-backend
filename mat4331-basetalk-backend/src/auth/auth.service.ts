@@ -1,15 +1,24 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Member } from '../member/member.entity';
 import { GoogleProfileDto } from './dto/google-profile.dto';
 import { MemberRepository } from '../member/member.repository';
 import { JwtService } from '@nestjs/jwt';
-import { ClientProxy } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
-import { plainToInstance } from 'class-transformer';
-import { MemberPayloadDto } from './dto/member-payload.dto';
 import { ValidateMemberDto } from './dto/validate-member.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { RedisService } from 'src/redis/redis.service';
+import { AccessToken } from '../common/types/access-token.type';
+import { JwtPayload } from '../common/types/jwt-payload.type';
+import {
+  jwtAccessOptions,
+  jwtGrantCodeOptions,
+  jwtRefreshOptions,
+} from '../config/jwt.config';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +43,7 @@ export class AuthService {
       email: googleProfileDto.email,
     });
 
-    this.logger.verbose(`found member: ${member}`);
+    this.logger.debug(`found member: ${member.nickname}`);
 
     // if the member does not exist, create new member on DB
     if (!member) {
@@ -45,13 +54,61 @@ export class AuthService {
   }
 
   /**
+   * method for issuing token grant code to get JWT tokens when the member is trying to log in with OAuth2
+   * @param member Member type object
+   * @returns issued grant code encrypted by JWT
+   */
+  async issueTokenGrantCode(member: Member): Promise<string> {
+    // define JWT payload
+    const payload = { sub: member.id };
+
+    // sign and return JWT token
+    return this.jwtService.sign(payload, jwtGrantCodeOptions);
+  }
+
+  async verifyTokenGrantCode(code: string): Promise<TokensDto> {
+    try {
+      // decode the JWT grant code
+      const decoded = await this.jwtService.verifyAsync(
+        code,
+        jwtGrantCodeOptions,
+      );
+
+      // extract the member's id and find the member from DB
+      const memberId = decoded.sub;
+      const member = await this.memberRepository.findMemberById({
+        id: memberId,
+      });
+
+      // if member has not been found, throw NotFound exception
+      if (!member) {
+        throw new NotFoundException(`Member with id: ${memberId} not found`);
+      }
+
+      // create JWT payload
+      const jwtPayload: JwtPayload = {
+        sub: member.id,
+        nickname: member.nickname,
+        profile: member.profile,
+        preferTeam: member.preferTeam,
+      };
+
+      // issue JWT tokens
+      return this.issueJwtTokens(jwtPayload);
+    } catch {
+      // if it is invalid or expired, throw Unauthorized exception
+      throw new UnauthorizedException('Grant code is invalid or expired');
+    }
+  }
+
+  /**
    * method for validating member information when he or she's email and password has passed
    * @param validateMemberDto member's email and password
    * @returns MemberPayload type object for generating JWT tokens
    */
   async validateMember(
     validateMemberDto: ValidateMemberDto,
-  ): Promise<MemberPayloadDto> {
+  ): Promise<JwtPayload> {
     // destruct DTO
     const { email, password } = validateMemberDto;
 
@@ -64,9 +121,15 @@ export class AuthService {
       member.password &&
       (await bcrypt.compare(password, member.password))
     ) {
-      // return member's payload to generate JWT tokens
-      const memberPayloadDto = plainToInstance(MemberPayloadDto, member);
-      return memberPayloadDto;
+      // return JWT payload to generate JWT tokens
+      const jwtPayload = {
+        sub: member.id,
+        nickname: member.nickname,
+        profile: member.profile,
+        preferTeam: member.preferTeam,
+      };
+
+      return jwtPayload;
     }
 
     // or else, return null
@@ -75,26 +138,110 @@ export class AuthService {
 
   /**
    * method for logging in and getting JWT tokens
-   * @param memberPayloadDto sub, nickname, profile(image), preferTeam
+   * @param jwtPaylod sub, nickname, profile(image), preferTeam
    * @returns access token, refresh token
    */
-  async login(memberPayloadDto: MemberPayloadDto): Promise<TokensDto> {
-    // sign JWT tokens
-    const accessToken = this.jwtService.sign(memberPayloadDto);
-    const refreshToken = this.jwtService.sign(memberPayloadDto, {
-      expiresIn: '30d',
-    });
+  async login(jwtPayload: JwtPayload): Promise<TokensDto> {
+    // issue JWT tokens
+    const tokens = await this.issueJwtTokens(jwtPayload);
 
     // store refresh token in Redis
     await this.redisService.setRefreshToken(
-      memberPayloadDto.id,
-      refreshToken,
+      jwtPayload.sub,
+      tokens.refreshToken,
       60 * 60 * 24 * 30,
     );
 
+    // return the generated tokens
+    return tokens;
+  }
+
+  /**
+   * method for issuing JWT tokens
+   * @param jwtPayload payload of JWT token
+   * @returns access token, refresh token
+   */
+  async issueJwtTokens(jwtPayload: JwtPayload): Promise<TokensDto> {
     return {
-      accessToken,
-      refreshToken,
+      accessToken: await this.jwtService.signAsync(
+        jwtPayload,
+        jwtAccessOptions,
+      ),
+      refreshToken: await this.jwtService.signAsync(
+        jwtPayload,
+        jwtRefreshOptions,
+      ),
     };
+  }
+
+  /**
+   * method for verifying access token
+   * @param accessToken member's access token
+   * @returns decoded token's payload
+   */
+  async verifyAccessToken(accessToken: string): Promise<JwtPayload> {
+    try {
+      return this.jwtService.verifyAsync<JwtPayload>(
+        accessToken,
+        jwtAccessOptions,
+      );
+    } catch (error) {
+      throw new Error('Token is invalid or expired');
+    }
+  }
+
+  /**
+   * method for refreshing access token
+   * @param refreshToken passed refresh token
+   * @returns an object containing the new access token, if the token is not valid then return null
+   */
+  async refreshToken(refreshToken: string): Promise<AccessToken> {
+    // decode the old refresh token
+    let decoded: JwtPayload;
+    try {
+      // verify refresh token and get the payload
+      decoded = await this.jwtService.verifyAsync<JwtPayload>(
+        refreshToken,
+        jwtRefreshOptions,
+      );
+    } catch (error) {
+      // if the passed token is invalid, throw Unauthorized exception
+      throw new UnauthorizedException('Failed to verify refresh token');
+    }
+
+    // get the stored refresh token from Redis
+    const storedRefreshToken = await this.redisService.getRefreshToken(
+      decoded.sub,
+    );
+
+    // if the stored token and passed token are the same
+    if (storedRefreshToken && storedRefreshToken === refreshToken) {
+      // create the JWT payload
+      const payload: JwtPayload = {
+        sub: decoded.sub,
+        nickname: decoded.nickname,
+        profile: decoded.profile,
+        preferTeam: decoded.preferTeam,
+      };
+
+      // sign new access token
+      const newAccessToken = this.jwtService.sign(payload, jwtAccessOptions);
+
+      // and return it
+      return {
+        accessToken: newAccessToken,
+      };
+    }
+
+    // or else, return null
+    return null;
+  }
+
+  /**
+   * method for logging out and deleting member's refresh token in Redis
+   * @param memberId member's id
+   */
+  async logout(memberId: number): Promise<void> {
+    await this.redisService.deleteRefreshToken(memberId);
   }
 }

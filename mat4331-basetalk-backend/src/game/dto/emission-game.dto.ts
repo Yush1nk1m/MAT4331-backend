@@ -1,4 +1,4 @@
-import { GameStatus } from '../types/game-status.enum';
+import { GameStatus } from '../../common/types/game-status.enum';
 import { KBOTeam } from 'src/common/types/KBO-team.enum';
 
 export class EmissionGameDto {

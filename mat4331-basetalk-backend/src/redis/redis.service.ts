@@ -23,4 +23,19 @@ export class RedisService {
       expiry,
     );
   }
+
+  /**
+   * method for getting stored refresh token from Redis
+   * @param memberId member's id, sub field of JWT payload
+   * @returns the found refresh token
+   */
+  async getRefreshToken(memberId: number): Promise<string> {
+    // get and return the stored refresh token
+    return this.redisRepository.get('refresh_token', String(memberId));
+  }
+
+  async deleteRefreshToken(memberId: number): Promise<void> {
+    // delete the member's refresh token
+    return this.redisRepository.delete('refresh_token', String(memberId));
+  }
 }

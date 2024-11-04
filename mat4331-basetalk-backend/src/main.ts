@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { rmqCrawlerToMainOption } from 'src/config/rmq.option';
-import { redisOption } from './config/redis.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

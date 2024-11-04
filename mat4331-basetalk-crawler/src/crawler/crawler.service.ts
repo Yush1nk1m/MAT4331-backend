@@ -17,6 +17,7 @@ import { GameStatsDto } from '../common/dto/game-stats.dto';
 import { GameService } from '../game/game.service';
 import { plainToClass } from 'class-transformer';
 import { GamesRepository } from 'src/repository/games.repository';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class CrawlerService {
@@ -316,5 +317,15 @@ export class CrawlerService {
     });
 
     await Promise.all(promises);
+  }
+
+  /**
+   * method for crawling annual games once at a day
+   */
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async reloadAnnualGames(): Promise<void> {
+    this.logger.debug('Crawler service has started to scrap annual games');
+
+    await this.loadAnnualGames(new Date().getFullYear());
   }
 }

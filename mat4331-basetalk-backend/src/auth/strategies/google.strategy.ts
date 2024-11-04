@@ -48,7 +48,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     );
 
     // find or create the google member
-    const member = this.authService.findOrCreateGoogleMember(googleProfileDto);
+    const member =
+      await this.authService.findOrCreateGoogleMember(googleProfileDto);
     done(null, member);
   }
 }

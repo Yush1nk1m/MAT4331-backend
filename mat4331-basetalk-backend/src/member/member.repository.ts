@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from './member.entity';
 import { Repository } from 'typeorm';
-import { EmailDto } from './types/email.dto';
+import { EmailDto } from './dto/email.dto';
 import { GoogleProfileDto } from '../auth/dto/google-profile.dto';
-import { MemberType } from './types/member-type.enum';
+import { MemberType } from '../common/types/member-type.enum';
+import { IdDto } from './dto/id.dto';
 
 @Injectable()
 export class MemberRepository {
@@ -23,6 +24,20 @@ export class MemberRepository {
     return this.repository.findOne({
       where: {
         email,
+      },
+    });
+  }
+
+  /**
+   * method for finding member by id
+   * @param idDto member's generated id
+   * @returns found member
+   */
+  async findMemberById(idDto: IdDto): Promise<Member> {
+    const { id } = idDto;
+    return this.repository.findOne({
+      where: {
+        id,
       },
     });
   }
