@@ -1,0 +1,25 @@
+@startuml OAuth2
+
+!$ICONURL = "https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons"
+!include $ICONURL/common.puml
+!include $ICONURL/devicons2/nestjs_original.puml
+!include $ICONURL/devicons2/oauth.puml
+!include $ICONURL/font-awesome/user.puml
+
+skinparam defaultTextAlignment center
+skinparam participantFontAlignment center
+
+FA_USER(Client, "Client", participant, SkyBlue) #White
+DEV2_NESTJS_ORIGINAL(Backend, "Backend", participant, #E0234E) #White
+DEV2_OAUTH(OAuth, "OAuth", participant, #4285F4) #White
+
+Client -> Backend: [A-01] 구글 로그인 페이지 요청
+Backend -> Client: [A-01] 구글 로그인 페이지 리다이렉션
+Client -> OAuth: 로그인 및 개인정보 수집 동의
+OAuth -> Client: Authorization code를 포함한 승인된 리다이렉션 URI로 사용자를 리다이렉션
+Client -> Backend: [A-02] Authorization code 전달 및 서비스 요청
+Backend -> Backend: [A-02] 로그인을 위한 적절한 처리
+Backend -> Client: [A-02] 서비스 특정 페이지 리다이렉션 및 로그인을 위한 적절한 처리
+Client -> Client: ...
+
+@enduml

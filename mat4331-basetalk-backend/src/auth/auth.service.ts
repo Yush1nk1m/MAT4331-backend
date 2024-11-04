@@ -19,6 +19,8 @@ import {
   jwtGrantCodeOptions,
   jwtRefreshOptions,
 } from '../config/jwt.config';
+import { VerifyGrantCodeDto } from './dto/verify-grant-code.dto';
+import { GrantCodePayload } from '../common/types/grant-code-paylaod.type';
 
 @Injectable()
 export class AuthService {
@@ -60,45 +62,75 @@ export class AuthService {
    */
   async issueTokenGrantCode(member: Member): Promise<string> {
     // define JWT payload
-    const payload = { sub: member.id };
+    const payload: GrantCodePayload = { sub: member.id };
 
-    // sign and return JWT token
-    return this.jwtService.sign(payload, jwtGrantCodeOptions);
+    // issue grant code
+    const code = this.jwtService.sign(payload, jwtGrantCodeOptions);
+
+    // store it to Redis
+    await this.redisService.setGrantCode(member.id, code);
+
+    // return the grant code
+    return code;
   }
 
-  async verifyTokenGrantCode(code: string): Promise<TokensDto> {
+  /**
+   * method for verifying grant code to log in by OAuth
+   * @param verifyGrantCodeDto grant code issued by OAuth login
+   * @returns JWT access token, refresh token
+   */
+  async verifyTokenGrantCode(
+    verifyGrantCodeDto: VerifyGrantCodeDto,
+  ): Promise<TokensDto> {
+    // destruct DTO
+    const { code } = verifyGrantCodeDto;
+
+    // decode the JWT grant code
+    let decoded: GrantCodePayload;
     try {
-      // decode the JWT grant code
-      const decoded = await this.jwtService.verifyAsync(
+      // verify grant code and get the payload
+      decoded = await this.jwtService.verifyAsync<GrantCodePayload>(
         code,
         jwtGrantCodeOptions,
       );
-
-      // extract the member's id and find the member from DB
-      const memberId = decoded.sub;
-      const member = await this.memberRepository.findMemberById({
-        id: memberId,
-      });
-
-      // if member has not been found, throw NotFound exception
-      if (!member) {
-        throw new NotFoundException(`Member with id: ${memberId} not found`);
-      }
-
-      // create JWT payload
-      const jwtPayload: JwtPayload = {
-        sub: member.id,
-        nickname: member.nickname,
-        profile: member.profile,
-        preferTeam: member.preferTeam,
-      };
-
-      // issue JWT tokens
-      return this.issueJwtTokens(jwtPayload);
     } catch {
-      // if it is invalid or expired, throw Unauthorized exception
       throw new UnauthorizedException('Grant code is invalid or expired');
     }
+
+    // extract the member's id
+    const memberId = decoded.sub;
+
+    // find grant code from Redis
+    const foundCode = await this.redisService.getGrantCode(memberId);
+    // if the found grant code does not exist or not the same as passed code
+    if (!foundCode || foundCode !== code) {
+      // throw Unauthorized exception
+      throw new UnauthorizedException('Grant code is invalid or expired');
+    }
+
+    // delete the grant code from Redis to prevent being used
+    await this.redisService.deleteGrantCode(memberId);
+
+    // find member from DB
+    const member = await this.memberRepository.findMemberById({
+      id: memberId,
+    });
+
+    // if member has not been found, throw NotFound exception
+    if (!member) {
+      throw new NotFoundException(`Member with id: ${memberId} not found`);
+    }
+
+    // create JWT payload
+    const jwtPayload: JwtPayload = {
+      sub: member.id,
+      nickname: member.nickname,
+      profile: member.profile,
+      preferTeam: member.preferTeam,
+    };
+
+    // issue JWT tokens
+    return this.issueJwtTokens(jwtPayload);
   }
 
   /**
