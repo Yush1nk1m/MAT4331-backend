@@ -2,9 +2,28 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { rmqCrawlerToMainOption } from 'src/config/rmq.option';
+import { ValidationPipe } from '@nestjs/common';
+import {
+  initializeTransactionalContext,
+  StorageDriver,
+} from 'typeorm-transactional';
 
 async function bootstrap() {
+  // initialize @Transactional() configuration
+  initializeTransactionalContext({
+    storageDriver: StorageDriver.ASYNC_LOCAL_STORAGE,
+  });
+
   const app = await NestFactory.create(AppModule);
+
+  // global pipe configuration
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // only allow properties defined on DTO
+      forbidNonWhitelisted: true, // reject undefined properties
+      transform: true, // transform request data to DTO instance
+    }),
+  );
 
   // Swagger configuration
   const swaggerConfig = new DocumentBuilder()

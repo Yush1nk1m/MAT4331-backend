@@ -36,7 +36,6 @@ export class Member {
   @ApiProperty({ description: 'The bio message of the member' })
   bio?: string;
 
-  // prefer team
   @Column({
     type: 'enum',
     enum: KBOTeam,
@@ -47,19 +46,17 @@ export class Member {
 
   @Column({ length: 255, nullable: true })
   @ApiProperty({ description: "The profile image's link of the member" })
-  profile: string;
+  profile?: string;
 
   @Column({
     type: 'enum',
     enum: MemberType,
   })
   @ApiProperty({
-    description:
-      "The member's type indicating he or she is a guest member or a signed member",
+    description: "The member's type indicating OAuth, local or guest",
   })
   type: MemberType;
 
-  // member account's status: active or inactive
   @Column({
     type: 'enum',
     enum: AccountStatus,

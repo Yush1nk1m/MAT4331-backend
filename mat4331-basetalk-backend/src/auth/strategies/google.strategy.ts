@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, Profile, VerifyCallback } from 'passport-google-oauth20';
 import { GoogleProfileDto } from '../dto/google-profile.dto';
-import { plainToInstance } from 'class-transformer';
 import { AuthService } from '../auth.service';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: configService.get<string>('GOOGLE_CLIENT_ID'),
       clientSecret: configService.get<string>('GOOGLE_CLIENT_SECRET'),
-      callbackURL: `${configService.get<string>('BASE_URL')}/auth/v1/login/oauth2/google/redirect`,
+      callbackURL: `${configService.get<string>('BASE_URL')}/v1/auth/login/oauth2/google/redirect`,
       scope: ['email', 'profile'],
     });
   }
@@ -37,15 +36,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     this.logger.verbose(`photos: ${photos}`);
 
     // define google profile DTO
-    const googleProfileDto: GoogleProfileDto = plainToInstance(
-      GoogleProfileDto,
-      {
-        email: emails[0].value,
-        firstName: name.givenName,
-        lastName: name.familyName,
-        picture: photos[0].value,
-      },
-    );
+    const googleProfileDto: GoogleProfileDto = {
+      email: emails[0].value,
+      firstName: name.givenName,
+      lastName: name.familyName,
+      picture: photos[0].value,
+    };
+
+    this.logger.debug('google profile DTO:', googleProfileDto);
 
     // find or create the google member
     const member =

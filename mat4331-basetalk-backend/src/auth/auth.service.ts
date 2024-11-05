@@ -1,4 +1,6 @@
 import {
+  ConflictException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -9,7 +11,7 @@ import { GoogleProfileDto } from './dto/google-profile.dto';
 import { MemberRepository } from '../member/member.repository';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { ValidateMemberDto } from './dto/validate-member.dto';
+import { LocalLoginDto } from './dto/local-login.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { AccessToken } from '../common/types/access-token.type';
@@ -21,6 +23,9 @@ import {
 } from '../config/jwt.config';
 import { VerifyGrantCodeDto } from './dto/verify-grant-code.dto';
 import { GrantCodePayload } from '../common/types/grant-code-paylaod.type';
+import { SignUpDto } from './dto/sign-up.dto';
+import { Transactional } from 'typeorm-transactional';
+import { MemberType } from '../common/types/member-type.enum';
 
 @Injectable()
 export class AuthService {
@@ -41,11 +46,9 @@ export class AuthService {
     googleProfileDto: GoogleProfileDto,
   ): Promise<Member> {
     // find the member on DB
-    const member = await this.memberRepository.findMemberByEmail({
+    const member: Member = await this.memberRepository.findMemberByEmail({
       email: googleProfileDto.email,
     });
-
-    this.logger.debug(`found member: ${member.nickname}`);
 
     // if the member does not exist, create new member on DB
     if (!member) {
@@ -65,7 +68,7 @@ export class AuthService {
     const payload: GrantCodePayload = { sub: member.id };
 
     // issue grant code
-    const code = this.jwtService.sign(payload, jwtGrantCodeOptions);
+    const code: string = this.jwtService.sign(payload, jwtGrantCodeOptions);
 
     // store it to Redis
     await this.redisService.setGrantCode(member.id, code);
@@ -98,10 +101,10 @@ export class AuthService {
     }
 
     // extract the member's id
-    const memberId = decoded.sub;
+    const memberId: number = decoded.sub;
 
     // find grant code from Redis
-    const foundCode = await this.redisService.getGrantCode(memberId);
+    const foundCode: string = await this.redisService.getGrantCode(memberId);
     // if the found grant code does not exist or not the same as passed code
     if (!foundCode || foundCode !== code) {
       // throw Unauthorized exception
@@ -112,7 +115,7 @@ export class AuthService {
     await this.redisService.deleteGrantCode(memberId);
 
     // find member from DB
-    const member = await this.memberRepository.findMemberById({
+    const member: Member = await this.memberRepository.findMemberById({
       id: memberId,
     });
 
@@ -135,26 +138,39 @@ export class AuthService {
 
   /**
    * method for validating member information when he or she's email and password has passed
-   * @param validateMemberDto member's email and password
+   * @param localLoginDto member's email and password
    * @returns MemberPayload type object for generating JWT tokens
    */
-  async validateMember(
-    validateMemberDto: ValidateMemberDto,
-  ): Promise<JwtPayload> {
+  async validateLocalMember(localLoginDto: LocalLoginDto): Promise<JwtPayload> {
     // destruct DTO
-    const { email, password } = validateMemberDto;
+    const { email, password } = localLoginDto;
 
     // find a member from DB
-    const member = await this.memberRepository.findMemberByEmail({ email });
+    const member: Member = await this.memberRepository.findMemberByEmail({
+      email,
+    });
 
-    // if the member exists and password is correct
-    if (
-      member &&
-      member.password &&
-      (await bcrypt.compare(password, member.password))
-    ) {
+    // if the member does not exist, throw NotFound exception
+    if (!member) {
+      throw new NotFoundException('Member not found');
+    }
+
+    // if the member has signed by OAuth, its password field is null
+    if (member.type === MemberType.OAUTH) {
+      throw new ForbiddenException(
+        'OAuth signed member cannot access to the local login',
+      );
+    }
+
+    // if the password is correct
+    const isCorrect: boolean = await this.comparePassword(
+      password,
+      member.password,
+    );
+    if (isCorrect) {
+      this.logger.debug('password has validated');
       // return JWT payload to generate JWT tokens
-      const jwtPayload = {
+      const jwtPayload: JwtPayload = {
         sub: member.id,
         nickname: member.nickname,
         profile: member.profile,
@@ -162,10 +178,10 @@ export class AuthService {
       };
 
       return jwtPayload;
+    } else {
+      // or else, throw Unauthorized exception
+      throw new UnauthorizedException('Password is incorrect');
     }
-
-    // or else, return null
-    return null;
   }
 
   /**
@@ -175,7 +191,9 @@ export class AuthService {
    */
   async login(jwtPayload: JwtPayload): Promise<TokensDto> {
     // issue JWT tokens
-    const tokens = await this.issueJwtTokens(jwtPayload);
+    const tokens: TokensDto = await this.issueJwtTokens(jwtPayload);
+
+    this.logger.debug('tokens:', tokens);
 
     // store refresh token in Redis
     await this.redisService.setRefreshToken(
@@ -183,6 +201,8 @@ export class AuthService {
       tokens.refreshToken,
       60 * 60 * 24 * 30,
     );
+
+    this.logger.debug('tokens are stored');
 
     // return the generated tokens
     return tokens;
@@ -218,7 +238,7 @@ export class AuthService {
         jwtAccessOptions,
       );
     } catch (error) {
-      throw new Error('Token is invalid or expired');
+      throw new UnauthorizedException('Token is invalid or expired');
     }
   }
 
@@ -242,7 +262,7 @@ export class AuthService {
     }
 
     // get the stored refresh token from Redis
-    const storedRefreshToken = await this.redisService.getRefreshToken(
+    const storedRefreshToken: string = await this.redisService.getRefreshToken(
       decoded.sub,
     );
 
@@ -257,7 +277,10 @@ export class AuthService {
       };
 
       // sign new access token
-      const newAccessToken = this.jwtService.sign(payload, jwtAccessOptions);
+      const newAccessToken: string = this.jwtService.sign(
+        payload,
+        jwtAccessOptions,
+      );
 
       // and return it
       return {
@@ -275,5 +298,58 @@ export class AuthService {
    */
   async logout(memberId: number): Promise<void> {
     await this.redisService.deleteRefreshToken(memberId);
+  }
+
+  @Transactional()
+  async signUpLocalMember(signUpDto: SignUpDto): Promise<Member> {
+    // destruct DTO
+    const { email, password } = signUpDto;
+
+    // check if there's a member with the same email
+    const existingMember = await this.memberRepository.findMemberByEmail({
+      email,
+    });
+    if (existingMember) {
+      throw new ConflictException('Member already exists');
+    }
+
+    // salt and hash password
+    const hashedPassword: string = await this.hashPassword(password);
+
+    // replace DTO's password property to hashed password
+    signUpDto.password = hashedPassword;
+    // create new local member
+    const newMember: Member =
+      await this.memberRepository.createLocalMember(signUpDto);
+
+    return newMember;
+  }
+
+  /**
+   * method for salting and hashing password
+   * @param password member's password
+   * @returns salted and hashed password
+   */
+  async hashPassword(password: string): Promise<string> {
+    // set salt rounds
+    const saltRounds: number = 10;
+    // salting
+    const salt: string = await bcrypt.genSalt(saltRounds);
+    // hashing
+    const hashedPassword: string = await bcrypt.hash(password, salt);
+    return hashedPassword;
+  }
+
+  /**
+   * method for comparing between plain password and hashed password
+   * @param password plain password
+   * @param hashedPassword hashed password
+   * @returns true if comparison is valid or false
+   */
+  async comparePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(password, hashedPassword);
   }
 }
