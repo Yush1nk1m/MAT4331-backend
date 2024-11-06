@@ -14,7 +14,6 @@ import * as bcrypt from 'bcrypt';
 import { LocalLoginDto } from './dto/local-login.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { RedisService } from 'src/redis/redis.service';
-import { AccessToken } from '../common/types/access-token.type';
 import { JwtPayload } from '../common/types/jwt-payload.type';
 import {
   jwtAccessOptions,
@@ -26,6 +25,8 @@ import { GrantCodePayload } from '../common/types/grant-code-paylaod.type';
 import { SignUpDto } from './dto/sign-up.dto';
 import { Transactional } from 'typeorm-transactional';
 import { MemberType } from '../common/types/member-type.enum';
+import { AccessTokenDto } from './dto/access-token.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Injectable()
 export class AuthService {
@@ -247,7 +248,10 @@ export class AuthService {
    * @param refreshToken passed refresh token
    * @returns an object containing the new access token, if the token is not valid then return null
    */
-  async refreshToken(refreshToken: string): Promise<AccessToken> {
+  async refreshToken(refreshDto: RefreshDto): Promise<AccessTokenDto> {
+    // destruct DTO
+    const { refreshToken } = refreshDto;
+
     // decode the old refresh token
     let decoded: JwtPayload;
     try {
@@ -296,8 +300,12 @@ export class AuthService {
    * method for logging out and deleting member's refresh token in Redis
    * @param memberId member's id
    */
-  async logout(memberId: number): Promise<void> {
-    await this.redisService.deleteRefreshToken(memberId);
+  async logout(member: Member): Promise<void> {
+    // destruct Member object
+    const { id } = member;
+
+    // delete the refresh token from Redis
+    await this.redisService.deleteRefreshToken(id);
   }
 
   @Transactional()

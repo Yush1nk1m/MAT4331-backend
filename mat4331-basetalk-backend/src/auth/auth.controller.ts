@@ -13,11 +13,13 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiFoundResponse,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -34,6 +36,9 @@ import { LocalLoginDto } from './dto/local-login.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignedMemberDto } from './dto/signed-member.dto';
 import { plainToInstance } from 'class-transformer';
+import { RefreshDto } from './dto/refresh.dto';
+import { AccessTokenDto } from './dto/access-token.dto';
+import { GetMember } from '../common/decorators/get-member.decorator';
 
 @ApiTags('Auth')
 @ApiBadRequestResponse({
@@ -149,7 +154,8 @@ export class AuthController {
   })
   @ApiCreatedResponse({
     description:
-      '회원 가입에 성공하였으며 비밀번호를 제외한 회원의 정보를 응답한다.',
+      '회원 가입에 성공하여 비밀번호를 제외한 회원의 정보를 응답한다.',
+    type: SignedMemberDto,
   })
   @ApiConflictResponse({
     description: '이미 존재하는 회원이다.',
@@ -169,5 +175,45 @@ export class AuthController {
     );
 
     return signedMemberDto;
+  }
+
+  @ApiOperation({
+    summary: '[A-06] 액세스 토큰 리프레시',
+    description:
+      '이메일, 비밀번호, 닉네임, 선호 팀 정보를 받아 로컬 회원의 가입을 수행한다.',
+  })
+  @ApiCreatedResponse({
+    description: '리프레시에 성공하여 새롭게 발급된 액세스 토큰을 응답한다.',
+    type: AccessTokenDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: '리프레시 토큰 검증에 실패한다.',
+  })
+  @Post('jwt/refresh')
+  @HttpCode(HttpStatus.CREATED)
+  async refreshAccessToken(
+    @Body() refreshDto: RefreshDto,
+  ): Promise<AccessTokenDto> {
+    // refresh and get the new access token
+    const accessTokenDto: AccessTokenDto =
+      await this.authService.refreshToken(refreshDto);
+
+    // return the access token
+    return accessTokenDto;
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[A-07] 로그아웃',
+    description: '액세스 토큰을 받아 회원의 로그아웃 요청을 처리한다.',
+  })
+  @ApiNoContentResponse({
+    description: '로그아웃에 성공하고 어떤 데이터도 응답하지 않는다.',
+  })
+  @Post('logout')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard('jwt'))
+  async logout(@GetMember() member: Member): Promise<void> {
+    await this.authService.logout(member);
   }
 }

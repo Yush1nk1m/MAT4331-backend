@@ -15,6 +15,7 @@
 | A-03 |  POST  | /v1/auth/login/oauth2/grant-code      | OAuth 방식으로 로그인 시 리다이렉트된 URI에서 확인할 수 있는 Grant code를 검증하고 JWT 토큰을 생성한다. |
 | A-04 |  POST  | /v1/auth/login/local                  | 로컬 로그인 방식으로 사용자를 검증하고 JWT 토큰을 생성한다.                                             |
 | A-05 |  POST  | /v1/auth/sign-up/local                | 로컬 회원 가입을 진행하고 가입된 회원의 정보를 반환한다.                                                |
+| A-06 |  POST  | /v1/auth/jwt/refresh                  | 리프레시 토큰을 전달받아 검증하고 새로운 액세스 토큰을 생성한다.                                        |
 
 #### [A-01] 구글 로그인 페이지 리다이렉트
 
@@ -104,6 +105,35 @@
   "preferTeam": "[KBOTeam enum type]"
 }
 ```
+
+#### [A-06] 액세스 토큰 리프레시
+
+- **Request**: 사용자의 리프레시 토큰을 전달한다.
+- **Request body**:
+
+```json
+{
+  "refreshToken": "[JWT refresh token]"
+}
+```
+
+- **Response**: 새롭게 생성된 액세스 토큰을 응답한다.
+- **Success status code**: 201
+- **Data format**: Response body
+- **Data detail**:
+
+```json
+{
+  "accessToken": "[issued access token]"
+}
+```
+
+#### [A-07] 로그아웃
+
+- **Request**: 사용자의 액세스 토큰을 전달한다.
+- **Request header**: Bearer authorization
+- **Response**: 어떤 데이터도 응답하지 않는다. 멱등성을 만족한다.
+- **Success status code**: 204
 
 ### Appendix. OAuth Login Process
 
