@@ -31,7 +31,6 @@ import { AuthService } from './auth.service';
 import { Member } from '../member/member.entity';
 import { VerifyGrantCodeDto } from './dto/verify-grant-code.dto';
 import { TokensDto } from './dto/tokens.dto';
-import { JwtPayload } from '../common/types/jwt-payload.type';
 import { LocalLoginDto } from './dto/local-login.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignedMemberDto } from './dto/signed-member.dto';
@@ -136,12 +135,8 @@ export class AuthController {
   @Post('login/local')
   @HttpCode(HttpStatus.OK)
   async localLogin(@Body() localLoginDto: LocalLoginDto): Promise<TokensDto> {
-    // validate the member and get JWT payload
-    const jwtPayload: JwtPayload =
-      await this.authService.validateLocalMember(localLoginDto);
-
-    // issue JWT tokens
-    const tokens: TokensDto = await this.authService.login(jwtPayload);
+    // login and issue JWT tokens
+    const tokens: TokensDto = await this.authService.localLogin(localLoginDto);
 
     // return tokens
     return tokens;

@@ -133,8 +133,8 @@ export class AuthService {
       preferTeam: member.preferTeam,
     };
 
-    // issue JWT tokens
-    return this.issueJwtTokens(jwtPayload);
+    // login and return JWT tokens
+    return this.login(jwtPayload);
   }
 
   /**
@@ -206,6 +206,23 @@ export class AuthService {
     this.logger.debug('tokens are stored');
 
     // return the generated tokens
+    return tokens;
+  }
+
+  /**
+   * method for integrating validate method and login method to abstract local login business logic
+   * @param localLoginDto email, password
+   * @returns JWT access token, refresh token
+   */
+  async localLogin(localLoginDto: LocalLoginDto): Promise<TokensDto> {
+    // validate the member and get JWT payload
+    const jwtPayload: JwtPayload =
+      await this.validateLocalMember(localLoginDto);
+
+    // issue JWT tokens
+    const tokens: TokensDto = await this.login(jwtPayload);
+
+    // return tokens
     return tokens;
   }
 
