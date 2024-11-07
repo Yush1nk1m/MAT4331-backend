@@ -3,7 +3,11 @@ import Redis from 'ioredis';
 
 @Injectable()
 export class RedisRepository implements OnModuleDestroy {
-  constructor(@Inject('RedisClient') private readonly redisClient: Redis) {}
+  constructor(
+    @Inject('RedisClient') private readonly redisClient: Redis,
+    @Inject('RedisPub') private readonly pubClient: Redis,
+    @Inject('RedisSub') private readonly subClient: Redis,
+  ) {}
 
   onModuleDestroy(): void {
     this.redisClient.disconnect();
@@ -28,5 +32,21 @@ export class RedisRepository implements OnModuleDestroy {
     expiry: number,
   ): Promise<void> {
     await this.redisClient.set(`${prefix}:${key}`, value, 'EX', expiry);
+  }
+
+  async publish(prefix: string, key: string, chat: string): Promise<void> {
+    await this.pubClient.publish(`${prefix}:${key}`, chat);
+  }
+
+  async subscribe(prefix: string, key: string): Promise<void> {
+    await this.subClient.subscribe(`${prefix}:${key}`);
+  }
+
+  async onChat(
+    callback: (channel: string, chat: string) => void,
+  ): Promise<void> {
+    this.subClient.on('chat', (channel, chat) => {
+      callback(channel, chat);
+    });
   }
 }

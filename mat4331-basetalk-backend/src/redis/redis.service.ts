@@ -77,4 +77,30 @@ export class RedisService {
     // delete the grant code from Redis
     await this.redisRepository.delete('grant_code', String(memberId));
   }
+
+  /**
+   * method for publishing chat to the specific channel
+   * @param chatroomId chatroom's id
+   * @param chat chat content
+   */
+  async publishChat(chatroomId: number, chat: string): Promise<void> {
+    await this.redisRepository.publish('chatroom', String(chatroomId), chat);
+  }
+
+  /**
+   * method for subscribing a single chatroom
+   * @param chatroomId chatroom's id
+   * @param callback callback function for processing chat
+   */
+  async subscribeChatroom(
+    chatroomId: string,
+    callback: (message: string) => void,
+  ): Promise<void> {
+    await this.redisRepository.subscribe('chatroom', String(chatroomId));
+    await this.redisRepository.onChat((receivedChannel, chat) => {
+      if (receivedChannel === `chatroom:${chatroomId}`) {
+        callback(chat);
+      }
+    });
+  }
 }

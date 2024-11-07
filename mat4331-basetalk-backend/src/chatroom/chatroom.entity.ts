@@ -21,15 +21,15 @@ export class Chatroom {
   @ApiProperty({ description: "The chat room's identifier" })
   id: number;
 
-  @ManyToOne(() => Game)
+  @ManyToOne(() => Game, { lazy: true })
   @JoinColumn({ name: 'game_id' })
   @ApiProperty({ description: 'The game of the chat room' })
-  game: Game;
+  game: Promise<Game>;
 
-  @ManyToOne(() => Member)
+  @ManyToOne(() => Member, { lazy: true })
   @JoinColumn({ name: 'member_id' })
   @ApiProperty({ description: 'The creator of the chat room' })
-  creator: Member;
+  creator: Promise<Member>;
 
   @Column({ length: 20 })
   @ApiProperty({ description: "The chat room's title" })

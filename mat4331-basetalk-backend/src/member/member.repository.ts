@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from './member.entity';
 import { Repository } from 'typeorm';
-import { EmailDto } from './dto/email.dto';
 import { GoogleProfileDto } from '../auth/dto/google-profile.dto';
 import { MemberType } from '../common/types/member-type.enum';
-import { IdDto } from './dto/id.dto';
 import { SignUpDto } from '../auth/dto/sign-up.dto';
 
 @Injectable()
@@ -17,34 +15,22 @@ export class MemberRepository {
 
   /**
    * method for finding member by email
-   * @param emailDto member's email address
+   * @param email member's email address
    * @returns found member
    */
-  async findMemberByEmail(emailDto: EmailDto): Promise<Member> {
-    // destruct DTO
-    const { email } = emailDto;
+  async findMemberByEmail(email: string): Promise<Member> {
     // find the member by email and return
-    return this.repository.findOne({
-      where: {
-        email,
-      },
-    });
+    return this.repository.findOneBy({ email });
   }
 
   /**
    * method for finding member by id
-   * @param idDto member's generated id
+   * @param id member's generated id
    * @returns found member
    */
-  async findMemberById(idDto: IdDto): Promise<Member> {
-    // destruct DTO
-    const { id } = idDto;
+  async findMemberById(id: number): Promise<Member> {
     // find the member by id and return
-    return this.repository.findOne({
-      where: {
-        id,
-      },
-    });
+    return this.repository.findOneBy({ id });
   }
 
   /**
@@ -89,11 +75,9 @@ export class MemberRepository {
 
   /**
    * method for deleting the member by id
-   * @param idDto member's id
+   * @param id member's id
    */
-  async deleteMemberById(idDto: IdDto): Promise<void> {
-    // destruct DTO
-    const { id } = idDto;
+  async deleteMemberById(id: number): Promise<void> {
     // delete the member
     await this.repository.delete({ id });
   }

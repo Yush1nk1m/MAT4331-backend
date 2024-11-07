@@ -9,7 +9,7 @@
 ### 인증 관련 기능
 
 - [x] Google OAuth2 인증
-- [ ] JWT 로그인
+- [x] JWT 인증
 - [ ] Kakao OAuth2 인증
 - [ ] Naver OAuth2 인증
 
@@ -25,8 +25,8 @@
 
 ### 채팅 관련 기능
 
-- [ ] Web Socket 사용한 기본적인 채팅
 - [ ] 기본적인 CRUD API
+- [ ] Web Socket 사용한 기본적인 채팅
 - [ ] 비속어 판별 AI 모델 통합
 - [ ] Web Socket & Redis 연동하여 Scalable하게 확장
 

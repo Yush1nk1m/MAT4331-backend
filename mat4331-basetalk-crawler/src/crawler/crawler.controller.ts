@@ -1,9 +1,7 @@
 import { Controller, Logger, Post } from '@nestjs/common';
 import { CrawlerService } from './crawler.service';
-import { EventPattern } from '@nestjs/microservices';
-import { Events } from 'src/common/constants/event.constant';
 
-@Controller('crawler/v1')
+@Controller('v1/crawler')
 export class CrawlerController {
   private readonly logger = new Logger(CrawlerController.name);
 

@@ -15,5 +15,6 @@ import { rmqMainToCrawlerOption } from 'src/config/rmq.option';
   ],
   controllers: [GameController],
   providers: [GameService, GameRepository],
+  exports: [GameService],
 })
 export class GameModule {}

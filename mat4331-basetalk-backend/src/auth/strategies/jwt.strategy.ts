@@ -3,13 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../../common/types/jwt-payload.type';
-import { MemberRepository } from '../../member/member.repository';
+import { MemberService } from '../../member/member.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly configService: ConfigService,
-    private readonly memberRepository: MemberRepository,
+    private readonly memberService: MemberService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -20,9 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   async validate(payload: JwtPayload) {
     // find the member from DB
-    const member = await this.memberRepository.findMemberById({
-      id: payload.sub,
-    });
+    const member = await this.memberService.findMemberById(payload.sub);
 
     // if the member does not exist, throw Unauthorized exception
     if (!member) {

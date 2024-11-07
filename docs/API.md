@@ -140,3 +140,41 @@
 이 별첨 섹션은 시퀀스 다이어그램을 통해 OAuth를 통한 로그인 과정이 어떻게 이루어지는지에 대한 이해를 시각적으로 돕는다. 전체적인 과정을 묘사해 두었기 때문에 클라이언트의 시각에서 보고자 한다면 클라이언트로부터 나가는 요청과 클라이언트로 들어오는 요청이 어떤 것인지만 확인하면 된다.
 
 ![OAuth Login Process](images/OAuth_Login.png)
+
+## Chatroom Module
+
+이 섹션은 채팅방 관련 모듈 API에 대한 설명이다.
+
+### Version 1 APIs
+
+|  ID   | Method | URI           | Description                                |
+| :---: | :----: | :------------ | :----------------------------------------- |
+| CR-01 |  POST  | /v1/chatrooms | 특정 경기에 대한 새로운 채팅방을 생성한다. |
+
+#### [CR-01] 채팅방 생성
+
+- **Request**: 사용자의 액세스 토큰, 경기 ID(크롤링 ID가 아닌 DB ID), 채팅방 제목, 선호 팀 정보를 전달한다.
+- **Request header**: Bearer authorization
+- **Request body**:
+
+```json
+{
+  "gameId": "[game id]",
+  "title": "[chatroom title]",
+  "preferTeam": "[KBOTeam enum type]"
+}
+```
+
+- **Response**: 새롭게 생성된 채팅방 정보를 응답한다.
+- **Success status code**: 201
+- **Data format**: Response body
+- **Data detail**:
+
+```json
+{
+  "id": "[chatroom id]",
+  "title": "[chatroom title]",
+  "preferTeam": "[KBOTeam enum type]",
+  "createdAt": "[created date]"
+}
+```

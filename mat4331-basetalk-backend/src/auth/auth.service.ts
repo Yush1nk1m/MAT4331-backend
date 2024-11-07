@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { Member } from '../member/member.entity';
 import { GoogleProfileDto } from './dto/google-profile.dto';
-import { MemberRepository } from '../member/member.repository';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LocalLoginDto } from './dto/local-login.dto';
@@ -27,13 +26,14 @@ import { Transactional } from 'typeorm-transactional';
 import { MemberType } from '../common/types/member-type.enum';
 import { AccessTokenDto } from './dto/access-token.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { MemberService } from '../member/member.service';
 
 @Injectable()
 export class AuthService {
   private readonly logger: Logger = new Logger('[Auth Service]');
 
   constructor(
-    private readonly memberRepository: MemberRepository,
+    private readonly memberService: MemberService,
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
   ) {}
@@ -47,13 +47,13 @@ export class AuthService {
     googleProfileDto: GoogleProfileDto,
   ): Promise<Member> {
     // find the member on DB
-    const member: Member = await this.memberRepository.findMemberByEmail({
-      email: googleProfileDto.email,
-    });
+    const member: Member = await this.memberService.findMemberByEmail(
+      googleProfileDto.email,
+    );
 
     // if the member does not exist, create new member on DB
     if (!member) {
-      return this.memberRepository.createGoogleMember(googleProfileDto);
+      return this.memberService.createGoogleMember(googleProfileDto);
     }
 
     return member;
@@ -116,9 +116,7 @@ export class AuthService {
     await this.redisService.deleteGrantCode(memberId);
 
     // find member from DB
-    const member: Member = await this.memberRepository.findMemberById({
-      id: memberId,
-    });
+    const member: Member = await this.memberService.findMemberById(memberId);
 
     // if member has not been found, throw NotFound exception
     if (!member) {
@@ -147,9 +145,7 @@ export class AuthService {
     const { email, password } = localLoginDto;
 
     // find a member from DB
-    const member: Member = await this.memberRepository.findMemberByEmail({
-      email,
-    });
+    const member: Member = await this.memberService.findMemberByEmail(email);
 
     // if the member does not exist, throw NotFound exception
     if (!member) {
@@ -317,12 +313,11 @@ export class AuthService {
    * method for logging out and deleting member's refresh token in Redis
    * @param memberId member's id
    */
-  async logout(member: Member): Promise<void> {
-    // destruct Member object
-    const { id } = member;
+  async logout(memberId: number): Promise<void> {
+    this.logger.debug(`logging out member's id: ${memberId}`);
 
     // delete the refresh token from Redis
-    await this.redisService.deleteRefreshToken(id);
+    await this.redisService.deleteRefreshToken(memberId);
   }
 
   @Transactional()
@@ -331,9 +326,7 @@ export class AuthService {
     const { email, password } = signUpDto;
 
     // check if there's a member with the same email
-    const existingMember = await this.memberRepository.findMemberByEmail({
-      email,
-    });
+    const existingMember = await this.memberService.findMemberByEmail(email);
     if (existingMember) {
       throw new ConflictException('Member already exists');
     }
@@ -345,7 +338,7 @@ export class AuthService {
     signUpDto.password = hashedPassword;
     // create new local member
     const newMember: Member =
-      await this.memberRepository.createLocalMember(signUpDto);
+      await this.memberService.createLocalMember(signUpDto);
 
     return newMember;
   }

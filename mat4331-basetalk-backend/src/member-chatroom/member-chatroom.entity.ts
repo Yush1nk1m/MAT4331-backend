@@ -1,7 +1,6 @@
 import {
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -19,12 +18,10 @@ export class MemberChatroom {
   id: number;
 
   @ManyToOne(() => Chatroom)
-  @JoinColumn({ name: 'chatroom_id' })
   @ApiProperty({ description: "The chat room's identifier" })
   chatroom: Chatroom;
 
   @ManyToOne(() => Member)
-  @JoinColumn({ name: 'member_id' })
   @ApiProperty({ description: "The member's identifier" })
   member: Member;
 

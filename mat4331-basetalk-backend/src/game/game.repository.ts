@@ -33,4 +33,13 @@ export class GameRepository {
       );
     }
   }
+
+  /**
+   * method for finding game by its id
+   * @param gameId game's id
+   * @returns found game
+   */
+  async findGameById(gameId: number): Promise<Game> {
+    return this.repository.findOneBy({ id: gameId });
+  }
 }
