@@ -147,9 +147,11 @@
 
 ### Version 1 APIs
 
-|  ID   | Method | URI           | Description                                |
-| :---: | :----: | :------------ | :----------------------------------------- |
-| CR-01 |  POST  | /v1/chatrooms | 특정 경기에 대한 새로운 채팅방을 생성한다. |
+|  ID   | Method | URI                             | Description                                |
+| :---: | :----: | :------------------------------ | :----------------------------------------- |
+| CR-01 |  POST  | /v1/chatrooms                   | 특정 경기에 대한 새로운 채팅방을 생성한다. |
+| CR-02 |  POST  | /v1/chatrooms/:chatroomId/join  | 채팅방에 입장한다.                         |
+| CR-03 |  POST  | /v1/chatrooms/:chatroomId/leave | 채팅방에서 퇴장한다.                       |
 
 #### [CR-01] 채팅방 생성
 
@@ -179,3 +181,21 @@
   "createdAt": "[created date]"
 }
 ```
+
+#### [CR-02] 채팅방 입장
+
+- **Request**: 사용자의 액세스 토큰과 채팅방의 ID를 전달한다.
+- **Request header**: Bearer authorization
+- **Request URI parameter**: 테이블의 API URI 참조
+
+- **Response**: 어떤 데이터도 응답하지 않는다. 멱등성을 만족한다.
+- **Success status code**: 204
+
+#### [CR-03] 채팅방 퇴장
+
+- **Request**: 사용자의 액세스 토큰과 채팅방의 ID를 전달한다.
+- **Request header**: Bearer authorization
+- **Request URI parameter**: 테이블의 API URI 참조
+
+- **Response**: 어떤 데이터도 응답하지 않는다. 멱등성을 만족한다.
+- **Success status code**: 204
