@@ -43,7 +43,10 @@ export class MemberChatroomRepository {
     member: Member,
     chatroom: Chatroom,
   ): Promise<void> {
-    await this.repository.delete({ member, chatroom });
+    await this.repository.delete({
+      member: { id: member.id },
+      chatroom: { id: chatroom.id },
+    });
   }
 
   /**
@@ -69,8 +72,8 @@ export class MemberChatroomRepository {
     chatroom: Chatroom,
   ): Promise<MemberChatroom> {
     return this.repository.findOneBy({
-      member,
-      chatroom,
+      member: { id: member.id },
+      chatroom: { id: chatroom.id },
     });
   }
 }

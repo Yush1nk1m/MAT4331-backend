@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { EmissionGameDto } from './dto/emission-game.dto';
 import { GameRepository } from './game.repository';
 import { ClientProxy } from '@nestjs/microservices';
@@ -30,5 +30,20 @@ export class GameService {
    */
   async findGameById(gameId: number): Promise<Game> {
     return this.gameRepository.findGameById(gameId);
+  }
+
+  /**
+   * method for validating game if it exists
+   * @param gameId game's id
+   * @returns found game
+   */
+  async validateGameById(gameId: number): Promise<Game> {
+    const game: Game = await this.gameRepository.findGameById(gameId);
+
+    if (!game) {
+      throw new NotFoundException(`Game with id: ${gameId} has not found`);
+    }
+
+    return game;
   }
 }

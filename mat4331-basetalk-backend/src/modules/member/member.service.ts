@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
 import { GoogleProfileDto } from '../auth/dto/google-profile.dto';
@@ -15,6 +15,16 @@ export class MemberService {
    */
   async findMemberById(memberId: number): Promise<Member> {
     return this.memberRepository.findMemberById(memberId);
+  }
+
+  async validateMemberById(memberId: number): Promise<Member> {
+    const member: Member = await this.memberRepository.findMemberById(memberId);
+
+    if (!member) {
+      throw new NotFoundException(`Member with id: ${memberId} has not found`);
+    }
+
+    return member;
   }
 
   /**

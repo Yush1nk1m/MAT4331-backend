@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chatroom } from './chatroom.entity';
 import { Repository } from 'typeorm';
@@ -8,6 +8,8 @@ import { KBOTeam } from '../../common/types/KBO-team.enum';
 
 @Injectable()
 export class ChatroomRepository {
+  private readonly logger: Logger = new Logger(ChatroomRepository.name);
+
   constructor(
     @InjectRepository(Chatroom)
     private readonly repository: Repository<Chatroom>,
@@ -33,7 +35,7 @@ export class ChatroomRepository {
       game: Promise.resolve(game),
       title,
       preferTeam,
-      participantCount: 0,
+      participantCount: 1,
     });
 
     // save and return it
@@ -47,5 +49,51 @@ export class ChatroomRepository {
    */
   async findChatroomById(id: number): Promise<Chatroom> {
     return this.repository.findOneBy({ id });
+  }
+
+  /**
+   * method for increasing participantCount by 1
+   * @param id chatroom's id
+   * @return updated participantCount
+   */
+  async incrementParticipantCount(id: number): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Chatroom)
+      .set({ participantCount: () => 'participantCount + 1' })
+      .where('id = :id', { id })
+      .returning('participantCount')
+      .execute();
+
+    this.logger.debug(`increment result: ${JSON.stringify(result)}`);
+
+    return result.raw[0].participant_count;
+  }
+
+  /**
+   * method for decreasing participantCount by 1
+   * @param id chatroom's id
+   * @return updated participantCount
+   */
+  async decrementParticipantCount(id: number): Promise<number> {
+    const result = await this.repository
+      .createQueryBuilder()
+      .update(Chatroom)
+      .set({ participantCount: () => 'participantCount - 1' })
+      .where('id = :id', { id })
+      .returning('participantCount')
+      .execute();
+
+    this.logger.debug(`decrement result: ${JSON.stringify(result)}`);
+
+    return result.raw[0].participant_count;
+  }
+
+  /**
+   * method for deleting the chatroom
+   * @param id chatroom's id
+   */
+  async deleteChatroomById(id: number): Promise<void> {
+    await this.repository.delete({ id });
   }
 }

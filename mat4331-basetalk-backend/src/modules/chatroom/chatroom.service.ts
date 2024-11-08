@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ChatroomRepository } from './chatroom.repository';
 import { Member } from '../member/member.entity';
 import { CreateChatroomDto } from './dto/create-chatroom.dto';
@@ -6,8 +11,8 @@ import { Chatroom } from './chatroom.entity';
 import { Transactional } from 'typeorm-transactional';
 import { Game } from '../game/game.entity';
 import { GameService } from '../game/game.service';
-import { MemberChatroomService } from '../member-chatroom/member-chatroom.service';
 import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
+import { MemberChatroomService } from '../member-chatroom/member-chatroom.service';
 import { MemberService } from '../member/member.service';
 
 @Injectable()
@@ -29,25 +34,14 @@ export class ChatroomService {
    */
   @Transactional()
   async createChatroom(
-    memberId: number,
+    member: Member,
     createChatroomDto: CreateChatroomDto,
   ): Promise<Chatroom> {
     // destruct DTO
     const { gameId, title, preferTeam } = createChatroomDto;
 
-    // validate member if it exist
-    const member: Member = await this.memberService.findMemberById(memberId);
-    // if it does not exist, throw NotFound exception
-    if (!member) {
-      throw new NotFoundException(`Member with id: ${memberId} not exists`);
-    }
-
     // validate game if it exist
-    const game: Game = await this.gameService.findGameById(gameId);
-    // if it does not exist, throw NotFound exception
-    if (!game) {
-      throw new NotFoundException(`Game with id: ${gameId} not exists`);
-    }
+    const game: Game = await this.gameService.validateGameById(gameId);
 
     this.logger.debug(`game with id: ${game.id} has been found.`);
 
@@ -80,7 +74,104 @@ export class ChatroomService {
    * @param chatroomId chatroom's id
    * @returns found chatroom
    */
-  async findChatroomById(chatroomId: number): Promise<Chatroom> {
-    return this.chatroomRepository.findChatroomById(chatroomId);
+  async validateChatroomById(chatroomId: number): Promise<Chatroom> {
+    const chatroom: Chatroom =
+      await this.chatroomRepository.findChatroomById(chatroomId);
+
+    if (!chatroom) {
+      throw new NotFoundException(
+        `Chatroom with id: ${chatroomId} has not found`,
+      );
+    }
+
+    return chatroom;
+  }
+
+  /**
+   * method for joining the member to the specified chatroom
+   * @param member Member instance
+   * @param chatroomId chatroom's id
+   */
+  @Transactional()
+  async joinChatroom(member: Member, chatroomId: number): Promise<void> {
+    // find and validate the chatroom
+    const chatroom: Chatroom = await this.validateChatroomById(chatroomId);
+
+    // if chatroom has reached its capacity, throw Conflict exception
+    if (chatroom.participantCount >= 20) {
+      throw new ConflictException(
+        `Chatroom id: ${chatroomId} has reached its capacity`,
+      );
+    }
+
+    // find and early return if member has already joined the chatroom
+    let memberChatroom: MemberChatroom =
+      await this.memberChatroomService.findMemberChatroomByMemberAndChatroom(
+        member,
+        chatroom,
+      );
+
+    if (memberChatroom) {
+      this.logger.debug(
+        `MemberChatroom already exists: ${JSON.stringify(memberChatroom)}`,
+      );
+      return;
+    }
+
+    // join member to the chatroom
+    memberChatroom = await this.memberChatroomService.joinMemberToChatroom(
+      member,
+      chatroom,
+    );
+
+    // increment chatroom's participant count
+    const participantCount: number =
+      await this.chatroomRepository.incrementParticipantCount(chatroom.id);
+
+    this.logger.debug(`updated partipant count: ${participantCount}`);
+
+    this.logger.debug(
+      `MemberChatroom has created: ${JSON.stringify(memberChatroom)}`,
+    );
+  }
+
+  /**
+   * method for leaving the member from the chatroom
+   * @param member Member instance
+   * @param chatroomId chatroom's id
+   */
+  @Transactional()
+  async leaveChatroom(member: Member, chatroomId: number): Promise<void> {
+    // find and validate chatroom
+    const chatroom: Chatroom = await this.validateChatroomById(chatroomId);
+
+    // find and early return if member has already left the chatroom
+    const memberChatroom: MemberChatroom =
+      await this.memberChatroomService.findMemberChatroomByMemberAndChatroom(
+        member,
+        chatroom,
+      );
+
+    if (!memberChatroom) {
+      return;
+    }
+
+    this.logger.debug(
+      `Member has participated the chatroom: ${JSON.stringify(memberChatroom)}`,
+    );
+
+    // leave the member from the chatroom
+    await this.memberChatroomService.leaveMemberFromChatroom(member, chatroom);
+
+    // decrement the participant count
+    const participantCount: number =
+      await this.chatroomRepository.decrementParticipantCount(chatroom.id);
+
+    this.logger.debug(`updated partipant count: ${participantCount}`);
+
+    // if all member has left, delete the chatroom
+    if (participantCount <= 0) {
+      await this.chatroomRepository.deleteChatroomById(chatroomId);
+    }
   }
 }

@@ -79,13 +79,9 @@ export class ChatroomGateway {
     const member: Member = await this.validateClientToken(client);
 
     // find chatroom and validate if it exists
-    const chatroom: Chatroom = await this.chatroomService.findChatroomById(
+    const chatroom: Chatroom = await this.chatroomService.validateChatroomById(
       Number(chatroomId),
     );
-
-    if (!chatroom) {
-      throw new Error(`Chatroom with id: ${chatroomId} has not found`);
-    }
 
     // find MemberChatroom to validate member's participation
     const memberChatroom: MemberChatroom =

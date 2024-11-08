@@ -37,7 +37,7 @@ import { SignedMemberDto } from './dto/signed-member.dto';
 import { plainToInstance } from 'class-transformer';
 import { RefreshDto } from './dto/refresh.dto';
 import { AccessTokenDto } from './dto/access-token.dto';
-import { GetMemberId } from '../../common/decorators/get-member.decorator';
+import { GetMember } from '../../common/decorators/get-member.decorator';
 
 @ApiTags('Auth')
 @ApiBadRequestResponse({
@@ -208,7 +208,7 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard('jwt'))
-  async logout(@GetMemberId() memberId: number): Promise<void> {
-    await this.authService.logout(memberId);
+  async logout(@GetMember() member: Member): Promise<void> {
+    await this.authService.logout(member.id);
   }
 }

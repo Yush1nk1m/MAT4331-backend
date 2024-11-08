@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MemberChatroomRepository } from './member-chatroom.repository';
 import { Member } from '../member/member.entity';
 import { Chatroom } from '../chatroom/chatroom.entity';
@@ -22,20 +22,29 @@ export class MemberChatroomService {
     member: Member,
     chatroom: Chatroom,
   ): Promise<MemberChatroom> {
-    // if the capacity has reached, throw Conflict exception
-    if (chatroom.participantCount >= 20) {
-      throw new ConflictException("Chatroom's capacity has reached");
-    }
-
-    // create MemberChatroom information
-    const memberChatroom: MemberChatroom =
-      await this.memberChatroomRepository.createMemberChatroom(
+    // find if there's already MemberChatroom information and early return if it exists
+    let memberChatroom: MemberChatroom =
+      await this.memberChatroomRepository.findMemberChatroomByMemberAndChatroom(
         member,
         chatroom,
       );
 
-    // increment chatroom's participation count
-    chatroom.participantCount++;
+    this.logger.debug(
+      `found MemberChatroom: ${JSON.stringify(memberChatroom)}`,
+    );
+
+    if (memberChatroom) {
+      this.logger.debug(
+        `Member has already joined the chatroom with id: ${chatroom.id}`,
+      );
+      return memberChatroom;
+    }
+
+    // create MemberChatroom information
+    memberChatroom = await this.memberChatroomRepository.createMemberChatroom(
+      member,
+      chatroom,
+    );
 
     this.logger.debug(`created MemberChatroom id: ${memberChatroom.id}`);
 
@@ -53,9 +62,6 @@ export class MemberChatroomService {
   ): Promise<void> {
     // delete MemberChatroom
     await this.memberChatroomRepository.deleteMemberChatroom(member, chatroom);
-
-    // decrement chatroom's participant count
-    chatroom.participantCount--;
   }
 
   /**
