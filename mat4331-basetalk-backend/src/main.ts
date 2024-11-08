@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './modules/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { rmqCrawlerToMainOption } from 'src/config/rmq.option';
 import { ValidationPipe } from '@nestjs/common';

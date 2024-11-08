@@ -1,6 +1,6 @@
 import { createParamDecorator } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
-import { Member } from '../../member/member.entity';
+import { Member } from '../../modules/member/member.entity';
 
 export const GetMemberId = createParamDecorator(
   (data, ctx: ExecutionContextHost): Member => {

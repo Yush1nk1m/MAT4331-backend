@@ -175,6 +175,7 @@
   "id": "[chatroom id]",
   "title": "[chatroom title]",
   "preferTeam": "[KBOTeam enum type]",
+  "participantCount": "[number of chatroom's participant]",
   "createdAt": "[created date]"
 }
 ```

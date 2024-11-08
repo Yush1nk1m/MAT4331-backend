@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatroom Client</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+      #chat {
+        width: 100%;
+        height: 300px;
+        border: 1px solid #ccc;
+        overflow-y: scroll;
+        margin-bottom: 10px;
+      }
+      #chatroomId,
+      #tokenInput {
+        width: 200px;
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chatroom Client</h1>
+    <div id="chat"></div>
+    <input type="text" id="tokenInput" placeholder="Enter Access Token" />
+    <button id="connectButton">Connect</button>
+    <br /><br />
+    <input type="text" id="chatroomId" placeholder="Enter Chatroom ID" />
+    <button id="joinButton">Join Room</button>
+    <button id="leaveButton">Leave Room</button>
+    <script>
+      let socket;
+
+      const tokenInput = document.getElementById("tokenInput");
+      const connectButton = document.getElementById("connectButton");
+      const chatroomIdInput = document.getElementById("chatroomId");
+      const joinButton = document.getElementById("joinButton");
+      const leaveButton = document.getElementById("leaveButton");
+      const chatDiv = document.getElementById("chat");
+
+      // Function to add messages to the chat div
+      function addMessage(message) {
+        const messageElement = document.createElement("div");
+        messageElement.textContent = message;
+        chatDiv.appendChild(messageElement);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      }
+
+      // Connect to the Socket.IO server with the provided token
+      connectButton.addEventListener("click", () => {
+        const token = tokenInput.value;
+        if (token) {
+          socket = io("http://localhost:8080/chat", {
+            withCredentials: true,
+            auth: {
+              token: token,
+            },
+            transports: ["websocket"],
+          });
+
+          // Listen for chat events and display messages
+          socket.on("chat", (message) => {
+            addMessage(message);
+          });
+
+          // Handle connection errors
+          socket.on("error", (error) => {
+            addMessage(`Error: ${JSON.stringify(error)}`);
+          });
+        } else {
+          addMessage("Please enter a valid access token.");
+        }
+      });
+
+      // Join a chatroom
+      joinButton.addEventListener("click", () => {
+        const chatroomId = chatroomIdInput.value;
+        if (chatroomId && socket) {
+          socket.emit("joinRoom", chatroomId);
+        }
+      });
+
+      // Leave a chatroom
+      leaveButton.addEventListener("click", () => {
+        const chatroomId = chatroomIdInput.value;
+        if (chatroomId && socket) {
+          socket.emit("leaveRoom", chatroomId);
+        }
+      });
+    </script>
+  </body>
+</html>
