@@ -57,4 +57,20 @@ export class MemberChatroomRepository {
       relations: ['chatroom'],
     });
   }
+
+  /**
+   * method for finding a single row of MemberChatroom by member and chatroom
+   * @param member Member instance
+   * @param chatroom Chatroom instance
+   * @returns found MemberChatroom
+   */
+  async findMemberChatroomByMemberAndChatroom(
+    member: Member,
+    chatroom: Chatroom,
+  ): Promise<MemberChatroom> {
+    return this.repository.findOneBy({
+      member,
+      chatroom,
+    });
+  }
 }

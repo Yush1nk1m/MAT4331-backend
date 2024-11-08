@@ -7,5 +7,5 @@
 - [개발 계획 문서](./docs/Workflow.md)
 - [RDBMS 설계 문서](./docs/RDBMS-design.md)
 - [NoSQL DBMS 설계 문서](./docs/NoSQL-design.md)
-- [API 설계 문서](./docs/API.md)
+- [REST API 설계 문서](./docs/Rest-API.md)
 - [마이크로서비스 설계 문서](./docs/Microservice-design.md)

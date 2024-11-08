@@ -66,4 +66,20 @@ export class MemberChatroomService {
   async findMemberChatroomsByMember(member: Member): Promise<MemberChatroom[]> {
     return this.memberChatroomRepository.findMemberChatroomsByMember(member);
   }
+
+  /**
+   * method for finding member's participation information to the specified chatroom
+   * @param member Member instance
+   * @param chatroom Chatroom instance
+   * @returns found MemberChatroom
+   */
+  async findMemberChatroomByMemberAndChatroom(
+    member: Member,
+    chatroom: Chatroom,
+  ): Promise<MemberChatroom> {
+    return this.memberChatroomRepository.findMemberChatroomByMemberAndChatroom(
+      member,
+      chatroom,
+    );
+  }
 }

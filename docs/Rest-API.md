@@ -1,6 +1,6 @@
-# API Documentation
+# REST API Documentation
 
-이 문서는 `Basetalk`의 백엔드 API에 대한 문서이다. 모듈 단위로 API를 구성하였으며, 복잡한 로직에 대해선 시퀀스 다이어그램을 첨부하여 시각적인 이해를 돕는다.
+이 문서는 `Basetalk`의 백엔드 REST API에 대한 문서이다. 모듈 단위로 API를 구성하였으며, 복잡한 로직에 대해선 시퀀스 다이어그램을 첨부하여 시각적인 이해를 돕는다.
 
 ## Auth Module
 
