@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { RedisRepository } from './redis.repository';
 
 @Injectable()
 export class RedisService {
+  private readonly logger: Logger = new Logger(RedisService.name);
+
   // track subscription count and deallocate Redis resource
   private readonly subscriptionMap: Map<string, number>; // <channel, subscription count>
   // save callback functions per channel to register onChat event handler
@@ -100,6 +102,7 @@ export class RedisService {
    * @param chat chat to send
    */
   async publishChat(channel: string, chat: string): Promise<void> {
+    this.logger.debug(`publish chat to channel: ${channel}, content: ${chat}`);
     await this.redisRepository.publish(channel, chat);
   }
 
@@ -114,6 +117,7 @@ export class RedisService {
   ): Promise<void> {
     // if no one subscribes the chatroom, subscribe it
     if ((this.subscriptionMap.get(channel) || 0) === 0) {
+      this.logger.debug(`subscribed channel: ${channel}`);
       await this.redisRepository.subscribe(channel);
       this.callbackMap.set(channel, callback);
     }
@@ -133,6 +137,7 @@ export class RedisService {
     const subscriptionCount: number = this.subscriptionMap.get(channel) || 0;
 
     if (subscriptionCount === 1) {
+      this.logger.debug(`unsubscribed channel: ${channel}`);
       await this.redisRepository.unsubscribe(channel);
       this.subscriptionMap.delete(channel);
     } else if (subscriptionCount > 1) {

@@ -1,4 +1,8 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
 import { RedisService } from '../redis/redis.service';
 import { Socket } from 'socket.io';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -11,6 +15,7 @@ import { Chatroom } from './chatroom.entity';
 import { ChatroomService } from './chatroom.service';
 import { MemberChatroomService } from '../member-chatroom/member-chatroom.service';
 import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
+import { jwtAccessOptions } from '../../config/jwt.config';
 
 /**
  * @TODO refactor Redis subscribe/unsubscribe logic by tracking DB data instead of memory-based map
@@ -23,7 +28,7 @@ import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
     credentials: true,
   },
 })
-export class ChatroomGateway {
+export class ChatroomGateway implements OnGatewayConnection {
   private logger: Logger = new Logger(ChatroomGateway.name);
 
   constructor(
@@ -45,11 +50,17 @@ export class ChatroomGateway {
       throw new Error('Access token does not exist');
     }
 
+    this.logger.debug(`socket received access token: ${token}`);
+
     // validate token
     try {
       // decode JWT token
-      const decoded: JwtPayload =
-        await this.jwtService.verifyAsync<JwtPayload>(token);
+      const decoded: JwtPayload = await this.jwtService.verifyAsync<JwtPayload>(
+        token,
+        jwtAccessOptions,
+      );
+
+      this.logger.debug(`decoded jwt token: ${JSON.stringify(decoded)}`);
 
       // verify if member exists
       const member: Member = await this.memberService.findMemberById(
@@ -97,8 +108,22 @@ export class ChatroomGateway {
     }
   }
 
+  /**
+   * method for validating client's socket connection by checking the access token
+   * @param client client's socket
+   */
+  async handleConnection(client: Socket): Promise<void> {
+    try {
+      const member: Member = await this.validateClientToken(client);
+      this.logger.debug(`connected member: ${JSON.stringify(member)}`);
+    } catch (error) {
+      this.logger.debug(`Socket Connection Error: ${error}`);
+      client.disconnect();
+    }
+  }
+
   @ApiOperation({
-    summary: '[WS-CR-01] 채팅방 연결',
+    summary: '[WS-01] 채팅방 연결',
     description: 'WebSocket으로 채팅방에 연결한다.',
   })
   @SubscribeMessage('joinRoom')
@@ -117,6 +142,8 @@ export class ChatroomGateway {
 
       // join member to the chatroom through Socket.io
       await client.join(chatroomId);
+
+      this.logger.debug(`client joined the chatroom id: ${chatroomId}`);
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while joining chatroom: ${error.message}`,
@@ -125,7 +152,7 @@ export class ChatroomGateway {
   }
 
   @ApiOperation({
-    summary: '[WS-CR-02] 채팅방 연결 해제',
+    summary: '[WS-02] 채팅방 연결 해제',
     description: 'WebSocket으로 연결되어 있었던 채팅방과의 연결을 해제한다.',
   })
   @SubscribeMessage('leaveRoom')

@@ -14,7 +14,8 @@
         margin-bottom: 10px;
       }
       #chatroomId,
-      #tokenInput {
+      #tokenInput,
+      #messageInput {
         width: 200px;
         margin-right: 10px;
       }
@@ -29,6 +30,9 @@
     <input type="text" id="chatroomId" placeholder="Enter Chatroom ID" />
     <button id="joinButton">Join Room</button>
     <button id="leaveButton">Leave Room</button>
+    <br /><br />
+    <input type="text" id="messageInput" placeholder="Enter your message" />
+    <button id="sendButton">Send Message</button>
     <script>
       let socket;
 
@@ -37,6 +41,8 @@
       const chatroomIdInput = document.getElementById("chatroomId");
       const joinButton = document.getElementById("joinButton");
       const leaveButton = document.getElementById("leaveButton");
+      const messageInput = document.getElementById("messageInput");
+      const sendButton = document.getElementById("sendButton");
       const chatDiv = document.getElementById("chat");
 
       // Function to add messages to the chat div
@@ -50,18 +56,19 @@
       // Connect to the Socket.IO server with the provided token
       connectButton.addEventListener("click", () => {
         const token = tokenInput.value;
+        console.log(`token: ${token}`);
         if (token) {
           socket = io("http://localhost:8080/chat", {
             withCredentials: true,
             auth: {
               token: token,
             },
-            transports: ["websocket"],
           });
 
           // Listen for chat events and display messages
           socket.on("chat", (message) => {
-            addMessage(message);
+            console.log(`received chat: ${JSON.stringify(message)}`);
+            addMessage(`${message.writer}: ${message.content}`);
           });
 
           // Handle connection errors
@@ -86,6 +93,17 @@
         const chatroomId = chatroomIdInput.value;
         if (chatroomId && socket) {
           socket.emit("leaveRoom", chatroomId);
+        }
+      });
+
+      // Send a chat message
+      sendButton.addEventListener("click", () => {
+        const chatroomId = chatroomIdInput.value;
+        const message = messageInput.value;
+        if (chatroomId && message && socket) {
+          socket.emit("chat", { chatroomId, content: message });
+          addMessage(`You: ${message}`); // Display the sent message
+          messageInput.value = ""; // Clear the input field
         }
       });
     </script>
