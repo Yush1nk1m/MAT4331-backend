@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "8078:8078"
