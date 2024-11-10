@@ -2,20 +2,20 @@ from pydantic import BaseModel
 
 # 타격 데이터
 class BatInfo(BaseModel):
-    PA: int
-    AB: int
-    R: int
-    H: int
-    HR: int
-    RBI: int
-    BB: int
-    HBP: int
-    SO: int
-    GO: int
-    FO: int
-    NP: int
-    GDP: int
-    LOB: int
+    PA: float
+    AB: float
+    R: float
+    H: float
+    HR: float
+    RBI: float
+    BB: float
+    HBP: float
+    SO: float
+    GO: float
+    FO: float
+    NP: float
+    GDP: float
+    LOB: float
     ABG: float
     OPS: float
     LI: float
@@ -25,21 +25,21 @@ class BatInfo(BaseModel):
 # 투구 데이터
 class PitchInfo(BaseModel):
     IP: float
-    TBF: int
-    H: int
-    R: int
-    ER: int
-    BB: int
-    HBP: int
-    K: int
-    HR: int
-    GO: int
-    FO: int
-    NP: int
-    S: int
-    IR: int
-    IS: int
-    GSC: int
+    TBF: float
+    H: float
+    R: float
+    ER: float
+    BB: float
+    HBP: float
+    K: float
+    HR: float
+    GO: float
+    FO: float
+    NP: float
+    S: float
+    IR: float
+    IS: float
+    GSC: float
     ERA: float
     WHIP: float
     LI: float
@@ -53,5 +53,6 @@ class TeamData(BaseModel):
     
 # 최종 요청 모델 (어웨이 팀과 홈 팀 데이터 포함)
 class GamePredictionRequest(BaseModel):
+    game_id: str
     away_team: TeamData
     home_team: TeamData

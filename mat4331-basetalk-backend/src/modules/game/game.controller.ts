@@ -1,8 +1,8 @@
 import { Controller, Logger } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
-import { Events } from 'src/common/constants/event.constant';
-import { EmissionGameDto } from './dto/emission-game.dto';
 import { GameService } from './game.service';
+import { EventPattern } from '@nestjs/microservices';
+import { EmissionGameDto } from './dto/emission-game.dto';
+import { Events } from 'src/common/constants/event.constant';
 
 @Controller('game')
 export class GameController {
@@ -10,19 +10,12 @@ export class GameController {
 
   constructor(private readonly gameService: GameService) {}
 
-  // rmq test method
-  @EventPattern('data')
-  async handleData(data: any) {
-    this.logger.debug('Received data:', data);
-  }
-
   /**
-   * event handler for processing crawler service's updated datum
+   * handle Events.GAME_UPDATED event
    * @param emissionGameDto emitted updated game information
    */
   @EventPattern(Events.GAME_UPDATED)
-  async handleUpdatedGame(emissionGameDto: EmissionGameDto): Promise<void> {
-    this.logger.debug('Main service has accepted the updated game information');
+  async handleGameUpdated(emissionGameDto: EmissionGameDto): Promise<void> {
     return this.gameService.updateCrawledGame(emissionGameDto);
   }
 }

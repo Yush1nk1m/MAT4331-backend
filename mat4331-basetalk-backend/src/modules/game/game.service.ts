@@ -3,6 +3,9 @@ import { EmissionGameDto } from './dto/emission-game.dto';
 import { GameRepository } from './game.repository';
 import { ClientProxy } from '@nestjs/microservices';
 import { Game } from './game.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Events } from 'src/common/constants/event.constant';
+import { CalculateAverageDto } from './dto/calculate-average.dto';
 
 @Injectable()
 export class GameService {
@@ -11,7 +14,7 @@ export class GameService {
   constructor(
     private readonly gameRepository: GameRepository,
     @Inject('MainToCrawler')
-    private readonly client: ClientProxy,
+    private readonly rmqClient: ClientProxy,
   ) {}
 
   /**
@@ -19,8 +22,14 @@ export class GameService {
    * @param emissionGameDto emitted updated game information
    */
   async updateCrawledGame(emissionGameDto: EmissionGameDto): Promise<void> {
-    const game = await this.gameRepository.upsertGame(emissionGameDto);
-    this.logger.debug('Upserted game', game);
+    try {
+      const game = await this.gameRepository.upsertGame(emissionGameDto);
+      this.logger.debug('Upserted game', game);
+    } catch (error) {
+      this.logger.debug(
+        `Error occurred while update crawled game: ${error.message}`,
+      );
+    }
   }
 
   /**
@@ -45,5 +54,31 @@ export class GameService {
     }
 
     return game;
+  }
+
+  /**
+   * method for predicting games' score not yet predicted
+   */
+  @Cron(CronExpression.EVERY_MINUTE)
+  async predictGameScore(): Promise<void> {
+    // find games not yet predicted
+    const games: Game[] = await this.gameRepository.findGamesNotPredicted();
+
+    this.logger.debug(
+      `found games not yet predicted: ${JSON.stringify(games)}`,
+    );
+
+    // send request to calculate average statistics for AI model prediction
+    await Promise.all(
+      games.map((game) => {
+        // create DTO for request
+        const calculateAverageDto: CalculateAverageDto = {
+          gameId: game.gameCid,
+        };
+
+        // emit request to crawler service
+        this.rmqClient.emit(Events.GAME_CACULATE_AVERAGE, calculateAverageDto);
+      }),
+    );
   }
 }

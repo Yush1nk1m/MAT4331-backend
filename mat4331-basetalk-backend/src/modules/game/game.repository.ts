@@ -42,4 +42,14 @@ export class GameRepository {
   async findGameById(gameId: number): Promise<Game> {
     return this.repository.findOneBy({ id: gameId });
   }
+
+  /**
+   * method for finding games not yet predicted
+   * @returns list of Games
+   */
+  async findGamesNotPredicted(): Promise<Game[]> {
+    return this.repository.findBy({
+      predictedAwayScore: null,
+    });
+  }
 }

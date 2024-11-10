@@ -326,6 +326,12 @@ export class CrawlerService {
   async reloadAnnualGames(): Promise<void> {
     this.logger.debug('Crawler service has started to scrap annual games');
 
-    await this.loadAnnualGames(new Date().getFullYear());
+    try {
+      await this.loadAnnualGames(new Date().getFullYear());
+    } catch (error) {
+      this.logger.debug(
+        `Error occurred while crawling annual games: ${error.message}`,
+      );
+    }
   }
 }

@@ -7,10 +7,13 @@ import mongoose, { Connection } from 'mongoose';
 import { GameStatsDto } from '../common/dto/game-stats.dto';
 import { CreateGamesDto } from '../common/dto/create-games.dto';
 import { GameStatus } from 'src/common/types/game-status.enum';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, EventPattern } from '@nestjs/microservices';
 import { Games } from 'src/schemas/games.schema';
 import { EmissionGameDto } from './dto/emission-game.dto';
 import { Events } from 'src/common/constants/event.constant';
+import { KBOTeam } from 'src/common/types/KBO-team.enum';
+import { EmissionGameAverageDto } from './dto/emmision-game-average.dto';
+import { CalculateAverageDto } from './dto/calculate-average.dto';
 
 @Injectable()
 export class GameService {
@@ -51,23 +54,34 @@ export class GameService {
       let updatedGame: Games;
       // if it has teams' statistics (finished game)
       if (teamStats) {
-        // create bat statistics
-        const awayBatStats = await this.batStatsRepository.createByBatInfo(
-          teamStats.bat_stats_away,
-        );
-        const homeBatStats = await this.batStatsRepository.createByBatInfo(
-          teamStats.bat_stats_home,
-        );
-
-        // create pitch statistics
-        const awayPitchStats =
-          await this.pitchStatsRepository.createByPitchInfo(
-            teamStats.pitch_stats_away,
-          );
-        const homePitchStats =
-          await this.pitchStatsRepository.createByPitchInfo(
-            teamStats.pitch_stats_home,
-          );
+        // create bat statistics and pitch statistics
+        const [awayBatStats, homeBatStats, awayPitchStats, homePitchStats] =
+          await Promise.all([
+            this.batStatsRepository.createByBatInfo(
+              gameId,
+              gameInfo.away_team,
+              gameInfo.game_date,
+              teamStats.bat_stats_away,
+            ),
+            this.batStatsRepository.createByBatInfo(
+              gameId,
+              gameInfo.home_team,
+              gameInfo.game_date,
+              teamStats.bat_stats_home,
+            ),
+            this.pitchStatsRepository.createByPitchInfo(
+              gameId,
+              gameInfo.away_team,
+              gameInfo.game_date,
+              teamStats.pitch_stats_away,
+            ),
+            this.pitchStatsRepository.createByPitchInfo(
+              gameId,
+              gameInfo.home_team,
+              gameInfo.game_date,
+              teamStats.pitch_stats_home,
+            ),
+          ]);
 
         // create CreateGamesDto with whole information
         const createGamesDto: CreateGamesDto = {
@@ -115,5 +129,66 @@ export class GameService {
     } finally {
       session.endSession();
     }
+  }
+
+  /**
+   * method for finding average statistics of each team by game id
+   * @param gameId game's id
+   * @returns statistics' DTO for emission
+   */
+  @EventPattern(Events.GAME_CACULATE_AVERAGE)
+  async getAverageStats(
+    calculateAverageDto: CalculateAverageDto,
+  ): Promise<void> {
+    // destruct DTO
+    const { gameId } = calculateAverageDto;
+
+    // find the game
+    const game: Games = await this.gamesRepository.findGameByGameId(gameId);
+
+    // extract awayTeam and homeTeam
+    const awayTeam: KBOTeam = game.away_team;
+    const homeTeam: KBOTeam = game.home_team;
+
+    // find average stats
+    const [awayBatStat, homeBatStat, awayPitchStat, homePitchStat] =
+      await Promise.all([
+        this.batStatsRepository.findAverageStatsByTeamAndDate(
+          awayTeam,
+          game.game_date,
+        ),
+        this.batStatsRepository.findAverageStatsByTeamAndDate(
+          homeTeam,
+          game.game_date,
+        ),
+        this.pitchStatsRepository.findAverageStatsByTeamAndDate(
+          awayTeam,
+          game.game_date,
+        ),
+        this.pitchStatsRepository.findAverageStatsByTeamAndDate(
+          homeTeam,
+          game.game_date,
+        ),
+      ]);
+
+    // create DTO with the found information
+    const emissionGameAverageDto: EmissionGameAverageDto = {
+      game_id: gameId,
+      away_team: {
+        bat_info: awayBatStat,
+        pitch_info: awayPitchStat,
+      },
+      home_team: {
+        bat_info: homeBatStat,
+        pitch_info: homePitchStat,
+      },
+    };
+
+    this.logger.debug(
+      `Emission Game Average DTO: ${JSON.stringify(emissionGameAverageDto)}`,
+    );
+
+    // emit DTO to AI service
+    // emissionGameAverageDto;
   }
 }
