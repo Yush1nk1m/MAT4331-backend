@@ -199,3 +199,40 @@
 
 - **Response**: 어떤 데이터도 응답하지 않는다. 멱등성을 만족한다.
 - **Success status code**: 204
+
+## Chat Module
+
+이 섹션은 채팅 관련 모듈 API에 대한 설명이다.
+
+### Version 1 APIs
+
+|  ID  | Method | URI                                                                     | Description                                               |
+| :--: | :----: | :---------------------------------------------------------------------- | :-------------------------------------------------------- |
+| C-01 |  GET   | /v1/chats?chatroomId=[채팅방 ID]&chatId=[채팅 ID]&loadCount=[조회 개수] | 특정 채팅방의 채팅들을 조회한다. 페이지네이션을 사용한다. |
+
+#### [C-01] 채팅 목록 조회
+
+- **Request**: 사용자의 액세스 토큰, 경기 ID(크롤링 ID가 아닌 DB ID), 채팅 ID(선택), 불러올 채팅 개수를 전달한다. 채팅 ID를 전달하지 않으면 가장 최근의 채팅들을 조회한다.
+- **Request header**: Bearer authorization
+- **Request Query parameter**: 테이블의 API URI 참조
+
+- **Response**: 조회된 채팅 정보를 응답한다.
+- **Success status code**: 200
+- **Data format**: Response body
+- **Data detail**:
+
+```json
+[
+  {
+    "id": "[chat id]",
+    "content": "[chat content]",
+    "type": "[chat type]",
+    "createdAt": "[chat's written date]",
+    "writer": {
+      "id": "[writer id]",
+      "nickname": "[writer nickname]",
+      "preferTeam": "[KBO Team]"
+    }
+  }
+]
+```
