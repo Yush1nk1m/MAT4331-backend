@@ -2,4 +2,4 @@ fastapi
 uvicorn
 pika
 pydantic
-aio-pika[asyncio]
+aio_pika

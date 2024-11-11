@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { EmissionGameDto } from './dto/emission-game.dto';
+import { EmissionGameUpdatedDto } from './dto/emission-game-updated.dto';
 import { GameRepository } from './game.repository';
 import { ClientProxy } from '@nestjs/microservices';
 import { Game } from './game.entity';
@@ -21,9 +21,11 @@ export class GameService {
    * Events.GAME_UPDATED event handling service logic
    * @param emissionGameDto emitted updated game information
    */
-  async updateCrawledGame(emissionGameDto: EmissionGameDto): Promise<void> {
+  async updateCrawledGame(
+    emissionGameUpdatedDto: EmissionGameUpdatedDto,
+  ): Promise<void> {
     try {
-      const game = await this.gameRepository.upsertGame(emissionGameDto);
+      const game = await this.gameRepository.upsertGame(emissionGameUpdatedDto);
       this.logger.debug('Upserted game', game);
     } catch (error) {
       this.logger.debug(
@@ -59,7 +61,7 @@ export class GameService {
   /**
    * method for predicting games' score not yet predicted
    */
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async predictGameScore(): Promise<void> {
     // find games not yet predicted
     const games: Game[] = await this.gameRepository.findGamesNotPredicted();

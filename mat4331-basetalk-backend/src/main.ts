@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { rmqCrawlerToMainOption } from 'src/config/rmq.option';
+import {
+  rmqAiToMainOption,
+  rmqCrawlerToMainOption,
+} from 'src/config/rmq.option';
 import { ValidationPipe } from '@nestjs/common';
 import {
   initializeTransactionalContext,
@@ -42,6 +45,7 @@ async function bootstrap() {
 
   // RabbitMQ Microservice
   app.connectMicroservice(rmqCrawlerToMainOption);
+  app.connectMicroservice(rmqAiToMainOption);
 
   // start microservices
   await app.startAllMicroservices();

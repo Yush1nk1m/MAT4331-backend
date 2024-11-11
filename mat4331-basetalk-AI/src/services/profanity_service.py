@@ -12,5 +12,7 @@ def detect_profanity(data: ProfanityCheckRequest) -> bool:
     
     # TODO: AI 모델을 불러와 필요한 작업을 수행하고 결과값을 반환한다.
     
-    return is_profane
+    return {
+        "is_profane": is_profane
+    }
     

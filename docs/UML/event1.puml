@@ -20,11 +20,11 @@ DEV_MONGODB(MongoDB, "\nMongoDB", participant, #47A248) #White
 DEV2_POSTGRESQL(PostgreSQL, "\nPostgreSQL", participant, #336791) #White
 MATERIAL_WEB(STATIZ, "\nSTATIZ", participant) #White
 
-CrawlerService --> STATIZ: Execute crawling
-STATIZ --> CrawlerService: Annual games' data
-CrawlerService --> MongoDB: Update the data
-CrawlerService --> RabbitMQ: [E-01] Publish Game.Updated event and send the updated data
-RabbitMQ --> MainService: [E-01] Deliver Game.Updated event and the updated data
-MainService --> PostgreSQL: Update the data
+CrawlerService -> STATIZ: Execute crawling
+STATIZ -> CrawlerService: Annual games' data
+CrawlerService -> MongoDB: Update the data
+CrawlerService -> RabbitMQ: [E-01] Publish Game.Updated event and send the updated data
+RabbitMQ -> MainService: [E-01] Deliver Game.Updated event and the updated data
+MainService -> PostgreSQL: Update the data
 
 @enduml

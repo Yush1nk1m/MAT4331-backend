@@ -26,7 +26,9 @@ export class GameService {
     @InjectConnection()
     private readonly connection: Connection,
     @Inject('CrawlerToMain')
-    private readonly client: ClientProxy,
+    private readonly rmqCrawlerToMainClient: ClientProxy,
+    @Inject('CrawlerToAi')
+    private readonly rmqCralwerToAiClient: ClientProxy,
   ) {}
 
   /**
@@ -120,7 +122,7 @@ export class GameService {
       };
 
       // emit the the data
-      this.client.emit(Events.GAME_UPDATED, emissionGameDto);
+      this.rmqCrawlerToMainClient.emit(Events.GAME_UPDATED, emissionGameDto);
 
       await session.commitTransaction();
     } catch (error) {
@@ -189,6 +191,9 @@ export class GameService {
     );
 
     // emit DTO to AI service
-    // emissionGameAverageDto;
+    this.rmqCralwerToAiClient.emit(
+      Events.GAME_PREDICT_SCORE,
+      emissionGameAverageDto,
+    );
   }
 }

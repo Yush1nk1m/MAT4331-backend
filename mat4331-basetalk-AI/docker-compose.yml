@@ -5,5 +5,4 @@ services:
     build: .
     volumes:
       - ./src:/app/src
-    ports:
-      - "8078:8078"
+    network_mode: "host"
