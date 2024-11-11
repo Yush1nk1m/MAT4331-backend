@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { MemberChatroomRepository } from './member-chatroom.repository';
 import { Member } from '../member/member.entity';
 import { Chatroom } from '../chatroom/chatroom.entity';
@@ -87,5 +87,24 @@ export class MemberChatroomService {
       member,
       chatroom,
     );
+  }
+
+  async validateMemberChatroomByMemberAndChatroom(
+    member: Member,
+    chatroom: Chatroom,
+  ): Promise<MemberChatroom> {
+    // find MemberChatroom
+    const memberChatroom: MemberChatroom =
+      await this.memberChatroomRepository.findMemberChatroomByMemberAndChatroom(
+        member,
+        chatroom,
+      );
+
+    // if MemberChatroom has not found, it means that member has not joined the chatroom
+    if (!memberChatroom) {
+      throw new NotFoundException('Member has not joined the chatroom');
+    }
+
+    return memberChatroom;
   }
 }

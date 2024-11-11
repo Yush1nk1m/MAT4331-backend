@@ -54,7 +54,7 @@ export class PitchStatsRepository {
         $group: {
           _id: null,
           IP: { $avg: '$IP' },
-          TBP: { $avg: '$TBP' },
+          TBF: { $avg: '$TBF' },
           H: { $avg: '$H' },
           R: { $avg: '$R' },
           ER: { $avg: '$ER' },

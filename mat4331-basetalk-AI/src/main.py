@@ -36,6 +36,8 @@ def on_message(channel, method, properties, body):
     # call event handler
     if event_pattern in event_handlers:
         parsed_data = GamePredictionRequest.parse_obj(data)
+        
+        print(f"parsed_data: {parsed_data}")
 
         result_data = event_handlers[event_pattern](parsed_data)
         

@@ -187,7 +187,7 @@ export class GameService {
     };
 
     this.logger.debug(
-      `Emission Game Average DTO: ${JSON.stringify(emissionGameAverageDto)}`,
+      `emissionGameAverageDto: ${JSON.stringify(emissionGameAverageDto)}`,
     );
 
     // emit DTO to AI service
