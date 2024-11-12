@@ -112,6 +112,10 @@ export class ChatroomGateway implements OnGatewayConnection {
    * method for validating client's socket connection by checking the access token
    * @param client client's socket
    */
+  @ApiOperation({
+    summary: '[WS-01] 웹 소켓 연결',
+    description: 'WebSocket으로 클라이언트와 서버가 연결된다.',
+  })
   async handleConnection(client: Socket): Promise<void> {
     try {
       const member: Member = await this.validateClientToken(client);
@@ -123,7 +127,7 @@ export class ChatroomGateway implements OnGatewayConnection {
   }
 
   @ApiOperation({
-    summary: '[WS-01] 채팅방 연결',
+    summary: '[WS-02] 채팅방 연결',
     description: 'WebSocket으로 채팅방에 연결한다.',
   })
   @SubscribeMessage('joinRoom')
@@ -152,7 +156,7 @@ export class ChatroomGateway implements OnGatewayConnection {
   }
 
   @ApiOperation({
-    summary: '[WS-02] 채팅방 연결 해제',
+    summary: '[WS-03] 채팅방 연결 해제',
     description: 'WebSocket으로 연결되어 있었던 채팅방과의 연결을 해제한다.',
   })
   @SubscribeMessage('leaveRoom')

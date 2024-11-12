@@ -2,6 +2,8 @@
 
 이 문서는 `Basetalk`의 백엔드 REST API에 대한 문서이다. 모듈 단위로 API를 구성하였으며, 복잡한 로직에 대해선 시퀀스 다이어그램을 첨부하여 시각적인 이해를 돕는다.
 
+문서에 나오는 API와 시퀀스 다이어그램들은 실패 사례에 대한 설명을 제공하고 있지 않으므로 주의를 요한다. 해당 부분은 `Swagger API`를 통해 직접 확인할 수 있다.
+
 ## Auth Module
 
 이 섹션은 인증 관련 모듈의 API에 대한 설명이다.
@@ -143,7 +145,7 @@
 
 ## Chatroom Module
 
-이 섹션은 채팅방 관련 모듈 API에 대한 설명이다.
+이 섹션은 채팅방 관련 모듈 API에 대한 설명이다. 채팅방과 관련된 기능들은 `WebSocket`과 밀접한 관련이 있기 때문에 [WebSocket 가이드 문서](./WebSocket-guide.md)를 함께 참고할 것을 권장한다.
 
 ### Version 1 APIs
 
@@ -202,7 +204,7 @@
 
 ## Chat Module
 
-이 섹션은 채팅 관련 모듈 API에 대한 설명이다.
+이 섹션은 채팅 관련 모듈 API에 대한 설명이다. 채팅과 관련된 기능들은 `WebSocket`과 밀접한 관련이 있기 때문에 [WebSocket 가이드 문서](./WebSocket-guide.md)를 함께 참고할 것을 권장한다.
 
 ### Version 1 APIs
 

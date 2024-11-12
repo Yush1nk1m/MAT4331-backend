@@ -10,15 +10,15 @@
 
 ### Main service
 
-`Basetalk`의 사용자 정보, KBO 경기 정보, 채팅 정보 등을 총체적으로 관리하는 메인 서비스이다. `NestJS`로 구현되어 있으며 `Crawler service`와 `AI service`의 중간에서 두 마이크로서비스와 양방향 통신을 수행한다.
+`Basetalk`의 사용자 정보, KBO 경기 정보, 채팅 정보 등 비즈니스 로직과 직접적으로 관련 있는 데이터들을 총체적으로 관리하고 핵심 API를 제공하는 서비스이다. `NestJS`로 구현되어 있다.
 
 ### Crawler service
 
-`Basetalk`의 KBO 경기 정보를 `STATIZ` 플랫폼을 통해 수집하는 크롤링 서비스이다. `NestJS`로 구현되어 있으며 `Main service`와 양방향 통신을 수행한다.
+`Basetalk`의 KBO 경기 정보를 `STATIZ` 플랫폼을 통해 수집하고, 상세 통계량을 `MongoDB`를 통해 관리하는 서비스이다. `NestJS`로 구현되어 있다.
 
 ### AI service
 
-`Basetalk`의 비즈니스 로직에 필요한 AI 모델들을 통합하는 서비스이다. `FastAPI`로 구현되어 있으며 `Main service`와 양방향 통신을 수행한다.
+`Basetalk`의 비즈니스 로직에 필요한 AI 모델들을 통합하고 주어진 데이터를 바탕으로 예측을 제공하는 서비스이다. `FastAPI`로 구현되어 있다.
 
 ## Events
 

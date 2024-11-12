@@ -22,10 +22,10 @@ import { ChatService } from './chat.service';
 import { ChatPaginationDto } from './dto/chat-pagination.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Chat } from './chat.entity';
-import { ChatResponseDto } from './dto/chat-response.dto';
 import { plainToInstance } from 'class-transformer';
 import { GetMember } from '../../common/decorators/get-member.decorator';
 import { Member } from '../member/member.entity';
+import { ChatDto } from './dto/chat.dto';
 
 @ApiTags('Chat')
 @ApiBadRequestResponse({
@@ -51,7 +51,7 @@ export class ChatController {
   })
   @ApiOkResponse({
     description: '채팅의 페이지네이션 조회에 성공한다.',
-    type: [ChatResponseDto],
+    type: [ChatDto],
   })
   @ApiForbiddenResponse({
     description: '회원이 채팅방에 입장하지 않았으므로 채팅을 조회할 수 없다.',
@@ -65,14 +65,14 @@ export class ChatController {
   async getChats(
     @GetMember() member: Member,
     @Query() chatPaginationDto: ChatPaginationDto,
-  ): Promise<ChatResponseDto[]> {
+  ): Promise<ChatDto[]> {
     const chats: Chat[] = await this.chatService.findChatsByPagination(
       member,
       chatPaginationDto,
     );
 
-    const transformedChats: ChatResponseDto[] = chats.map((chat) => {
-      return plainToInstance(ChatResponseDto, chat, {
+    const transformedChats: ChatDto[] = chats.map((chat) => {
+      return plainToInstance(ChatDto, chat, {
         excludeExtraneousValues: true,
       });
     });

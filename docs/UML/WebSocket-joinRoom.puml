@@ -1,0 +1,26 @@
+@startuml JoinRoom
+
+!$ICONURL = "https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons"
+!include $ICONURL/common.puml
+!include $ICONURL/devicons2/nestjs_original.puml
+!include $ICONURL/font-awesome/user.puml
+
+skinparam defaultTextAlignment center
+skinparam participantFontAlignment center
+
+FA_USER(Client, "Client", participant, SkyBlue) #White
+DEV2_NESTJS_ORIGINAL(Backend, "Backend", participant, #E0234E) #White
+
+Client -> Backend: [WS-01] 웹 소켓 연결 요청
+Backend -> Client: [WS-01] 웹 소켓 연결 성립
+
+Client -> Backend: [CR-02] 채팅방 입장 요청
+Backend -> Client: [CR-02] 이미 입장되어 있어도 성공 응답(멱등성)
+Backend --> Client: [CR-02] 채팅방 정원(20명)에 도달했으면 실패 응답
+
+Client -> Backend: [WS-02] 채팅방 연결 요청
+Backend -> Client: [WS-02] 채팅방 연결 성립
+
+Client -> Backend: 채팅 전송 가능 ...
+
+@enduml

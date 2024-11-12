@@ -68,7 +68,7 @@
           // Listen for chat events and display messages
           socket.on("chat", (message) => {
             console.log(`received chat: ${JSON.stringify(message)}`);
-            addMessage(`${message.writer}: ${message.content}`);
+            addMessage(`${message.writer.nickname}: ${message.content}`);
           });
 
           // Handle connection errors

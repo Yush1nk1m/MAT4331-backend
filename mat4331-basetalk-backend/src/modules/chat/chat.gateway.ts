@@ -14,6 +14,7 @@ import { jwtAccessOptions } from '../../config/jwt.config';
 import { ChatDto } from './dto/chat.dto';
 import { ChatroomService } from '../chatroom/chatroom.service';
 import { Chatroom } from '../chatroom/chatroom.entity';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('Chat')
 @WebSocketGateway({
@@ -100,11 +101,9 @@ export class ChatGateway {
 
       // create chat and convert it to DTO
       const chat: Chat = await this.chatService.saveChat(SaveChatDto);
-      const chatDto: ChatDto = {
-        writer: chat.writer.nickname,
-        content: chat.content,
-        createdAt: chat.createdAt,
-      };
+      const chatDto: ChatDto = plainToInstance(ChatDto, chat, {
+        excludeExtraneousValues: true,
+      });
 
       this.logger.debug(`saved chat: ${JSON.stringify(chatDto)}`);
 
