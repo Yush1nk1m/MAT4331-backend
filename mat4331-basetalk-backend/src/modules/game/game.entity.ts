@@ -52,9 +52,10 @@ export class Game {
     default: GameStatus.SCHEDULED,
   })
   @ApiProperty({
-    description: "The game's status indicating if it is canceled or confirmed",
+    description:
+      "The game's status indicating if it is canceled or finished or scheduled",
   })
-  gameStatus: string;
+  gameStatus: GameStatus;
 
   @Column()
   @ApiProperty({

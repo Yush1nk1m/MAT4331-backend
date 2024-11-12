@@ -56,4 +56,13 @@ export class GameRepository {
       gameStatus: Not(GameStatus.CANCELED),
     });
   }
+
+  /**
+   * method for finding games of the specified date
+   * @param gameDate Game's date
+   * @returns found Games
+   */
+  async findGamesByDate(gameDate: Date): Promise<Game[]> {
+    return this.repository.findBy({ gameDate });
+  }
 }

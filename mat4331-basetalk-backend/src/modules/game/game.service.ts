@@ -83,4 +83,13 @@ export class GameService {
       }),
     );
   }
+
+  /**
+   * method for finding games of the specified date
+   * @param date date
+   * @returns found Games
+   */
+  async findGamesByDate(date: Date): Promise<Game[]> {
+    return this.gameRepository.findGamesByDate(date);
+  }
 }
