@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,6 +12,7 @@ import { Game } from '../game/game.entity';
 import { Member } from '../member/member.entity';
 import { KBOTeam } from '../../common/types/KBO-team.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
 
 /**
  * each game's chat room's entity
@@ -54,4 +56,16 @@ export class Chatroom {
   @UpdateDateColumn()
   @ApiProperty({ description: "The chat room's updated date" })
   updatedAt: Date;
+
+  // Object relationships
+  @OneToMany(
+    () => MemberChatroom,
+    (memberChatroom) => memberChatroom.chatroom,
+    {
+      cascade: true,
+      lazy: true,
+    },
+  )
+  @ApiProperty({ description: "Chatroom's joined members information" })
+  memberChatroomList: Promise<MemberChatroom[]>;
 }

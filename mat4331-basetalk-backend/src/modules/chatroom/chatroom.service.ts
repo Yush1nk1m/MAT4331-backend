@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -173,5 +174,32 @@ export class ChatroomService {
     if (participantCount <= 0) {
       await this.chatroomRepository.deleteChatroomById(chatroomId);
     }
+  }
+
+  /**
+   * method for editing chatroom's title
+   * @param member Member entity
+   * @param chatroomId chatroom's id
+   * @param title chatroom's new title
+   * @returns updated Chatroom entity
+   */
+  async editChatroomTitle(
+    member: Member,
+    chatroomId: number,
+    title: string,
+  ): Promise<Chatroom> {
+    // validate the chatroom
+    const chatroom: Chatroom = await this.validateChatroomById(chatroomId);
+    this.logger.debug(`chatroom: ${JSON.stringify(chatroom)}`);
+
+    // if the creator is not the member, throw Forbidden exception
+    const creator: Member = await chatroom.creator;
+    this.logger.debug(`creator: ${JSON.stringify(creator)}`);
+    if (creator.id !== member.id) {
+      throw new ForbiddenException('Member cannot edit the title');
+    }
+
+    // change the title
+    return this.chatroomRepository.updateChatroomTitle(chatroom, title);
   }
 }

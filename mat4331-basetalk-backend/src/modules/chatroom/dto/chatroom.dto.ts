@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer';
 import { IsDate, IsEnum, IsInt, IsString, Length } from 'class-validator';
 import { KBOTeam } from '../../../common/types/KBO-team.enum';
 
-export class CreatedChatroomDto {
+export class ChatroomDto {
   @ApiProperty({ description: "Chatroom's id" })
   @IsInt()
   @Expose()

@@ -31,12 +31,13 @@ export class ChatroomRepository {
   ): Promise<Chatroom> {
     // create Chatroom instance
     const chatroom: Chatroom = this.repository.create({
-      creator: Promise.resolve(creator),
-      game: Promise.resolve(game),
       title,
       preferTeam,
       participantCount: 1,
     });
+
+    chatroom.creator = Promise.resolve(creator);
+    chatroom.game = Promise.resolve(game);
 
     // save and return it
     return this.repository.save(chatroom);
@@ -95,5 +96,19 @@ export class ChatroomRepository {
    */
   async deleteChatroomById(id: number): Promise<void> {
     await this.repository.delete({ id });
+  }
+
+  /**
+   * method for update and save chatroom's title
+   * @param chatroom Chatroom entity
+   * @param title new title
+   * @returns updated Chatroom entity
+   */
+  async updateChatroomTitle(
+    chatroom: Chatroom,
+    title: string,
+  ): Promise<Chatroom> {
+    chatroom.title = title;
+    return this.repository.save(chatroom);
   }
 }

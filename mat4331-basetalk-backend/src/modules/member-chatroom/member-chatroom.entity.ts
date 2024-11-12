@@ -17,7 +17,7 @@ export class MemberChatroom {
   @ApiProperty({ description: "The member-chatroom's identifier" })
   id: number;
 
-  @ManyToOne(() => Chatroom)
+  @ManyToOne(() => Chatroom, (chatroom) => chatroom.memberChatroomList)
   @ApiProperty({ description: "The chat room's identifier" })
   chatroom: Chatroom;
 
