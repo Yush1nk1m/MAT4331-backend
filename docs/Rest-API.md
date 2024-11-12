@@ -154,6 +154,8 @@
 | CR-01 |  POST  | /v1/chatrooms                   | 특정 경기에 대한 새로운 채팅방을 생성한다. |
 | CR-02 |  POST  | /v1/chatrooms/:chatroomId/join  | 채팅방에 입장한다.                         |
 | CR-03 |  POST  | /v1/chatrooms/:chatroomId/leave | 채팅방에서 퇴장한다.                       |
+| CR-04 | PATCH  | /v1/chatrooms/:chatroomId/title | 채팅방의 제목을 변경한다.                  |
+| CR-05 | DELETE | /v1/chatrooms/:chatroomId       | 채팅방을 삭제한다.                         |
 
 #### [CR-01] 채팅방 생성
 
@@ -194,6 +196,43 @@
 - **Success status code**: 204
 
 #### [CR-03] 채팅방 퇴장
+
+- **Request**: 사용자의 액세스 토큰과 채팅방의 ID를 전달한다.
+- **Request header**: Bearer authorization
+- **Request URI parameter**: 테이블의 API URI 참조
+
+- **Response**: 어떤 데이터도 응답하지 않는다. 멱등성을 만족한다.
+- **Success status code**: 204
+
+#### [CR-04] 채팅방 제목 변경
+
+- **Request**: 사용자의 액세스 토큰과 채팅방의 ID, 채팅방의 새로운 제목을 전달한다.
+- **Request header**: Bearer authorization
+- **Request URI parameter**: 테이블의 API URI 참조
+- **Request Body**
+
+```json
+{
+  "title": "[new title]"
+}
+```
+
+- **Response**: 변경된 채팅방 정보를 응답한다.
+- **Success status code**: 200
+- **Data format**: Response body
+- **Data detail**:
+
+```json
+{
+  "id": "[chatroom id]",
+  "title": "[chatroom title]",
+  "preferTeam": "[KBOTeam enum type]",
+  "participantCount": "[number of chatroom's participant]",
+  "createdAt": "[created date]"
+}
+```
+
+#### [CR-05] 채팅방 삭제
 
 - **Request**: 사용자의 액세스 토큰과 채팅방의 ID를 전달한다.
 - **Request header**: Bearer authorization

@@ -202,4 +202,29 @@ export class ChatroomService {
     // change the title
     return this.chatroomRepository.updateChatroomTitle(chatroom, title);
   }
+
+  /**
+   * method for deleting the specified chatroom
+   * @param member Member entity
+   * @param chatroomId chatroom's id
+   */
+  async deleteChatroom(member: Member, chatroomId: number): Promise<void> {
+    // find the chatroom
+    const chatroom: Chatroom =
+      await this.chatroomRepository.findChatroomById(chatroomId);
+
+    // if it does not exist, ealry return to satisfy itempotency
+    if (!chatroom) {
+      return;
+    }
+
+    // if the creator is not the member, throw Forbidden exception
+    const creator: Member = await chatroom.creator;
+    if (creator.id !== member.id) {
+      throw new ForbiddenException('Member cannot delete the chatroom');
+    }
+
+    // delete the chatroom
+    this.chatroomRepository.deleteChatroomById(chatroom.id);
+  }
 }

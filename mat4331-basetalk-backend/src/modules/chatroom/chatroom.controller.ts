@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   HttpCode,
   HttpStatus,
   Param,
@@ -158,7 +159,7 @@ export class ChatroomController {
   })
   @ApiOperation({
     summary: '[CR-04] 채팅방 제목 변경',
-    description: '채팅방의 제목을 변경한다. 이 API는 멱등성을 만족한다.',
+    description: '채팅방의 제목을 변경한다.',
   })
   @ApiOkResponse({
     description: '채팅방 제목 변경에 성공한다.',
@@ -170,7 +171,7 @@ export class ChatroomController {
   @ApiNotFoundResponse({
     description: '채팅방이 존재하지 않는다.',
   })
-  @Patch(':chatroomId')
+  @Patch(':chatroomId/title')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt'))
   async editChatroomTitle(
@@ -195,5 +196,35 @@ export class ChatroomController {
     });
 
     return chatroomDto;
+  }
+
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'chatroomId',
+    description: "chatroom's id",
+    example: '1',
+  })
+  @ApiOperation({
+    summary: '[CR-05] 채팅방 삭제',
+    description: '채팅방을 삭제한다. 멱등성을 만족한다.',
+  })
+  @ApiNoContentResponse({
+    description: '채팅방 삭제에 성공한다. 어떤 데이터도 응답하지 않는다.',
+  })
+  @ApiForbiddenResponse({
+    description: '채팅방의 생성자가 아니므로 삭제할 수 없다.',
+  })
+  @Delete(':chatroomId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard('jwt'))
+  async deleteChatroom(
+    @GetMember() member: Member,
+    @Param() chatroomIdDto: ChatroomIdDto,
+  ): Promise<void> {
+    // destruct DTO
+    const { chatroomId } = chatroomIdDto;
+
+    // delete the chatroom
+    await this.chatroomService.deleteChatroom(member, chatroomId);
   }
 }
