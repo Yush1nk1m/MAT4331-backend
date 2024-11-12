@@ -34,7 +34,7 @@ import { plainToInstance } from 'class-transformer';
 @ApiInternalServerErrorResponse({
   description: '예기치 못한 서버 오류가 발생한다.',
 })
-@Controller('games')
+@Controller('v1/games')
 export class GameController {
   private readonly logger = new Logger(GameController.name);
 

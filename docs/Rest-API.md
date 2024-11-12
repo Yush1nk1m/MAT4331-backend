@@ -143,6 +143,43 @@
 
 ![OAuth Login Process](images/OAuth_Login.png)
 
+## Game Module
+
+이 섹션은 KBO 경기 관련 모듈 API에 대한 설명이다.
+
+### Version 1 APIs
+
+|  ID  | Method | URI                                       | Description                         |
+| :--: | :----: | :---------------------------------------- | :---------------------------------- |
+| G-01 |  GET   | /v1/games?year=[연도]&month=[월]&day=[일] | 특정 날짜의 경기 정보들을 조회한다. |
+
+#### [G-01] 특정 날짜 경기 정보 조회
+
+- **Request**: 날짜 정보를 전달한다.
+- **Request Query parameter**: 테이블의 API URI 참조
+
+- **Response**: 조회된 KBO 경기 정보를 응답한다.
+- **Success status code**: 200
+- **Data format**: Response body
+- **Data detail**: `gameStatus` 속성의 경우 [GameStatus](../mat4331-basetalk-backend/src/common/types/game-status.enum.ts) 타입을 참조하여 그 값을 전달한다.
+
+```json
+[
+  {
+    "id": "[game id]",
+    "gameCid": "[game crawling id]",
+    "awayTeam": "[KBOTeam enum type]",
+    "homeTeam": "[KBOTeam enum type]",
+    "awayScore": "[away team's actual score]",
+    "homeScore": "[home team's actual score]",
+    "predictedAwayScore": "[away team's AI predicted score]",
+    "predictedHomeScore": "[home team's AI predicted score]",
+    "gameStatus": "[GameStatus enum type]",
+    "gamedate": "2024-11-12T13:11:45.863Z"
+  }
+]
+```
+
 ## Chatroom Module
 
 이 섹션은 채팅방 관련 모듈 API에 대한 설명이다. 채팅방과 관련된 기능들은 `WebSocket`과 밀접한 관련이 있기 때문에 [WebSocket 가이드 문서](./WebSocket-guide.md)를 함께 참고할 것을 권장한다.
