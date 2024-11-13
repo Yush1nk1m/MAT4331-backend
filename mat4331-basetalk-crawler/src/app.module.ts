@@ -12,7 +12,8 @@ import { CrawlerModule } from './crawler/crawler.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: process.env.NODE_ENV !== 'production' ? '.env' : undefined,
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
       isGlobal: true,
     }),
     // Mongoose module confiruation

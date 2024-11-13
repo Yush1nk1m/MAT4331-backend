@@ -18,7 +18,8 @@ import { DataSource } from 'typeorm';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env',
+      envFilePath: process.env.NODE_ENV !== 'production' ? '.env' : undefined,
+      ignoreEnvFile: process.env.NODE_ENV === 'production',
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
