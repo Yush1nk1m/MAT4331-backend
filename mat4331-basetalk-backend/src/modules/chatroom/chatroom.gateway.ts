@@ -3,7 +3,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
-import { RedisService } from '../redis/redis.service';
 import { Socket } from 'socket.io';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
@@ -32,7 +31,6 @@ export class ChatroomGateway implements OnGatewayConnection {
   private logger: Logger = new Logger(ChatroomGateway.name);
 
   constructor(
-    private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
     private readonly memberService: MemberService,
     private readonly chatroomService: ChatroomService,
@@ -63,17 +61,16 @@ export class ChatroomGateway implements OnGatewayConnection {
       this.logger.debug(`decoded jwt token: ${JSON.stringify(decoded)}`);
 
       // verify if member exists
-      const member: Member = await this.memberService.findMemberById(
+      const member: Member = await this.memberService.validateMemberById(
         decoded.sub,
       );
-      if (!member) {
-        throw new Error();
-      }
+
+      this.logger.debug(`validated member: ${JSON.stringify(member)}`);
 
       // return found member
       return member;
-    } catch {
-      throw new Error('Failed to verify access token');
+    } catch (error) {
+      throw new Error(`Failed to verify access token: ${error.message}`);
     }
   }
 
@@ -136,14 +133,6 @@ export class ChatroomGateway implements OnGatewayConnection {
       // validate if the access token exists and if the client has joined the chatroom
       await this.validateParticipation(client, chatroomId);
 
-      // subscribe Redis channel and register onChat handler
-      await this.redisService.subscribeToChannel(
-        `chatroom:${chatroomId}`,
-        (chat) => {
-          client.to(chatroomId).emit('chat', JSON.parse(chat));
-        },
-      );
-
       // join member to the chatroom through Socket.io
       await client.join(chatroomId);
 
@@ -162,9 +151,6 @@ export class ChatroomGateway implements OnGatewayConnection {
   @SubscribeMessage('leaveRoom')
   async handleLeaveRoom(client: Socket, chatroomId: string) {
     try {
-      // check if it is available to unsubscribe Redis channel
-      await this.redisService.unsubscribeFromChannel(`chatroom:${chatroomId}`);
-
       // leave room through Socket.io
       await client.leave(chatroomId);
     } catch (error) {

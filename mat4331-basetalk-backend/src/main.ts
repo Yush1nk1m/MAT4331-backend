@@ -10,6 +10,7 @@ import {
   initializeTransactionalContext,
   StorageDriver,
 } from 'typeorm-transactional';
+import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
 
 async function bootstrap() {
   // initialize @Transactional() configuration
@@ -18,6 +19,11 @@ async function bootstrap() {
   });
 
   const app = await NestFactory.create(AppModule);
+
+  // use Redis WebSocket adapter
+  const redisIoAdapter = new RedisIoAdapter(app);
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
 
   // global pipe configuration
   app.useGlobalPipes(

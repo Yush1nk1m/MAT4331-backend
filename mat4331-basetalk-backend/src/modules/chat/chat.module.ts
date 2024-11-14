@@ -10,6 +10,8 @@ import { ChatRepository } from './chat.repository';
 import { ChatroomModule } from '../chatroom/chatroom.module';
 import { ChatController } from './chat.controller';
 import { MemberChatroomModule } from '../member-chatroom/member-chatroom.module';
+import { ClientsModule } from '@nestjs/microservices';
+import { rmqMainToAiOption } from '../../config/rmq.option';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { MemberChatroomModule } from '../member-chatroom/member-chatroom.module'
     MemberChatroomModule,
     RedisModule,
     JwtModule,
+    ClientsModule.register([rmqMainToAiOption]),
   ],
   providers: [ChatGateway, ChatService, ChatRepository],
   exports: [ChatService],

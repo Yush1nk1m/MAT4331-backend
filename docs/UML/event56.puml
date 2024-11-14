@@ -1,0 +1,33 @@
+@startuml Event56
+
+!$ICONURL = "https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons"
+!include $ICONURL/common.puml
+!include $ICONURL/devicons2/nestjs_original.puml
+!include $ICONURL/devicons2/fastapi.puml
+!include $ICONURL/devicons2/rabbitmq_original.puml
+!include $ICONURL/devicons/mongodb.puml
+!include $ICONURL/devicons2/postgresql.puml
+!include $ICONURL/font-awesome/user.puml
+
+skinparam defaultTextAlignment center
+skinparam linetype ortho
+skinparam participantFontAlignment center
+
+FA_USER(Client, Client, participant, SkyBlue) #White
+DEV2_NESTJS_ORIGINAL(MainService, "\nMain Service", participant, #E0234E) #White
+DEV2_POSTGRESQL(PostgreSQL, "\nPostgreSQL", participant, #336791) #White
+DEV2_RABBITMQ_ORIGINAL(RabbitMQ, "\nRabbitMQ", participant, #FF6600) #White
+DEV2_FASTAPI(AIService, "\nAI Service", participant, #009688) #White
+
+Client -> MainService: Send chat via WebSocket
+MainService -> Client: Multicast chat to the same chatroom's clients
+MainService -> PostgreSQL: Save chat
+PostgreSQL -> MainService: Return saved chat
+MainService -> RabbitMQ: [E-05] Publish Chat.Predict.Profanity event and send chat's id and content
+RabbitMQ -> AIService: [E-05] Deliver Chat.Predict.Profanity event and chat's id and content
+AIService -> AIService: Predict profanity
+AIService -> RabbitMQ: [E-06] Publish Chat.Save.Prediction event and send chat's id and profanity prediction
+RabbitMQ -> MainService: [E-06] Deliver Chat.Save.Prediction event and chat's id and profanity prediction
+MainService -> PostgreSQL: Save prediction as filtered result
+
+@enduml

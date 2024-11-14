@@ -1,4 +1,6 @@
 import { ClientOptions, Transport } from '@nestjs/microservices';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 /**
  * RabbitMQ option for emitting event from Crawler service to Main service
@@ -10,7 +12,7 @@ export const rmqCrawlerToMainOption: {
   name: 'CrawlerToMain',
   transport: Transport.RMQ,
   options: {
-    urls: ['amqp://localhost:5672'], // RabbitMQ URL
+    urls: [`amqp://${process.env.RABBITMQ_HOST}:5672`], // RabbitMQ URL
     queue: 'crawler_to_main_data_queue', // Queue name
     queueOptions: { durable: true },
     // connection retry options
@@ -32,7 +34,7 @@ export const rmqMainToCrawlerOption: {
   name: 'MainToCrawler',
   transport: Transport.RMQ,
   options: {
-    urls: ['amqp://localhost:5672'],
+    urls: [`amqp://${process.env.RABBITMQ_HOST}:5672`],
     queue: 'main_to_crawler_data_queue',
     queueOptions: { durable: true },
     // connection retry options
@@ -54,7 +56,7 @@ export const rmqCralwerToAiOption: {
   name: 'CrawlerToAi',
   transport: Transport.RMQ,
   options: {
-    urls: ['amqp://localhost:5672'],
+    urls: [`amqp://${process.env.RABBITMQ_HOST}:5672`],
     queue: 'crawler_to_ai_data_queue',
     queueOptions: { durable: true },
     // connection retry options

@@ -1,6 +1,5 @@
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { RedisService } from '../redis/redis.service';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { Member } from '../member/member.entity';
@@ -31,7 +30,6 @@ export class ChatGateway {
     private readonly chatService: ChatService,
     private readonly memberService: MemberService,
     private readonly chatroomService: ChatroomService,
-    private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -64,8 +62,8 @@ export class ChatGateway {
 
       // return found member
       return member;
-    } catch {
-      throw new Error('Failed to verify access token');
+    } catch (error) {
+      throw new Error(`Failed to verify access token: ${error.message}`);
     }
   }
 
@@ -106,12 +104,6 @@ export class ChatGateway {
       });
 
       this.logger.debug(`saved chat: ${JSON.stringify(chatDto)}`);
-
-      // publish chat
-      await this.redisService.publishChat(
-        `chatroom:${chatroomId}`,
-        JSON.stringify(chatDto),
-      );
 
       client.to(chatroomId).emit('chat', chatDto);
     } catch (error) {

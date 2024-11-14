@@ -13,12 +13,12 @@ skinparam defaultTextAlignment center
 skinparam linetype ortho
 skinparam participantFontAlignment center
 
-DEV2_NESTJS_ORIGINAL(MainService, "\nMain Service", participant, #E0234E) #White
 DEV2_NESTJS_ORIGINAL(CrawlerService, "\nCrawler Service", participant, #E0234E) #White
-DEV2_RABBITMQ_ORIGINAL(RabbitMQ, "\nRabbitMQ", participant, #FF6600) #White
 DEV_MONGODB(MongoDB, "\nMongoDB", participant, #47A248) #White
-DEV2_POSTGRESQL(PostgreSQL, "\nPostgreSQL", participant, #336791) #White
 MATERIAL_WEB(STATIZ, "\nSTATIZ", participant) #White
+DEV2_RABBITMQ_ORIGINAL(RabbitMQ, "\nRabbitMQ", participant, #FF6600) #White
+DEV2_NESTJS_ORIGINAL(MainService, "\nMain Service", participant, #E0234E) #White
+DEV2_POSTGRESQL(PostgreSQL, "\nPostgreSQL", participant, #336791) #White
 
 CrawlerService -> STATIZ: Execute crawling
 STATIZ -> CrawlerService: Annual games' data

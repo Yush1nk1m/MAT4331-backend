@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common';
 import { ChatRepository } from './chat.repository';
 import { SaveChatDto } from './dto/save-chat.dto';
 import { Chat } from './chat.entity';
@@ -7,6 +7,9 @@ import { ChatPaginationDto } from './dto/chat-pagination.dto';
 import { Member } from '../member/member.entity';
 import { MemberChatroomService } from '../member-chatroom/member-chatroom.service';
 import { Chatroom } from '../chatroom/chatroom.entity';
+import { ClientProxy } from '@nestjs/microservices';
+import { PredictProfanityDto } from './dto/predict-profanity.dto';
+import { Events } from '../../common/constants/event.constant';
 
 @Injectable()
 export class ChatService {
@@ -16,6 +19,8 @@ export class ChatService {
     private readonly chatRepository: ChatRepository,
     private readonly chatroomService: ChatroomService,
     private readonly memberChatroomService: MemberChatroomService,
+    @Inject('MainToAi')
+    private readonly rmqClient: ClientProxy,
   ) {}
 
   /**
@@ -28,13 +33,35 @@ export class ChatService {
     const { member, chatroom, content } = saveChatDto;
 
     // create chat
-    const chat = await this.chatRepository.createChat(
+    const chat: Chat = await this.chatRepository.createChat(
       chatroom,
       member,
       content,
     );
 
+    // request AI service to predict profanity
+    await this.requestProfanityPrediction(chat);
+
     return chat;
+  }
+
+  /**
+   * method for request AI service to predict profanity
+   * @param chat Chat entity
+   */
+  async requestProfanityPrediction(chat: Chat): Promise<void> {
+    // create DTO with Chat
+    const predictProfanityDto: PredictProfanityDto = {
+      chat_id: chat.id,
+      content: chat.content,
+    };
+
+    this.logger.debug(
+      `Emit event with PredictProfanityDTO: ${JSON.stringify(predictProfanityDto)}`,
+    );
+
+    // emit event to AI service
+    this.rmqClient.emit(Events.CHAT_PREDICT_PROFANITY, predictProfanityDto);
   }
 
   /**

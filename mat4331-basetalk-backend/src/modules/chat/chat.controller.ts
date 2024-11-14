@@ -26,6 +26,9 @@ import { plainToInstance } from 'class-transformer';
 import { GetMember } from '../../common/decorators/get-member.decorator';
 import { Member } from '../member/member.entity';
 import { ChatDto } from './dto/chat.dto';
+import { EventPattern } from '@nestjs/microservices';
+import { Events } from '../../common/constants/event.constant';
+import { ChatSavePredictionDto } from './dto/chat-save-prediction.dto';
 
 @ApiTags('Chat')
 @ApiBadRequestResponse({
@@ -42,6 +45,19 @@ export class ChatController {
   private readonly logger: Logger = new Logger(ChatController.name);
 
   constructor(private readonly chatService: ChatService) {}
+
+  /**
+   * handle Events.CHAT_SAVE_PREDICTION event
+   * @param chatSavePredictionDto chat's id, prediction result
+   */
+  @EventPattern(Events.CHAT_SAVE_PREDICTION)
+  async handleSavePrediction(
+    chatSavePredictionDto: ChatSavePredictionDto,
+  ): Promise<void> {
+    this.logger.debug(
+      `handle event ${Events.CHAT_SAVE_PREDICTION}: ${JSON.stringify(chatSavePredictionDto)}`,
+    );
+  }
 
   @ApiBearerAuth()
   @ApiOperation({

@@ -10,7 +10,7 @@ import { GameService } from './game.service';
 import { EventPattern } from '@nestjs/microservices';
 import { EmissionGameUpdatedDto } from './dto/emission-game-updated.dto';
 import { Events } from 'src/common/constants/event.constant';
-import { EmissionSavePredictionDto } from './dto/emission-save-prediction.dto';
+import { GameSavePredictionDto } from './dto/game-save-prediction.dto';
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
@@ -53,14 +53,14 @@ export class GameController {
 
   /**
    * handle Events.GAME_SAVE_PREDICTION event
-   * @param emissionSavePredictionDto game's crawling id, predicted away score, predicted home score
+   * @param gameSavePredictionDto game's crawling id, predicted away score, predicted home score
    */
   @EventPattern(Events.GAME_SAVE_PREDICTION)
   async handleSavePrediction(
-    emissionSavePredictionDto: EmissionSavePredictionDto,
+    gameSavePredictionDto: GameSavePredictionDto,
   ): Promise<void> {
     this.logger.debug(
-      `Passed prediction: ${JSON.stringify(emissionSavePredictionDto)}`,
+      `Passed prediction: ${JSON.stringify(gameSavePredictionDto)}`,
     );
   }
 

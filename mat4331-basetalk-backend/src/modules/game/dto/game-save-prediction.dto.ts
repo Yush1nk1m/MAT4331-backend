@@ -1,6 +1,6 @@
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
-export class EmissionSavePredictionDto {
+export class GameSavePredictionDto {
   @IsString()
   @IsNotEmpty()
   game_id: string;

@@ -30,6 +30,8 @@
 |   E-02   | Game.Calculate.Average |  Main service   | Crawler service | 특정 경기에 대한 각 팀의 평균 타격/투구 통계량 계산을 요청한다.       |
 |   E-03   | Game.Predict.Score     | Crawler service |   AI service    | 어웨이/홈 팀의 평균 타격/투구 통계량을 바탕으로 점수 예측을 요청한다. |
 |   E-04   | Game.Save.Prediction   |   AI service    |  Main service   | 특정 경기의 어웨이/홈 팀 예측 점수를 DB에 저장할 것을 요청한다.       |
+|   E-05   | Chat.Predict.Profanity |  Main service   |   AI service    | 채팅 내용의 비속어 필터링을 요청한다.                                 |
+|   E-06   | Chat.Save.Prediction   |   AI service    |  Main service   | 채팅 내용의 비속어 필터링 결과의 저장을 요청한다.                     |
 
 ## Events Detail
 
@@ -43,7 +45,7 @@
 
 Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
 
-**[E-01] Data format**
+#### [E-01] Data format
 
 ```json
 {
@@ -65,7 +67,7 @@ Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
 
 Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
 
-**[E-02] Data format**
+#### [E-02] Data format
 
 ```json
 {
@@ -73,7 +75,7 @@ Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
 }
 ```
 
-**[E-03] Data format**
+#### [E-03] Data format
 
 ```json
 {
@@ -131,12 +133,38 @@ Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
 }
 ```
 
-**[E-04] Data format**
+#### [E-04] Data format
 
 ```json
 {
   "game_id": "Game's crawling ID",
   "away_score": "Away team's predicted score",
   "home_score": "Home team's predicted score"
+}
+```
+
+### [E-05], [E-06]: 채팅 비속어 필터링 파이프라인
+
+클라이언트가 채팅방에서 채팅을 전송하면 메인 서비스는 이를 데이터베이스에 저장한 후 AI 서비스에 채팅의 ID와 내용을 담아 비속어 필터링을 요청하는 이벤트를 전송한다. AI 서비스는 채팅의 부적절함을 예측하고 결과 이벤트를 메인 서비스에 전송한다.
+
+![Event56: [E-05], [E-06]](images/Event56.png)
+
+Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
+
+#### [E-05] Data format
+
+```json
+{
+  "chat_id": "Chat's id",
+  "content": "Chat's content"
+}
+```
+
+#### [E-06] Data format
+
+```json
+{
+  "chat_id": "Chat's id",
+  "is_profane": "Chat's profanity prediction"
 }
 ```

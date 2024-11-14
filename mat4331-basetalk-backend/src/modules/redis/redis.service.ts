@@ -5,23 +5,7 @@ import { RedisRepository } from './redis.repository';
 export class RedisService {
   private readonly logger: Logger = new Logger(RedisService.name);
 
-  // track subscription count and deallocate Redis resource
-  private readonly subscriptionMap: Map<string, number>; // <channel, subscription count>
-  // save callback functions per channel to register onChat event handler
-  private readonly callbackMap: Map<string, (chat: string) => void>; // <channel, callback function>
-
-  constructor(private readonly redisRepository: RedisRepository) {
-    this.subscriptionMap = new Map<string, number>();
-    this.callbackMap = new Map<string, (chat: string) => void>();
-
-    // register onChat only once
-    this.redisRepository.onChat((channel, chat) => {
-      if (this.callbackMap.has(channel)) {
-        const callback = this.callbackMap.get(channel);
-        callback(chat);
-      }
-    });
-  }
+  constructor(private readonly redisRepository: RedisRepository) {}
 
   /**
    * method for storing refresh token to Redis
@@ -94,54 +78,5 @@ export class RedisService {
   async deleteGrantCode(memberId: number): Promise<void> {
     // delete the grant code from Redis
     await this.redisRepository.delete('grant_code', String(memberId));
-  }
-
-  /**
-   * method for publishing chat to the specified channel
-   * @param channel Redis channel (ex: 'chatroom:123')
-   * @param chat chat to send
-   */
-  async publishChat(channel: string, chat: string): Promise<void> {
-    this.logger.debug(`publish chat to channel: ${channel}, content: ${chat}`);
-    await this.redisRepository.publish(channel, chat);
-  }
-
-  /**
-   * method for subscribe specific channel, and set the callback to process received chat
-   * @param channel Redis channel
-   * @param callback callback function for processing chat
-   */
-  async subscribeToChannel(
-    channel: string,
-    callback: (chat: string) => void,
-  ): Promise<void> {
-    // if no one subscribes the chatroom, subscribe it
-    if ((this.subscriptionMap.get(channel) || 0) === 0) {
-      this.logger.debug(`subscribed channel: ${channel}`);
-      await this.redisRepository.subscribe(channel);
-      this.callbackMap.set(channel, callback);
-    }
-
-    // and increase subscribe count by 1
-    this.subscriptionMap.set(
-      channel,
-      (this.subscriptionMap.get(channel) || 0) + 1,
-    );
-  }
-
-  /**
-   * method for unsubscribing specified Redis channel
-   * @param channel Redis channel
-   */
-  async unsubscribeFromChannel(channel: string): Promise<void> {
-    const subscriptionCount: number = this.subscriptionMap.get(channel) || 0;
-
-    if (subscriptionCount === 1) {
-      this.logger.debug(`unsubscribed channel: ${channel}`);
-      await this.redisRepository.unsubscribe(channel);
-      this.subscriptionMap.delete(channel);
-    } else if (subscriptionCount > 1) {
-      this.subscriptionMap.set(channel, subscriptionCount - 1);
-    }
   }
 }

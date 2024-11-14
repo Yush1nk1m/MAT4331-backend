@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
 import { GoogleProfileDto } from '../auth/dto/google-profile.dto';
@@ -6,6 +6,8 @@ import { SignUpDto } from '../auth/dto/sign-up.dto';
 
 @Injectable()
 export class MemberService {
+  private readonly logger: Logger = new Logger(MemberService.name);
+
   constructor(private readonly memberRepository: MemberRepository) {}
 
   /**
@@ -18,7 +20,11 @@ export class MemberService {
   }
 
   async validateMemberById(memberId: number): Promise<Member> {
+    this.logger.debug(`Start to validate member id: ${memberId}`);
+
     const member: Member = await this.memberRepository.findMemberById(memberId);
+
+    this.logger.debug(`Found member: ${JSON.stringify(member)}`);
 
     if (!member) {
       throw new NotFoundException(`Member with id: ${memberId} has not found`);

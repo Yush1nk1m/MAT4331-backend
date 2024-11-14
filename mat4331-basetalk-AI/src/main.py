@@ -1,10 +1,11 @@
 import asyncio
 from fastapi import FastAPI, BackgroundTasks
 from src.models.game_data import GamePredictionRequest
+from src.models.text_data import ProfanityCheckRequest
 from src.routers import mock
 from src.services.game_service import predict_outcome
 from src.services.profanity_service import detect_profanity
-from src.configs.config import RABBITMQ_HOST, RABBITMQ_AI_TO_MAIN_QUEUE, RABBITMQ_CRAWLER_TO_AI_QUEUE, RABBITMQ_USER, RABBITMQ_PASSWORD
+from src.configs.config import RABBITMQ_HOST, RABBITMQ_MAIN_TO_AI_QUEUE, RABBITMQ_AI_TO_MAIN_QUEUE, RABBITMQ_CRAWLER_TO_AI_QUEUE, RABBITMQ_USER, RABBITMQ_PASSWORD
 import pika
 import json
 
@@ -20,30 +21,43 @@ channel = connection.channel()
 
 # declare queue
 channel.queue_declare(queue=RABBITMQ_CRAWLER_TO_AI_QUEUE, durable=True)
+channel.queue_declare(queue=RABBITMQ_MAIN_TO_AI_QUEUE, durable=True)
 
 # Event handler routing table
 event_handlers = {
     "Game.Predict.Score": predict_outcome,
-    "Chat.Predict.Profane": detect_profanity,
+    "Chat.Predict.Profanity": detect_profanity,
+}
+
+request_models = {
+    "Game.Predict.Score": GamePredictionRequest,
+    "Chat.Predict.Profanity": ProfanityCheckRequest,
+}
+
+response_event_patterns = {
+    "Game.Predict.Score": "Game.Save.Prediction",
+    "Chat.Predict.Profanity": "Chat.Save.Prediction",
 }
 
 # message consumer function
 def on_message(channel, method, properties, body):
     message = json.loads(body)
+    
     event_pattern = message.get("pattern")
-    data = message.get("data")    
+    data = message.get("data")
         
     # call event handler
     if event_pattern in event_handlers:
-        parsed_data = GamePredictionRequest.parse_obj(data)
+        model = request_models[event_pattern]
+        parsed_data = model.parse_obj(data)
         
         print(f"parsed_data: {parsed_data}")
 
         result_data = event_handlers[event_pattern](parsed_data)
         
         response_message = json.dumps({
-            "pattern": "Game.Save.Prediction",
-            "data": result_data
+            "pattern": response_event_patterns[event_pattern],
+            "data": result_data,
         })
         
         channel.basic_publish(
@@ -53,7 +67,7 @@ def on_message(channel, method, properties, body):
             properties=pika.BasicProperties(
                 delivery_mode=2,
                 content_type="application/json"
-            )
+            ),
         )        
         
     else:
@@ -64,6 +78,7 @@ def on_message(channel, method, properties, body):
     
 # Consumer configuration
 channel.basic_consume(queue=RABBITMQ_CRAWLER_TO_AI_QUEUE, on_message_callback=on_message)
+channel.basic_consume(queue=RABBITMQ_MAIN_TO_AI_QUEUE, on_message_callback=on_message)
 
 @app.on_event("startup")
 async def startup_event():
