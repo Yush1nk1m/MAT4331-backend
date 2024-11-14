@@ -23,12 +23,16 @@ export class Chat {
   @ApiProperty({ description: "The chat's identifier" })
   id: number;
 
-  @ManyToOne(() => Chatroom)
+  @ManyToOne(() => Chatroom, (chatroom) => chatroom.chatList, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'chatroom_id' })
   @ApiProperty({ description: 'The identifier of the chat room it belonged' })
   chatroom: Chatroom;
 
-  @ManyToOne(() => Member)
+  @ManyToOne(() => Member, (member) => member.chatList, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'member_id' })
   @ApiProperty({ description: 'The identifier of the writer' })
   writer: Member;

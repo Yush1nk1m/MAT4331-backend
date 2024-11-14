@@ -19,11 +19,15 @@ export class MemberChatroom {
 
   @ManyToOne(() => Chatroom, (chatroom) => chatroom.memberChatroomList, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   @ApiProperty({ description: "The chat room's identifier" })
   chatroom: Chatroom;
 
-  @ManyToOne(() => Member, (member) => member.memberChatroomList)
+  @ManyToOne(() => Member, (member) => member.memberChatroomList, {
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   @ApiProperty({ description: "The member's identifier" })
   member: Member;
 

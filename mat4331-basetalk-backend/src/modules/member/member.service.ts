@@ -3,12 +3,20 @@ import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
 import { GoogleProfileDto } from '../auth/dto/google-profile.dto';
 import { SignUpDto } from '../auth/dto/sign-up.dto';
+import { RedisService } from '../redis/redis.service';
+import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
+import { Transactional } from 'typeorm-transactional';
+import { ChatroomService } from '../chatroom/chatroom.service';
 
 @Injectable()
 export class MemberService {
   private readonly logger: Logger = new Logger(MemberService.name);
 
-  constructor(private readonly memberRepository: MemberRepository) {}
+  constructor(
+    private readonly memberRepository: MemberRepository,
+    private readonly chatroomService: ChatroomService,
+    private readonly redisService: RedisService,
+  ) {}
 
   /**
    * method for finding member by id
@@ -63,10 +71,33 @@ export class MemberService {
   }
 
   /**
-   * method for deleting the member by id
-   * @param memberId member's id
+   * method for deleting the member
+   * @param member Member entity
    */
-  async deleteMemberById(memberId: number): Promise<void> {
-    await this.memberRepository.deleteMemberById(memberId);
+  @Transactional()
+  async deleteMember(member: Member): Promise<void> {
+    // delete the member's chatroom information
+    const memberChatroomList: MemberChatroom[] =
+      await member.memberChatroomList;
+
+    this.logger.debug(
+      `memberChatroomList: ${JSON.stringify(memberChatroomList)}`,
+    );
+
+    // process to leave all chatrooms
+    await Promise.all(
+      memberChatroomList.map((memberChatroom) => {
+        return this.chatroomService.leaveChatroom(
+          member,
+          memberChatroom.chatroom.id,
+        );
+      }),
+    );
+
+    // delete refresh token from Redis
+    await this.redisService.deleteRefreshToken(member.id);
+
+    // delete Member
+    await this.memberRepository.deleteMemberById(member.id);
   }
 }

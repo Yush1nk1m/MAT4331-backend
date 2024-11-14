@@ -143,6 +143,23 @@
 
 ![OAuth Login Process](images/OAuth_Login.png)
 
+## Member Module
+
+이 섹션은 회원 관련 모듈의 API에 대한 설명이다.
+
+### Version 1 APIs
+
+|  ID  | Method | URI         | Description           |
+| :--: | :----: | :---------- | :-------------------- |
+| M-01 | DELETE | /v1/members | 회원 탈퇴를 수행한다. |
+
+#### [M-01] 회원 탈퇴
+
+- **Request**: 사용자의 액세스 토큰을 전달한다.
+- **Request header**: Bearer authorization
+- **Response**: 어떤 데이터도 응답하지 않는다. **멱등성은 만족하지 않는다.**
+- **Success status code**: 204
+
 ## Game Module
 
 이 섹션은 KBO 경기 관련 모듈 API에 대한 설명이다.

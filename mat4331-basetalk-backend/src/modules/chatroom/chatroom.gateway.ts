@@ -7,7 +7,7 @@ import { Socket } from 'socket.io';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../../common/types/jwt-payload.type';
-import { Logger } from '@nestjs/common';
+import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { MemberService } from '../member/member.service';
 import { Member } from '../member/member.entity';
 import { Chatroom } from './chatroom.entity';
@@ -32,6 +32,7 @@ export class ChatroomGateway implements OnGatewayConnection {
 
   constructor(
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => MemberService))
     private readonly memberService: MemberService,
     private readonly chatroomService: ChatroomService,
     private readonly memberChatroomService: MemberChatroomService,

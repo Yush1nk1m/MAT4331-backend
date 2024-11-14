@@ -12,6 +12,7 @@ import { MemberType } from '../../common/types/member-type.enum';
 import { AccountStatus } from '../../common/types/account-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
+import { Chat } from '../chat/chat.entity';
 
 /**
  * service member's entity
@@ -88,4 +89,11 @@ export class Member {
   })
   @ApiProperty({ description: "Member's joined chatrooms information" })
   memberChatroomList: Promise<MemberChatroom[]>;
+
+  @OneToMany(() => Chat, (chat) => chat.writer, {
+    cascade: true,
+    lazy: true,
+  })
+  @ApiProperty({ description: "Member's written chats" })
+  chatList: Promise<Chat[]>;
 }

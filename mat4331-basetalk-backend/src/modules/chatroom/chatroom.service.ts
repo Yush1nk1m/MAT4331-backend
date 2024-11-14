@@ -14,7 +14,6 @@ import { Game } from '../game/game.entity';
 import { GameService } from '../game/game.service';
 import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
 import { MemberChatroomService } from '../member-chatroom/member-chatroom.service';
-import { MemberService } from '../member/member.service';
 
 @Injectable()
 export class ChatroomService {
@@ -22,7 +21,6 @@ export class ChatroomService {
 
   constructor(
     private readonly chatroomRepository: ChatroomRepository,
-    private readonly memberService: MemberService,
     private readonly gameService: GameService,
     private readonly memberChatroomService: MemberChatroomService,
   ) {}

@@ -1,0 +1,54 @@
+config:
+  target: "http://localhost:8080"
+  phases:
+    - duration: 60
+      arrivalRate: 10
+  variables:
+    email: "testuser@test.com"
+    password: "testpassword"
+
+scenarios:
+  - name: "WebSocket Chat Load Test"
+    flow:
+      - post:
+          url: "/v1/auth/login/local"
+          json:
+            email: "{{ email }}"
+            password: "{{ password }}"
+          capture:
+            - json: "$.access_token"
+              as: accessToken
+
+      - post:
+          url: "/v1/chatrooms"
+          headers:
+            Authorization: "Bearer {{ accessToken }}"
+          json:
+            gameId: 1
+            title: "Test room"
+            preferTeam: "LG"
+          capture:
+            - json: "$.id"
+              as: chatroomId
+
+      - loop:
+          - count: 50
+          - over:
+              - websocket:
+                  url: "ws://localhost:8080/chat"
+                  headers:
+                    Authorization: "Bearer {{ accessToken }}"
+              - send:
+                  text: '{ "event": "joinRoom", "data": { "chatroomId": "{{ chatroomId }}" } }'
+
+              - loop:
+                  - count: 50
+                  - over:
+                      - send:
+                          text: '{ "event": "chat", "data": { "chatroomId": "{{ chatroomId }}", "content": "Test message" } }'
+                      - think: 1
+
+      - delete:
+          url: "/v1/chatrooms/{{ chatroomId }}"
+          headers:
+            Authorization: "Bearer {{ accessToken }}"
