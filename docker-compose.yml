@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  basetalk-ai:
+    build:
+      context: ./mat4331-basetalk-AI
+    ports:
+      - "8078:8078"
+    env_file:
+      - ./mat4331-basetalk-AI/src/.env
+    restart: always
+
+  basetalk-main:
+    build:
+      context: ./mat4331-basetalk-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./mat4331-basetalk-backend/.env
+    restart: always
+
+  basetalk-crawler:
+    build:
+      context: ./mat4331-basetalk-crawler
+    ports:
+      - "8079:8079"
+    env_file:
+      - ./mat4331-basetalk-crawler/.env
+    restart: always

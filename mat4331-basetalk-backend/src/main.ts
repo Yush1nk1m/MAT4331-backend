@@ -11,6 +11,10 @@ import {
   StorageDriver,
 } from 'typeorm-transactional';
 import { RedisIoAdapter } from './common/adapters/redis-io.adapter';
+import * as compression from 'compression';
+import helmet from 'helmet';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 async function bootstrap() {
   // initialize @Transactional() configuration
@@ -19,6 +23,12 @@ async function bootstrap() {
   });
 
   const app = await NestFactory.create(AppModule);
+
+  // Compression configuration
+  app.use(compression());
+
+  // Helmet configuration
+  app.use(helmet());
 
   // use Redis WebSocket adapter
   const redisIoAdapter = new RedisIoAdapter(app);
@@ -46,7 +56,7 @@ async function bootstrap() {
 
   // cors configuration
   app.enableCors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', process.env.CLIENT_DOMAIN],
     credentials: true,
   });
 

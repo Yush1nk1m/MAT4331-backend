@@ -1,4 +1,4 @@
-from src.models.text_data import ProfanityCheckRequest
+from models.text_data import ProfanityCheckRequest
 
 # 비속어 판별 함수
 # 비속어를 판별하고 true or false를 return한다.

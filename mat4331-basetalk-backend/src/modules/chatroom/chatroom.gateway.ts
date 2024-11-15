@@ -15,15 +15,14 @@ import { ChatroomService } from './chatroom.service';
 import { MemberChatroomService } from '../member-chatroom/member-chatroom.service';
 import { MemberChatroom } from '../member-chatroom/member-chatroom.entity';
 import { jwtAccessOptions } from '../../config/jwt.config';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-/**
- * @TODO refactor Redis subscribe/unsubscribe logic by tracking DB data instead of memory-based map
- */
 @ApiTags('Chatroom')
 @WebSocketGateway({
   namespace: '/chat',
   cors: {
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', process.env.CLIENT_DOMAIN],
     credentials: true,
   },
 })

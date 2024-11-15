@@ -1,11 +1,11 @@
 import asyncio
 from fastapi import FastAPI, BackgroundTasks
-from src.models.game_data import GamePredictionRequest
-from src.models.text_data import ProfanityCheckRequest
-from src.routers import mock
-from src.services.game_service import predict_outcome
-from src.services.profanity_service import detect_profanity
-from src.configs.config import RABBITMQ_HOST, RABBITMQ_MAIN_TO_AI_QUEUE, RABBITMQ_AI_TO_MAIN_QUEUE, RABBITMQ_CRAWLER_TO_AI_QUEUE, RABBITMQ_USER, RABBITMQ_PASSWORD
+from models.game_data import GamePredictionRequest
+from models.text_data import ProfanityCheckRequest
+from routers import mock
+from services.game_service import predict_outcome
+from services.profanity_service import detect_profanity
+from configs.config import RABBITMQ_HOST, RABBITMQ_MAIN_TO_AI_QUEUE, RABBITMQ_AI_TO_MAIN_QUEUE, RABBITMQ_CRAWLER_TO_AI_QUEUE, RABBITMQ_USER, RABBITMQ_PASSWORD
 import pika
 import json
 

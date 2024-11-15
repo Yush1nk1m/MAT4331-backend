@@ -12,7 +12,7 @@ export const rmqCrawlerToMainOption: {
   name: 'CrawlerToMain',
   transport: Transport.RMQ,
   options: {
-    urls: [`amqp://${process.env.RABBITMQ_HOST}:5672`], // RabbitMQ URL
+    urls: [process.env.RABBITMQ_URL], // RabbitMQ URL
     queue: 'crawler_to_main_data_queue', // Queue name
     queueOptions: { durable: true },
     // connection retry options
@@ -34,7 +34,7 @@ export const rmqMainToCrawlerOption: {
   name: 'MainToCrawler',
   transport: Transport.RMQ,
   options: {
-    urls: [`amqp://${process.env.RABBITMQ_HOST}:5672`],
+    urls: [process.env.RABBITMQ_URL],
     queue: 'main_to_crawler_data_queue',
     queueOptions: { durable: true },
     // connection retry options
@@ -56,7 +56,7 @@ export const rmqAiToMainOption: {
   name: 'AiToMain',
   transport: Transport.RMQ,
   options: {
-    urls: [`amqp://${process.env.RABBITMQ_HOST}:5672`],
+    urls: [process.env.RABBITMQ_URL],
     queue: 'ai_to_main_data_queue',
     queueOptions: { durable: true },
     // connection retry options
@@ -78,7 +78,7 @@ export const rmqMainToAiOption: {
   name: 'MainToAi',
   transport: Transport.RMQ,
   options: {
-    urls: [`amqp://${process.env.RABBITMQ_HOST}:5672`],
+    urls: [process.env.RABBITMQ_URL],
     queue: 'main_to_ai_data_queue',
     queueOptions: { durable: true },
     // connection retry options

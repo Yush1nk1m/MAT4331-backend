@@ -14,12 +14,14 @@ import { ChatDto } from './dto/chat.dto';
 import { ChatroomService } from '../chatroom/chatroom.service';
 import { Chatroom } from '../chatroom/chatroom.entity';
 import { plainToInstance } from 'class-transformer';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @ApiTags('Chat')
 @WebSocketGateway({
   namespace: '/chat',
   cors: {
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', process.env.CLIENT_DOMAIN],
     credentials: true,
   },
 })

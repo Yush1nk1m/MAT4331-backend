@@ -1,4 +1,4 @@
-from src.models.game_data import GamePredictionRequest
+from models.game_data import GamePredictionRequest
 
 # 승패 예측 함수
 # 주어진 팀 데이터를 바탕으로 양 팀의 점수를 예측하고 반환한다.

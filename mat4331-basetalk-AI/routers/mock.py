@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from src.models.game_data import GamePredictionRequest, TeamData, BatInfo, PitchInfo
-from src.models.text_data import ProfanityCheckRequest
-from src.services.profanity_service import detect_profanity
-from src.services.game_service import predict_outcome
+from models.game_data import GamePredictionRequest, TeamData, BatInfo, PitchInfo
+from models.text_data import ProfanityCheckRequest
+from services.profanity_service import detect_profanity
+from services.game_service import predict_outcome
 
 router = APIRouter()
 
