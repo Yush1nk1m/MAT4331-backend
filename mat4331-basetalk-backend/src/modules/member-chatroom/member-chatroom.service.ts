@@ -29,10 +29,6 @@ export class MemberChatroomService {
         chatroom,
       );
 
-    this.logger.debug(
-      `found MemberChatroom: ${JSON.stringify(memberChatroom)}`,
-    );
-
     if (memberChatroom) {
       this.logger.debug(
         `Member has already joined the chatroom with id: ${chatroom.id}`,

@@ -1,54 +1,76 @@
 config:
   target: "http://localhost:8080"
   phases:
-    - duration: 60
-      arrivalRate: 10
+    - duration: 120
+      arrivalCount: 50
   variables:
-    email: "testuser@test.com"
-    password: "testpassword"
+    host: "http://localhost:8080"
+    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjksIm5pY2tuYW1lIjoi7Jyg7IugIO2FjOyKpO2KuCAyIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxNjAyMDM3LCJleHAiOjE3MzIyMDY4Mzd9.FZMYhdp4ZrznDF5fTnmhnq_zYdQYcAlnIwhPRpJJVS4"
+  socketio:
+    auth:
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjksIm5pY2tuYW1lIjoi7Jyg7IugIO2FjOyKpO2KuCAyIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxNjAyMDM3LCJleHAiOjE3MzIyMDY4Mzd9.FZMYhdp4ZrznDF5fTnmhnq_zYdQYcAlnIwhPRpJJVS4"
 
 scenarios:
-  - name: "WebSocket Chat Load Test"
+  - name: "WebSocket Test"
+    engine: socketio
     flow:
-      - post:
-          url: "/v1/auth/login/local"
-          json:
-            email: "{{ email }}"
-            password: "{{ password }}"
-          capture:
-            - json: "$.access_token"
-              as: accessToken
+      - log: "Start WebSocket Load Test"
 
+      # 채팅방 생성
       - post:
           url: "/v1/chatrooms"
           headers:
             Authorization: "Bearer {{ accessToken }}"
           json:
             gameId: 1
-            title: "Test room"
+            title: "Test chatroom"
             preferTeam: "LG"
           capture:
-            - json: "$.id"
-              as: chatroomId
+            json: "$.id"
+            as: "chatroomId"
 
+      # pause
+      - think: 1
+
+      # 채팅방 연결
       - loop:
-          - count: 50
-          - over:
-              - websocket:
-                  url: "ws://localhost:8080/chat"
-                  headers:
-                    Authorization: "Bearer {{ accessToken }}"
-              - send:
-                  text: '{ "event": "joinRoom", "data": { "chatroomId": "{{ chatroomId }}" } }'
+          - count: 20
+          - flow:
+              - namespace: "/chat"
+                emit:
+                  channel: "joinRoom"
+                  data: "{{ chatroomId }}"
+              - think: 1
 
-              - loop:
-                  - count: 50
-                  - over:
-                      - send:
-                          text: '{ "event": "chat", "data": { "chatroomId": "{{ chatroomId }}", "content": "Test message" } }'
-                      - think: 1
+      # pause
+      - think: 1
 
+      # 채팅 전송
+      - loop:
+          - count: 60
+          - flow:
+              - namespace: "/chat"
+                emit:
+                  channel: "chat"
+                  data:
+                    chatroomId: "{{ chatroomId }}"
+                    content: "Chat Test Content"
+              - think: 3
+
+      # pause
+      - think: 1
+
+      # 채팅방 연결 해제
+      - namespace: "/chat"
+        emit:
+          channel: "leaveRoom"
+          data: "{{ chatroomId }}"
+
+      # pause
+      - think: 1
+
+      # 채팅방 삭제
       - delete:
-          url: "/v1/chatrooms/{{ chatroomId }}"
+          url: "{{ host }}/v1/chatrooms/{{ chatroomId }}"
           headers:
             Authorization: "Bearer {{ accessToken }}"

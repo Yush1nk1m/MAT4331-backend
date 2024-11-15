@@ -87,6 +87,8 @@ export class ChatroomGateway implements OnGatewayConnection {
     // validate the access token and get Member instance
     const member: Member = await this.validateClientToken(client);
 
+    this.logger.debug(`Connected member: ${JSON.stringify(member)}`);
+
     // find chatroom and validate if it exists
     const chatroom: Chatroom = await this.chatroomService.validateChatroomById(
       Number(chatroomId),

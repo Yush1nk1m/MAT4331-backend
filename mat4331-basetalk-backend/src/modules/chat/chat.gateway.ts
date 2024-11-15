@@ -85,6 +85,7 @@ export class ChatGateway {
 
       // validate client token
       const member: Member = await this.validateClientToken(client);
+      this.logger.debug(`Chat writer: ${JSON.stringify(member)}`);
 
       // validate chatroom
       const chatroom: Chatroom =
