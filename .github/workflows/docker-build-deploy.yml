@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         project:
-          - mat4331-basetalk-AI
+          - mat4331-basetalk-ai
           - mat4331-basetalk-backend
           - mat4331-basetalk-crawler
 
