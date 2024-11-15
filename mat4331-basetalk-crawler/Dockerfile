@@ -1,19 +1,34 @@
-# 1. Base image
-FROM node:20
+# Stage 1: Build
 
-# 2. Configure working directory
-WORKDIR /usr/src/app
+## 1. Base image
+FROM node:20 AS build
 
-# 3. Copy package.json and install dependencies
+## 2. Configure working directory
+WORKDIR /app
+
+## 3. Copy package.json and install dependencies
 COPY package*.json ./
-RUN npm install --omit=dev
+RUN npm install
 
-# 4. Copy Application code
+## 4. Copy Application code and build
 COPY . .
-
-# 5. NestJS build
 RUN npm run build
 
-# 6. Expose port and start application
+# Stage 2: Production
+
+## 1. Base image
+FROM node:20 AS production
+
+## 2. Configure working directory
+WORKDIR /app
+
+## 3. Copy only necessary files from build stage
+COPY package*.json ./
+COPY --from=build /app/dist ./dist
+
+## 4. Install production dependencies
+RUN npm install --omit=dev
+
+## 5. Expose port and start application
 EXPOSE 8079
 CMD ["npm", "run", "start"]
