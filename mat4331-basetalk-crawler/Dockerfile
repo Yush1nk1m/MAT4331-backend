@@ -31,4 +31,4 @@ RUN npm install --omit=dev
 
 ## 5. Expose port and start application
 EXPOSE 8079
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/main.js"]

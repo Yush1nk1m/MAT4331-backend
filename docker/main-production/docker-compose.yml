@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  basetalk-backend:
+    image: kys010306/mat4331-basetalk-backend:latest
+    container_name: basetalk-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: always
