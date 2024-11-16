@@ -65,8 +65,9 @@ jobs:
         run: |
           for HOST in ${{ secrets.MAIN_HOST_1 }} ${{ secrets.MAIN_HOST_2 }} ${{ secrets.CRAWLER_HOST }} ${{ secrets.AI_HOST }}; do
             ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@$HOST '
-              sudo docker-compose down --rmi all --volumes --remove-orphans &&
-              sudo docker system prune -f &&
+              sudo docker-compose down --remove-orphans &&
+              sudo docker network prune -f &&
+              sudo docker system prune -af --volumes &&
               sudo docker-compose pull &&
               sudo docker-compose up -d
             '
