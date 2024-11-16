@@ -43,10 +43,12 @@ jobs:
 
       - name: Deploy Service to EC2 instances via Bastion
         run: |
-          for HOST in ${{ matrix.hosts }}; do
-            ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@${{ secrets[HOST] }} "
+          HOSTS="${{ join(matrix.hosts, ' ') }}"
+          for HOST_KEY in $HOSTS; do
+            HOST=${{ secrets[HOST_KEY] }}
+            ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@$HOST "
               sudo docker-compose ps -a &&
-              echo "hello"
+              echo 'hello'
             "
           done
         shell: bash
