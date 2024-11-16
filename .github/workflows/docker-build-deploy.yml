@@ -47,7 +47,6 @@ jobs:
             echo HOST
             echo $HOST
             echo "${{ secrets[HOST] }}"
-            echo "${{ secrets[$HOST] }}"
           done
         shell: bash
 
