@@ -46,8 +46,8 @@ jobs:
           for HOST in $HOSTS; do
             echo HOST
             echo $HOST
-            echo "${{ secrets.HOST }}"
-            echo "${{ secrets.$HOST }}"
+            echo "${{ secrets[HOST] }}"
+            echo "${{ secrets[$HOST] }}"
           done
         shell: bash
 
