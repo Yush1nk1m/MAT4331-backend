@@ -58,9 +58,6 @@ jobs:
           echo "${{ secrets.SSH_SECRET_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
-          for HOST in ${{ secrets.MAIN_HOST_1 }} ${{ secrets.MAIN_HOST_2 }} ${{ secrets.CRAWLER_HOST }} ${{ secrets.AI_HOST }}; do
-            ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
-          done
 
         shell: bash
 
