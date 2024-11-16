@@ -23,8 +23,7 @@ jobs:
               - MAIN_HOST_2
           - project: mat4331-basetalk-crawler
             path: mat4331-basetalk-crawler/
-            hosts:
-              - CRAWLER_HOST
+            host: CRAWLER_HOST
 
     steps:
       - name: Checkout repository
@@ -44,8 +43,12 @@ jobs:
       - name: Deploy Service to EC2 instances via Bastion
         run: |
           HOSTS="${{ join(matrix.hosts, ' ') }}"
-          echo $HOSTS
-
+          for HOST in $HOSTS; do
+            ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@$HOST "
+              sudo docker-compose ps -a &&
+              echo "hello"
+            "
+          done
         shell: bash
 
       - name: Clean up SSH key
