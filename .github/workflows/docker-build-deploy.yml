@@ -52,19 +52,24 @@ jobs:
         run: |
           docker push kys010306/${{ matrix.project }}
 
-      - name: Add SSH Key
+      - name: Add SSH Key and Register Known Hosts
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_SECRET_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.BASTION_HOST }} >> ~/.ssh/known_hosts
+          for HOST in ${{ secrets.MAIN_HOST_1 }} ${{ secrets.MAIN_HOST_2 }} ${{ secrets.CRAWLER_HOST }} ${{ secrets.AI_HOST }}; do
+            ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+          done
+
         shell: bash
 
       - name: Deploy Service to EC2 instances via Bastion
         run: |
           for HOST in ${{ secrets.MAIN_HOST_1 }} ${{ secrets.MAIN_HOST_2 }} ${{ secrets.CRAWLER_HOST }} ${{ secrets.AI_HOST }}; do
             ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ${{ secrets.BASTION_HOST }}" $HOST '
-              sudo docker-compose down
-              sudo docker-compose pull
+              sudo docker-compose down &&
+              sudo docker-compose pull &&
               sudo docker-compose up -d
             '
           done
