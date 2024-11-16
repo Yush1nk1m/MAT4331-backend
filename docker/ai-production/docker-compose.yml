@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  basetalk-ai:
+    image: kys010306/mat4331-basetalk-ai:latest
+    container_name: basetalk-ai
+    ports:
+      - "8078:8078"
+    env_file:
+      - .env
+    restart: unless-stopped
