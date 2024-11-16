@@ -5,7 +5,7 @@
 !include AWSPuml/AWSSimplified.puml
 !include AWSPuml/Compute/EC2.puml
 !include AWSPuml/Compute/EC2Instance.puml
-!include AWSPuml/Gompute
+!include AWSPuml/Compute/EC2DBInstance.puml
 !include AWSPuml/Groups/AWSCloud.puml
 !include AWSPuml/Groups/VPC.puml
 !include AWSPuml/Groups/AvailabilityZone.puml
