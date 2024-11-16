@@ -63,11 +63,11 @@ jobs:
         run: |
           for HOST in ${{ secrets.MAIN_HOST_1 }} ${{ secrets.MAIN_HOST_2 }} ${{ secrets.CRAWLER_HOST }} ${{ secrets.AI_HOST }}; do
             ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ${{ secrets.BASTION_HOST }}" $HOST << 'EOF'
-              echo "Deploying on $HOST"
-              sudo docker-compose down
-              sudo docker-compose pull
-              sudo docker-compose up -d
-            EOF
+        echo "Deploying on $HOST"
+        sudo docker-compose down
+        sudo docker-compose pull
+        sudo docker-compose up -d
+        EOF
           done
         shell: bash
 
