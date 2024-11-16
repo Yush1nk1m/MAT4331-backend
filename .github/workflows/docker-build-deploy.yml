@@ -44,6 +44,7 @@ jobs:
       - name: Deploy Service to EC2 instances via Bastion
         run: |
           HOSTS="${{ join(matrix.hosts, ' ') }}"
+          echo $HOSTS
           for HOST_KEY in $HOSTS; do
             HOST=${{ secrets[HOST_KEY] }}
             ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@$HOST "
