@@ -23,9 +23,6 @@ jobs:
             host: CRAWLER_HOST
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Determine if project has changed
         id: check_changes
         run: |
@@ -38,6 +35,9 @@ jobs:
       - name: Skip unchanged project
         if: env.changed == 'false'
         run: echo "No changes in ${{ matrix.project }}. Skipping build and deploy."
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Log in to DockerHub
         if: env.changed == 'true'
