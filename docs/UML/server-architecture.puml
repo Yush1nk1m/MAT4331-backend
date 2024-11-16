@@ -1,0 +1,59 @@
+@startuml AWS VPC Architecture
+
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v18.0/dist
+!include AWSPuml/AWSCommon.puml
+!include AWSPuml/AWSSimplified.puml
+!include AWSPuml/Compute/EC2.puml
+!include AWSPuml/Compute/EC2Instance.puml
+!include AWSPuml/Gompute
+!include AWSPuml/Groups/AWSCloud.puml
+!include AWSPuml/Groups/VPC.puml
+!include AWSPuml/Groups/AvailabilityZone.puml
+!include AWSPuml/Groups/PublicSubnet.puml
+!include AWSPuml/Groups/PrivateSubnet.puml
+!include AWSPuml/NetworkingContentDelivery/VPCNATGateway.puml
+!include AWSPuml/NetworkingContentDelivery/VPCInternetGateway.puml
+!include AWSPuml/NetworkingContentDelivery/ElasticLoadBalancingApplicationLoadBalancer.puml
+!include AWSPuml/Database/RDS.puml
+!include AWSPuml/Storage/SimpleStorageService.puml
+!include AWSPuml/NetworkingContentDelivery/CloudFront.puml
+!include AWSPuml/General/Users.puml
+!include AWSPuml/General/User.puml
+
+hide stereotype
+skinparam linetype ortho
+skinparam rectangle {
+    BorderColor Black
+    BorderThickness 1
+}
+
+AWSCloudGroup(cloud) {
+  VPCGroup(vpc) {
+    VPCInternetGateway(internet_gateway, "Internet Gateway", "")
+
+    AvailabilityZoneGroup(az_a, "Availability Zone (ap-northeast-2a)") {
+      PublicSubnetGroup(az_a_public, "Public Subnet") {
+        EC2Instance(nat_instance, "NAT Instance", "") #Transparent
+        ElasticLoadBalancingApplicationLoadBalancer(alb_a, "ALB", "") #Transparent
+      }
+
+      PrivateSubnetGroup(az_a_private, "Private Subnet") {
+        EC2Instance(backend_server_a, "Backend Server a", "") #Transparent
+        RDS(rds, "RDS (Postgres)", "") #Transparent
+      }
+    }
+
+    AvailabilityZoneGroup(az_c, "Availability Zone (ap-northeast-2b)") {
+      PublicSubnetGroup(az_c_public, "Public Subnet") {
+        EC2Instance(bastion, "Bastion") #Transparent
+        ElasticLoadBalancingApplicationLoadBalancer(alb_c, "ALB", "") #Transparent
+      }
+
+      PrivateSubnetGroup(az_c_private, "Private Subnet") {
+        EC2Instance(backend_server_c, "Backend Server c", "") #Transparent
+      }
+    }
+  }
+}
+
+@enduml

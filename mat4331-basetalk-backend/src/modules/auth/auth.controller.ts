@@ -87,7 +87,7 @@ export class AuthController {
     const code: string = await this.authService.issueTokenGrantCode(member);
 
     // TODO: redirect service's actual loading page
-    return res.redirect(`http://localhost:8080/?code=${code}`);
+    return res.redirect(`http://localhost:3000/Login/?code=${code}`);
   }
 
   @ApiOperation({
