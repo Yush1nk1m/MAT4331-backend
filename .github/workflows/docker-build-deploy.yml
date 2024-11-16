@@ -14,13 +14,17 @@ jobs:
         include:
           - project: mat4331-basetalk-ai
             path: mat4331-basetalk-ai/
-            host: AI_HOST
+            hosts:
+              - AI_HOST
           - project: mat4331-basetalk-backend
             path: mat4331-basetalk-backend/
-            host: MAIN_HOST_1,MAIN_HOST_2
+            hosts:
+              - MAIN_HOST_1
+              - MAIN_HOST_2
           - project: mat4331-basetalk-crawler
             path: mat4331-basetalk-crawler/
-            host: CRAWLER_HOST
+            hosts:
+              - CRAWLER_HOST
 
     steps:
       - name: Checkout repository
@@ -39,9 +43,8 @@ jobs:
 
       - name: Deploy Service to EC2 instances via Bastion
         run: |
-          HOSTS=$(echo "${{ secrets[matrix.host] }}" | tr ',' ' ')
-          for HOST in $HOSTS; do
-            ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@$HOST "
+          for HOST in matrix.hosts; do
+            ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@${{ secrets[HOST] }} "
               sudo docker-compose ps -a &&
               echo "hello"
             "
