@@ -29,7 +29,7 @@ jobs:
       - name: Determine if project has changed
         id: check_changes
         run: |
-          if git diff -quiet HEAD^ HEAD -- ${{ matrix.path }}; then
+          if git diff --quiet HEAD^ HEAD -- ${{ matrix.path }}; then
             echo "changed=false" >> $GITHUB_ENV
           else
             echo "changed=true" >> $GITHUB_ENV
@@ -90,6 +90,7 @@ jobs:
           HOSTS=$(echo "${{ secrets[matrix.host] }}" | tr ',' ' ')
           for HOST in $HOSTS; do
             ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@$HOST '
+              sudo timedatectl set-timezone Asia/Seoul &&
               sudo docker-compose down --rmi all --volumes --remove-orphans &&
               sudo docker container prune -f &&
               sudo docker network prune -f &&

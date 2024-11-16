@@ -61,7 +61,7 @@ export class GameService {
   /**
    * method for predicting games' score not yet predicted
    */
-  @Cron(CronExpression.EVERY_HOUR)
+  @Cron(CronExpression.EVERY_DAY_AT_5AM)
   async predictGameScore(): Promise<void> {
     // find games not yet predicted
     const games: Game[] = await this.gameRepository.findGamesNotPredicted();
