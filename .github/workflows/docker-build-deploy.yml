@@ -45,13 +45,7 @@ jobs:
         run: |
           HOSTS="${{ join(matrix.hosts, ' ') }}"
           echo $HOSTS
-          for HOST_KEY in $HOSTS; do
-            HOST=${{ secrets[HOST_KEY] }}
-            ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@$HOST "
-              sudo docker-compose ps -a &&
-              echo 'hello'
-            "
-          done
+
         shell: bash
 
       - name: Clean up SSH key
