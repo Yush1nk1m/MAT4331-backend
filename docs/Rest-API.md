@@ -203,13 +203,15 @@
 
 ### Version 1 APIs
 
-|  ID   | Method | URI                             | Description                                |
-| :---: | :----: | :------------------------------ | :----------------------------------------- |
-| CR-01 |  POST  | /v1/chatrooms                   | 특정 경기에 대한 새로운 채팅방을 생성한다. |
-| CR-02 |  POST  | /v1/chatrooms/:chatroomId/join  | 채팅방에 입장한다.                         |
-| CR-03 |  POST  | /v1/chatrooms/:chatroomId/leave | 채팅방에서 퇴장한다.                       |
-| CR-04 | PATCH  | /v1/chatrooms/:chatroomId/title | 채팅방의 제목을 변경한다.                  |
-| CR-05 | DELETE | /v1/chatrooms/:chatroomId       | 채팅방을 삭제한다.                         |
+|  ID   | Method | URI                             | Description                                      |
+| :---: | :----: | :------------------------------ | :----------------------------------------------- |
+| CR-01 |  POST  | /v1/chatrooms                   | 특정 경기에 대한 새로운 채팅방을 생성한다.       |
+| CR-02 |  POST  | /v1/chatrooms/:chatroomId/join  | 채팅방에 입장한다.                               |
+| CR-03 |  POST  | /v1/chatrooms/:chatroomId/leave | 채팅방에서 퇴장한다.                             |
+| CR-04 | PATCH  | /v1/chatrooms/:chatroomId/title | 채팅방의 제목을 변경한다.                        |
+| CR-05 | DELETE | /v1/chatrooms/:chatroomId       | 채팅방을 삭제한다.                               |
+| CR-06 |  GET   | /v1/chatrooms/me                | 회원이 참여한 채팅방들을 조회한다.               |
+| CR-07 |  GET   | v1/chatrooms/:gameId            | 특정 KBO 경기에 대해 개설된 채팅방들을 조회한다. |
 
 #### [CR-01] 채팅방 생성
 
@@ -294,6 +296,51 @@
 
 - **Response**: 어떤 데이터도 응답하지 않는다. 멱등성을 만족한다.
 - **Success status code**: 204
+
+#### [CR-06] 내 채팅방 조회
+
+- **Request**: 사용자의 액세스 토큰을 전달한다.
+- **Request header**: Bearer authorization
+
+- **Response**: 사용자가 참여한 채팅방들의 정보를 응답한다.
+- **Success status code**: 200
+- **Data format**: Response body
+- **Data detail**:
+
+```json
+[
+  {
+    "id": "[chatroom id]",
+    "title": "[chatroom title]",
+    "preferTeam": "[KBOTeam enum type]",
+    "participantCount": "[number of chatroom's participant]",
+    "createdAt": "[created date]"
+  }
+]
+```
+
+#### [CR-07] 특정 경기의 채팅방 조회
+
+- **Request**: 사용자의 액세스 토큰과 경기의 ID를 전달한다.
+- **Request header**: Bearer authorization
+- **Request Query parameter**: 테이블의 API URI 참조
+
+- **Response**: 특정 KBO 경기에 대해 생성된 채팅방들의 정보를 응답한다.
+- **Success status code**: 200
+- **Data format**: Response body
+- **Data detail**:
+
+```json
+[
+  {
+    "id": "[chatroom id]",
+    "title": "[chatroom title]",
+    "preferTeam": "[KBOTeam enum type]",
+    "participantCount": "[number of chatroom's participant]",
+    "createdAt": "[created date]"
+  }
+]
+```
 
 ## Chat Module
 

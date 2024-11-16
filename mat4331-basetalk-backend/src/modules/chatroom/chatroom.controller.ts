@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -33,6 +34,7 @@ import { Member } from '../member/member.entity';
 import { ChatroomIdDto } from './dto/chatroom-id.dto';
 import { GetMember } from '../../common/decorators/get-member.decorator';
 import { EditTitleDto } from './dto/edit-title.dto';
+import { GameIdDto } from './dto/game-id.dto';
 
 @ApiTags('Chatroom')
 @ApiBadRequestResponse({
@@ -226,5 +228,69 @@ export class ChatroomController {
 
     // delete the chatroom
     await this.chatroomService.deleteChatroom(member, chatroomId);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: '[CR-06] 내 채팅방 조회',
+    description: '회원이 참여한 채팅방을 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '채팅방 조회에 성공한다.',
+    type: [ChatroomDto],
+  })
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  async getMyChatrooms(@GetMember() member: Member): Promise<ChatroomDto[]> {
+    // find chatrooms the member beloged to
+    const chatrooms: Chatroom[] =
+      await this.chatroomService.findChatroomsByMember(member);
+
+    // plain to ChatroomDto instances
+    const chatroomDtos: ChatroomDto[] = chatrooms.map((chatroom) => {
+      return plainToInstance(ChatroomDto, chatroom, {
+        excludeExtraneousValues: true,
+      });
+    });
+
+    return chatroomDtos;
+  }
+
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'gameId',
+    description: "game's id",
+    example: '1',
+  })
+  @ApiOperation({
+    summary: '[CR-07] 특정 경기의 채팅방 조회',
+    description: '특정 KBO 경기의 채팅방을 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '채팅방 조회에 성공한다.',
+    type: [ChatroomDto],
+  })
+  @Get(':gameId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
+  async getChatroomsOfGame(
+    @Param() gameIdDto: GameIdDto,
+  ): Promise<ChatroomDto[]> {
+    // desctruct DTO
+    const { gameId } = gameIdDto;
+
+    // find chatroom by the specified game id
+    const chatrooms: Chatroom[] =
+      await this.chatroomService.findChatroomsByGameId(gameId);
+
+    // plain to ChatroomDto instances
+    const chatroomDtos: ChatroomDto[] = chatrooms.map((chatroom) => {
+      return plainToInstance(ChatroomDto, chatroom, {
+        excludeExtraneousValues: true,
+      });
+    });
+
+    return chatroomDtos;
   }
 }

@@ -225,4 +225,31 @@ export class ChatroomService {
     // delete the chatroom
     this.chatroomRepository.deleteChatroomById(chatroom.id);
   }
+
+  /**
+   * method for finding chatrooms by game's id
+   * @param gameId game's id
+   * @returns found chatrooms
+   */
+  async findChatroomsByGameId(gameId: number): Promise<Chatroom[]> {
+    return this.chatroomRepository.findChatroomsByGameId(gameId);
+  }
+
+  /**
+   * method for finding chatrooms the member belonged to
+   * @param member Member entity
+   * @returns found chatrooms
+   */
+  async findChatroomsByMember(member: Member): Promise<Chatroom[]> {
+    // find MemberChatroom information
+    const memberChatrooms: MemberChatroom[] =
+      await this.memberChatroomService.findMemberChatroomsByMember(member);
+
+    // extract only the chatroom's information
+    const chatrooms: Chatroom[] = memberChatrooms.map((memberChatroom) => {
+      return memberChatroom.chatroom;
+    });
+
+    return chatrooms;
+  }
 }

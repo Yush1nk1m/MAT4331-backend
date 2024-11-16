@@ -111,4 +111,17 @@ export class ChatroomRepository {
     chatroom.title = title;
     return this.repository.save(chatroom);
   }
+
+  /**
+   * method for finding chatrooms by game's id it belonged
+   * @param gameId game's id
+   * @returns found chatrooms
+   */
+  async findChatroomsByGameId(gameId: number): Promise<Chatroom[]> {
+    return this.repository.findBy({
+      game: {
+        id: gameId,
+      },
+    });
+  }
 }
