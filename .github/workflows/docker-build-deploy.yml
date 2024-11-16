@@ -44,10 +44,10 @@ jobs:
         run: |
           HOSTS="${{ join(matrix.hosts, ' ') }}"
           for HOST in $HOSTS; do
-            ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no" -o "ProxyJump ubuntu@${{ secrets.BASTION_HOST }}" ubuntu@${{ secrets[HOST] }} "
-              sudo docker-compose ps -a &&
-              echo "hello"
-            "
+            echo HOST
+            echo $HOST
+            echo "${{ secrets.HOST }}"
+            echo "${{ secrets.$HOST }}"
           done
         shell: bash
 
