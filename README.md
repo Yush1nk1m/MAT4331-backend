@@ -5,7 +5,13 @@
 ## Documentation
 
 - [개발 계획 문서](./docs/Workflow.md)
-- [RDBMS 설계 문서](./docs/RDBMS-design.md)
-- [NoSQL DBMS 설계 문서](./docs/NoSQL-design.md)
 - [REST API 설계 문서](./docs/Rest-API.md)
 - [마이크로서비스 설계 문서](./docs/Microservice-design.md)
+- [RDBMS 설계 문서](./docs/RDBMS-design.md)
+- [NoSQL DBMS 설계 문서](./docs/NoSQL-design.md)
+
+## Server Architecture
+
+AWS를 통해 서버를 배포하였으며 아키텍처는 다음과 같다.
+
+![Server Architecture](docs/images/Server-architecture.png)

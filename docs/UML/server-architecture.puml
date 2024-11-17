@@ -14,13 +14,14 @@
 !include AWSPuml/NetworkingContentDelivery/VPCNATGateway.puml
 !include AWSPuml/NetworkingContentDelivery/VPCInternetGateway.puml
 !include AWSPuml/NetworkingContentDelivery/ElasticLoadBalancingApplicationLoadBalancer.puml
-!include AWSPuml/Database/RDS.puml
+!include AWSPuml/Database/MemoryDBforRedis.puml
 !include AWSPuml/Storage/SimpleStorageService.puml
 !include AWSPuml/NetworkingContentDelivery/CloudFront.puml
 !include AWSPuml/General/Users.puml
 !include AWSPuml/General/User.puml
 
 hide stereotype
+top to bottom direction
 skinparam linetype ortho
 skinparam rectangle {
     BorderColor Black
@@ -31,26 +32,31 @@ AWSCloudGroup(cloud) {
   VPCGroup(vpc) {
     VPCInternetGateway(internet_gateway, "Internet Gateway", "")
 
-    AvailabilityZoneGroup(az_a, "Availability Zone (ap-northeast-2a)") {
+    AvailabilityZoneGroup(az_a, "Availability Zone A") {
       PublicSubnetGroup(az_a_public, "Public Subnet") {
-        EC2Instance(nat_instance, "NAT Instance", "") #Transparent
         ElasticLoadBalancingApplicationLoadBalancer(alb_a, "ALB", "") #Transparent
+        EC2Instance(nat_instance, "NAT Instance", "") #Transparent
+        EC2DBInstance(mongo_db, "MongoDB", "") #Transparent
+        EC2Instance(rmq, "RabbitMQ", "") #Transparent
       }
 
       PrivateSubnetGroup(az_a_private, "Private Subnet") {
-        EC2Instance(backend_server_a, "Backend Server a", "") #Transparent
-        RDS(rds, "RDS (Postgres)", "") #Transparent
+        EC2Instance(main_service_1, "Main Service", "") #Transparent
       }
     }
 
-    AvailabilityZoneGroup(az_c, "Availability Zone (ap-northeast-2b)") {
-      PublicSubnetGroup(az_c_public, "Public Subnet") {
-        EC2Instance(bastion, "Bastion") #Transparent
-        ElasticLoadBalancingApplicationLoadBalancer(alb_c, "ALB", "") #Transparent
+    AvailabilityZoneGroup(az_b, "Availability Zone B") {
+      PublicSubnetGroup(az_b_public, "Public Subnet") {
+        ElasticLoadBalancingApplicationLoadBalancer(alb_b, "ALB", "") #Transparent
+        EC2Instance(bastion, "Bastion", "") #Transparent
+        EC2DBInstance(postgres_db, "PostgresDB", "") #Transparent
+        EC2DBInstance(redis, "Redis", "") #Transparent
       }
 
-      PrivateSubnetGroup(az_c_private, "Private Subnet") {
-        EC2Instance(backend_server_c, "Backend Server c", "") #Transparent
+      PrivateSubnetGroup(az_b_private, "Private Subnet") {
+        EC2Instance(main_service_2, "Main Service", "") #Transparent
+        EC2Instance(crawler_service, "Crawler Service", "") #Transparent
+        EC2Instance(ai_service, "AI Service", "") #Transparent
       }
     }
   }
