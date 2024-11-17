@@ -1,5 +1,10 @@
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { Member } from '../member/member.entity';
@@ -15,6 +20,7 @@ import { ChatroomService } from '../chatroom/chatroom.service';
 import { Chatroom } from '../chatroom/chatroom.entity';
 import { plainToInstance } from 'class-transformer';
 import * as dotenv from 'dotenv';
+import { SendChatDto } from './dto/send-chat.dto';
 dotenv.config();
 
 @ApiTags('Chat')
@@ -75,15 +81,12 @@ export class ChatGateway {
   })
   @SubscribeMessage('chat')
   async handleChat(
-    client: Socket,
-    payload: { chatroomId: string; content: string },
+    @MessageBody() sendChatDto: SendChatDto,
+    @ConnectedSocket() client: Socket,
   ): Promise<void> {
     try {
-      this.logger.debug(
-        `client requested with payload: ${JSON.stringify(payload)}`,
-      );
       // destruct DTO
-      const { chatroomId, content } = payload;
+      const { chatroomId, content } = sendChatDto;
 
       // validate client token
       const member: Member = await this.validateClientToken(client);
@@ -91,7 +94,7 @@ export class ChatGateway {
 
       // validate chatroom
       const chatroom: Chatroom =
-        await this.chatroomService.validateChatroomById(Number(chatroomId));
+        await this.chatroomService.validateChatroomById(chatroomId);
 
       // create DTO to save chat
       const SaveChatDto: SaveChatDto = {
@@ -108,7 +111,7 @@ export class ChatGateway {
 
       this.logger.debug(`saved chat: ${JSON.stringify(chatDto)}`);
 
-      client.to(chatroomId).emit('chat', chatDto);
+      client.to(String(chatroomId)).emit('chat', chatDto);
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while sending chat: ${error.message}`,

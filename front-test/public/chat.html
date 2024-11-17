@@ -84,7 +84,7 @@
       joinButton.addEventListener("click", () => {
         const chatroomId = chatroomIdInput.value;
         if (chatroomId && socket) {
-          socket.emit("joinRoom", chatroomId);
+          socket.emit("joinRoom", Number(chatroomId));
         }
       });
 
@@ -101,7 +101,10 @@
         const chatroomId = chatroomIdInput.value;
         const message = messageInput.value;
         if (chatroomId && message && socket) {
-          socket.emit("chat", { chatroomId, content: message });
+          socket.emit("chat", {
+            chatroomId: chatroomId,
+            content: message,
+          });
           addMessage(`You: ${message}`); // Display the sent message
           messageInput.value = ""; // Clear the input field
         }

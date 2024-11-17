@@ -1,4 +1,6 @@
 import {
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
@@ -7,7 +9,7 @@ import { Socket } from 'socket.io';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../../common/types/jwt-payload.type';
-import { forwardRef, Inject, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Logger, ParseIntPipe } from '@nestjs/common';
 import { MemberService } from '../member/member.service';
 import { Member } from '../member/member.entity';
 import { Chatroom } from './chatroom.entity';
@@ -81,7 +83,7 @@ export class ChatroomGateway implements OnGatewayConnection {
    */
   async validateParticipation(
     client: Socket,
-    chatroomId: string,
+    chatroomId: number,
   ): Promise<void> {
     // validate the access token and get Member instance
     const member: Member = await this.validateClientToken(client);
@@ -115,7 +117,7 @@ export class ChatroomGateway implements OnGatewayConnection {
     summary: '[WS-01] 웹 소켓 연결',
     description: 'WebSocket으로 클라이언트와 서버가 연결된다.',
   })
-  async handleConnection(client: Socket): Promise<void> {
+  async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
     try {
       const member: Member = await this.validateClientToken(client);
       this.logger.debug(`connected member: ${JSON.stringify(member)}`);
@@ -130,13 +132,16 @@ export class ChatroomGateway implements OnGatewayConnection {
     description: 'WebSocket으로 채팅방에 연결한다.',
   })
   @SubscribeMessage('joinRoom')
-  async handleJoinRoom(client: Socket, chatroomId: string) {
+  async handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(ParseIntPipe) chatroomId: number,
+  ) {
     try {
       // validate if the access token exists and if the client has joined the chatroom
       await this.validateParticipation(client, chatroomId);
 
       // join member to the chatroom through Socket.io
-      await client.join(chatroomId);
+      await client.join(String(chatroomId));
 
       this.logger.debug(`client joined the chatroom id: ${chatroomId}`);
     } catch (error) {
@@ -151,10 +156,13 @@ export class ChatroomGateway implements OnGatewayConnection {
     description: 'WebSocket으로 연결되어 있었던 채팅방과의 연결을 해제한다.',
   })
   @SubscribeMessage('leaveRoom')
-  async handleLeaveRoom(client: Socket, chatroomId: string) {
+  async handleLeaveRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody(ParseIntPipe) chatroomId: number,
+  ) {
     try {
       // leave room through Socket.io
-      await client.leave(chatroomId);
+      await client.leave(String(chatroomId));
     } catch (error) {
       client.emit('error', {
         message: `error occurred while leaving chatroom: ${error.message}`,
