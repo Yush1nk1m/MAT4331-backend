@@ -62,4 +62,17 @@ AWSCloudGroup(cloud) {
   }
 }
 
+main_service_1 .up. postgres_db
+main_service_2 .up. postgres_db
+
+main_service_1 .up. redis
+main_service_2 .up. redis
+
+crawler_service .up. mongo_db
+
+main_service_1 .down. rmq
+main_service_2 .down. rmq
+crawler_service .down. rmq
+ai_service .down. rmq
+
 @enduml
