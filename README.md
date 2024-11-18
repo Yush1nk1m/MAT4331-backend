@@ -15,3 +15,4 @@
 AWS를 통해 서버를 배포하였으며 아키텍처는 다음과 같다.
 
 ![Server Architecture](docs/images/Server-architecture.png)
+ 
