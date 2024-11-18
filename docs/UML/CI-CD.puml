@@ -1,0 +1,35 @@
+@startuml CI/CD
+skinparam DefaultFontName Arial
+skinparam DefaultFontSize 12
+skinparam RoundCorner 10
+skinparam ArrowColor #666666
+skinparam ActivityBorderColor #666666
+skinparam ActivityBackgroundColor #FAFAFA
+
+|GitHub Actions|
+start
+:Checkout Code;
+:Check Project Changes;
+
+if (Changes Detected?) then (no)
+  :Skip Build;
+  stop
+else (yes)
+  :DockerHub Login;
+  :Build Docker Image;
+  :Push to DockerHub;
+  :Setup SSH Keys;
+  
+  fork
+    :Deploy to AI Host]
+  fork again
+    :Deploy to Main Hosts]
+  fork again
+    :Deploy to Crawler Host]
+  end fork
+  
+  :Cleanup SSH Keys;
+  stop
+endif
+
+@enduml
