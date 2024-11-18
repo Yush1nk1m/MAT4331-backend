@@ -62,4 +62,25 @@ AWSCloudGroup(cloud) {
   }
 }
 
+internet_gateway .right. az_a_public #Purple
+internet_gateway .right. az_b_public #Purple
+
+main_service_1 <.up.> postgres_db #Blue
+main_service_2 <.up.> postgres_db #Blue
+
+main_service_1 <.up.> redis #Red
+main_service_2 <.up.> redis #Red
+
+crawler_service .up. mongo_db #Green
+
+main_service_1 <.down.> rmq #Orange
+main_service_2 <.down.> rmq #Orange
+crawler_service <.down.> rmq #Orange
+ai_service <.down.> rmq #Orange
+
+alb_b .down.> main_service_1 #Purple
+alb_b .down.> main_service_2 #Purple
+alb_a .up.> main_service_1 #Purple
+alb_a .up.> main_service_2 #Purple
+
 @enduml
