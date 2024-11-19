@@ -27,7 +27,11 @@ dotenv.config();
 @WebSocketGateway({
   namespace: '/chat',
   cors: {
-    origin: ['http://localhost:3000', process.env.CLIENT_DOMAIN],
+    origin: [
+      'http://localhost:3000',
+      'https://www.basetalk.org',
+      'https://basetalk.org',
+    ],
     credentials: true,
   },
 })

@@ -12,6 +12,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   database: process.env.POSTGRES_DATABASE,
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: process.env.NODE_ENV !== 'production' ? true : false,
-  logging: process.env.NODE_ENV !== 'production' ? true : false,
+  logging: false,
   namingStrategy: new SnakeNamingStrategy(),
 };
