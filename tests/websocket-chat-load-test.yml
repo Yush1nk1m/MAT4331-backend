@@ -1,14 +1,14 @@
 config:
   target: "http://localhost:8080"
   phases:
-    - duration: 120
-      arrivalCount: 50
+    - duration: 60
+      arrivalCount: 30
   variables:
     host: "http://localhost:8080"
-    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjksIm5pY2tuYW1lIjoi7Jyg7IugIO2FjOyKpO2KuCAyIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxNjAyMDM3LCJleHAiOjE3MzIyMDY4Mzd9.FZMYhdp4ZrznDF5fTnmhnq_zYdQYcAlnIwhPRpJJVS4"
+    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsIm5pY2tuYW1lIjoic3RyaW5nIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxOTA5ODUyLCJleHAiOjE3MzI1MTQ2NTJ9.xke55ec1Za9eVUelABFlnvIq8zBPlwDdvLqdXXjd_k4"
   socketio:
     auth:
-      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjksIm5pY2tuYW1lIjoi7Jyg7IugIO2FjOyKpO2KuCAyIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxNjAyMDM3LCJleHAiOjE3MzIyMDY4Mzd9.FZMYhdp4ZrznDF5fTnmhnq_zYdQYcAlnIwhPRpJJVS4"
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsIm5pY2tuYW1lIjoic3RyaW5nIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxOTA5ODUyLCJleHAiOjE3MzI1MTQ2NTJ9.xke55ec1Za9eVUelABFlnvIq8zBPlwDdvLqdXXjd_k4"
 
 scenarios:
   - name: "WebSocket Test"
@@ -34,28 +34,26 @@ scenarios:
 
       # 채팅방 연결
       - loop:
-          - count: 20
-          - flow:
-              - namespace: "/chat"
-                emit:
-                  channel: "joinRoom"
-                  data: "{{ chatroomId }}"
-              - think: 1
+          - namespace: "/chat"
+            emit:
+              channel: "joinRoom"
+              data: "{{ chatroomId }}"
+          - think: 1
+        count: 20
 
       # pause
       - think: 1
 
       # 채팅 전송
       - loop:
-          - count: 60
-          - flow:
-              - namespace: "/chat"
-                emit:
-                  channel: "chat"
-                  data:
-                    chatroomId: "{{ chatroomId }}"
-                    content: "Chat Test Content"
-              - think: 3
+          - namespace: "/chat"
+            emit:
+              channel: "chat"
+              data:
+                chatroomId: "{{ chatroomId }}"
+                content: "Chat Test Content"
+          - think: "{{$randomNumber(1, 3)}}"
+        count: 60
 
       # pause
       - think: 1

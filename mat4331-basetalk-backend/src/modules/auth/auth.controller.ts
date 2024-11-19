@@ -87,7 +87,7 @@ export class AuthController {
     const code: string = await this.authService.issueTokenGrantCode(member);
 
     // TODO: redirect service's actual loading page
-    return res.redirect(`http://localhost:3000/login/?code=${code}`);
+    return res.redirect(`https://www.basetalk.org/login/?code=${code}`);
   }
 
   @ApiOperation({

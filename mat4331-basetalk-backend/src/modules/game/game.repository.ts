@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './game.entity';
-import { Not, Repository } from 'typeorm';
+import { Between, MoreThan, Not, Repository } from 'typeorm';
 import { EmissionGameUpdatedDto } from './dto/emission-game-updated.dto';
 import { GameStatus } from '../../common/types/game-status.enum';
+import { CreateGameDto } from './dto/create-game.dto';
 
 @Injectable()
 export class GameRepository {
@@ -11,6 +12,18 @@ export class GameRepository {
     @InjectRepository(Game)
     private readonly repository: Repository<Game>,
   ) {}
+
+  /**
+   * test method
+   */
+  async createGame(createGameDto: CreateGameDto): Promise<Game> {
+    return this.repository.save(
+      this.repository.create({
+        ...createGameDto,
+        gameDate: new Date(createGameDto.gameDate),
+      }),
+    );
+  }
 
   /**
    * upsert emitted game information
@@ -54,6 +67,7 @@ export class GameRepository {
     return this.repository.findBy({
       predictedAwayScore: null,
       gameStatus: Not(GameStatus.CANCELED),
+      gameCid: MoreThan('10000000'),
     });
   }
 
@@ -63,6 +77,11 @@ export class GameRepository {
    * @returns found Games
    */
   async findGamesByDate(gameDate: Date): Promise<Game[]> {
-    return this.repository.findBy({ gameDate });
+    const startOfDay: Date = new Date(new Date(gameDate).setHours(0, 0, 0, 0));
+    const endOfDay: Date = new Date(
+      new Date(gameDate).setHours(23, 59, 59, 999),
+    );
+
+    return this.repository.findBy({ gameDate: Between(startOfDay, endOfDay) });
   }
 }

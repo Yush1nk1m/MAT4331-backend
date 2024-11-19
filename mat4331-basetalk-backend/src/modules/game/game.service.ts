@@ -6,6 +6,7 @@ import { Game } from './game.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Events } from 'src/common/constants/event.constant';
 import { CalculateAverageDto } from './dto/calculate-average.dto';
+import { CreateGameDto } from './dto/create-game.dto';
 
 @Injectable()
 export class GameService {
@@ -16,6 +17,13 @@ export class GameService {
     @Inject('MainToCrawler')
     private readonly rmqClient: ClientProxy,
   ) {}
+
+  /**
+   * test method
+   */
+  async createGame(createGameDto: CreateGameDto): Promise<Game> {
+    return this.gameRepository.createGame(createGameDto);
+  }
 
   /**
    * Events.GAME_UPDATED event handling service logic

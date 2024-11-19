@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Logger,
+  Post,
   Query,
 } from '@nestjs/common';
 import { GameService } from './game.service';
@@ -13,6 +15,7 @@ import { Events } from 'src/common/constants/event.constant';
 import { GameSavePredictionDto } from './dto/game-save-prediction.dto';
 import {
   ApiBadRequestResponse,
+  ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiOperation,
@@ -23,6 +26,7 @@ import { SearchGameDto } from './dto/search-game.dto';
 import { GameDto } from './dto/game.dto';
 import { Game } from './game.entity';
 import { plainToInstance } from 'class-transformer';
+import { CreateGameDto } from './dto/create-game.dto';
 
 @ApiTags('Game')
 @ApiBadRequestResponse({
@@ -39,6 +43,21 @@ export class GameController {
   private readonly logger = new Logger(GameController.name);
 
   constructor(private readonly gameService: GameService) {}
+
+  @ApiOperation({
+    summary: '시연용 API',
+    description:
+      '시연용으로 가짜 경기 데이터를 생성한다. gameCid 속성은 반드시 10000000 이하의 값을 전달해야 한다.',
+  })
+  @ApiCreatedResponse({
+    description: '가짜 경기 데이터가 생성된다.',
+    type: Game,
+  })
+  @Post('test')
+  @HttpCode(HttpStatus.CREATED)
+  async createGame(@Body() createGameDto: CreateGameDto): Promise<Game> {
+    return this.gameService.createGame(createGameDto);
+  }
 
   /**
    * handle Events.GAME_UPDATED event
