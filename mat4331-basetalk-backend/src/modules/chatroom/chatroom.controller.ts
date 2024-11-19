@@ -257,7 +257,6 @@ export class ChatroomController {
     return chatroomDtos;
   }
 
-  @ApiBearerAuth()
   @ApiParam({
     name: 'gameId',
     description: "game's id",
@@ -273,7 +272,6 @@ export class ChatroomController {
   })
   @Get(':gameId')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard('jwt'))
   async getChatroomsOfGame(
     @Param() gameIdDto: GameIdDto,
   ): Promise<ChatroomDto[]> {

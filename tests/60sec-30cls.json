@@ -1,0 +1,1535 @@
+{
+  "aggregate": {
+    "counters": {
+      "vusers.created_by_name.WebSocket Test": 30,
+      "vusers.created": 30,
+      "http.requests": 60,
+      "http.codes.201": 30,
+      "http.responses": 30,
+      "http.downloaded_bytes": 3330,
+      "socketio.emit": 2430,
+      "vusers.failed": 30
+    },
+    "rates": {
+      "http.request_rate": 1,
+      "socketio.emit_rate": 12
+    },
+    "firstCounterAt": 1731995362648,
+    "firstHistogramAt": 1731995363682,
+    "lastCounterAt": 1731995578525,
+    "lastHistogramAt": 1731995567521,
+    "firstMetricAt": 1731995362648,
+    "lastMetricAt": 1731995578525,
+    "period": 1731995570000,
+    "summaries": {
+      "http.response_time": {
+        "min": 346,
+        "max": 1072,
+        "count": 30,
+        "mean": 501.7,
+        "p50": 415.8,
+        "median": 415.8,
+        "p75": 561.2,
+        "p90": 713.5,
+        "p95": 727.9,
+        "p99": 907,
+        "p999": 907
+      },
+      "http.response_time.2xx": {
+        "min": 346,
+        "max": 1072,
+        "count": 30,
+        "mean": 501.7,
+        "p50": 415.8,
+        "median": 415.8,
+        "p75": 561.2,
+        "p90": 713.5,
+        "p95": 727.9,
+        "p99": 907,
+        "p999": 907
+      },
+      "socketio.response_time": {
+        "min": 0.1,
+        "max": 1.8,
+        "count": 2430,
+        "mean": 0.5,
+        "p50": 0.4,
+        "median": 0.4,
+        "p75": 0.5,
+        "p90": 0.6,
+        "p95": 0.7,
+        "p99": 0.9,
+        "p999": 1.4
+      }
+    },
+    "histograms": {
+      "http.response_time": {
+        "min": 346,
+        "max": 1072,
+        "count": 30,
+        "mean": 501.7,
+        "p50": 415.8,
+        "median": 415.8,
+        "p75": 561.2,
+        "p90": 713.5,
+        "p95": 727.9,
+        "p99": 907,
+        "p999": 907
+      },
+      "http.response_time.2xx": {
+        "min": 346,
+        "max": 1072,
+        "count": 30,
+        "mean": 501.7,
+        "p50": 415.8,
+        "median": 415.8,
+        "p75": 561.2,
+        "p90": 713.5,
+        "p95": 727.9,
+        "p99": 907,
+        "p999": 907
+      },
+      "socketio.response_time": {
+        "min": 0.1,
+        "max": 1.8,
+        "count": 2430,
+        "mean": 0.5,
+        "p50": 0.4,
+        "median": 0.4,
+        "p75": 0.5,
+        "p90": 0.6,
+        "p95": 0.7,
+        "p99": 0.9,
+        "p999": 1.4
+      }
+    }
+  },
+  "intermediate": [
+    {
+      "counters": {
+        "vusers.created_by_name.WebSocket Test": 4,
+        "vusers.created": 4,
+        "http.requests": 4,
+        "http.codes.201": 4,
+        "http.responses": 4,
+        "http.downloaded_bytes": 444,
+        "socketio.emit": 12
+      },
+      "rates": {
+        "http.request_rate": 1,
+        "socketio.emit_rate": 2
+      },
+      "http.request_rate": null,
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995362648,
+      "firstHistogramAt": 1731995363682,
+      "lastCounterAt": 1731995369701,
+      "lastHistogramAt": 1731995369701,
+      "firstMetricAt": 1731995362648,
+      "lastMetricAt": 1731995369701,
+      "period": "1731995360000",
+      "summaries": {
+        "http.response_time": {
+          "min": 419,
+          "max": 906,
+          "count": 4,
+          "mean": 607.3,
+          "p50": 507.8,
+          "median": 507.8,
+          "p75": 596,
+          "p90": 596,
+          "p95": 596,
+          "p99": 596,
+          "p999": 596
+        },
+        "http.response_time.2xx": {
+          "min": 419,
+          "max": 906,
+          "count": 4,
+          "mean": 607.3,
+          "p50": 507.8,
+          "median": 507.8,
+          "p75": 596,
+          "p90": 596,
+          "p95": 596,
+          "p99": 596,
+          "p999": 596
+        },
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 1.4,
+          "count": 12,
+          "mean": 0.6,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.6,
+          "p90": 0.7,
+          "p95": 0.8,
+          "p99": 0.8,
+          "p999": 0.8
+        }
+      },
+      "histograms": {
+        "http.response_time": {
+          "min": 419,
+          "max": 906,
+          "count": 4,
+          "mean": 607.3,
+          "p50": 507.8,
+          "median": 507.8,
+          "p75": 596,
+          "p90": 596,
+          "p95": 596,
+          "p99": 596,
+          "p999": 596
+        },
+        "http.response_time.2xx": {
+          "min": 419,
+          "max": 906,
+          "count": 4,
+          "mean": 607.3,
+          "p50": 507.8,
+          "median": 507.8,
+          "p75": 596,
+          "p90": 596,
+          "p95": 596,
+          "p99": 596,
+          "p999": 596
+        },
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 1.4,
+          "count": 12,
+          "mean": 0.6,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.6,
+          "p90": 0.7,
+          "p95": 0.8,
+          "p99": 0.8,
+          "p999": 0.8
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 60,
+        "vusers.created_by_name.WebSocket Test": 5,
+        "vusers.created": 5,
+        "http.requests": 5,
+        "http.codes.201": 5,
+        "http.responses": 5,
+        "http.downloaded_bytes": 555
+      },
+      "rates": {
+        "socketio.emit_rate": 6,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995370108,
+      "firstHistogramAt": 1731995370108,
+      "lastCounterAt": 1731995379709,
+      "lastHistogramAt": 1731995379709,
+      "firstMetricAt": 1731995370108,
+      "lastMetricAt": 1731995379709,
+      "period": "1731995370000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 60,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.8
+        },
+        "http.response_time": {
+          "min": 375,
+          "max": 626,
+          "count": 5,
+          "mean": 444.4,
+          "p50": 415.8,
+          "median": 415.8,
+          "p75": 415.8,
+          "p90": 415.8,
+          "p95": 415.8,
+          "p99": 415.8,
+          "p999": 415.8
+        },
+        "http.response_time.2xx": {
+          "min": 375,
+          "max": 626,
+          "count": 5,
+          "mean": 444.4,
+          "p50": 415.8,
+          "median": 415.8,
+          "p75": 415.8,
+          "p90": 415.8,
+          "p95": 415.8,
+          "p99": 415.8,
+          "p999": 415.8
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 60,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.8
+        },
+        "http.response_time": {
+          "min": 375,
+          "max": 626,
+          "count": 5,
+          "mean": 444.4,
+          "p50": 415.8,
+          "median": 415.8,
+          "p75": 415.8,
+          "p90": 415.8,
+          "p95": 415.8,
+          "p99": 415.8,
+          "p999": 415.8
+        },
+        "http.response_time.2xx": {
+          "min": 375,
+          "max": 626,
+          "count": 5,
+          "mean": 444.4,
+          "p50": 415.8,
+          "median": 415.8,
+          "p75": 415.8,
+          "p90": 415.8,
+          "p95": 415.8,
+          "p99": 415.8,
+          "p999": 415.8
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 104,
+        "vusers.created_by_name.WebSocket Test": 5,
+        "vusers.created": 5,
+        "http.requests": 5,
+        "http.codes.201": 5,
+        "http.responses": 5,
+        "http.downloaded_bytes": 555
+      },
+      "rates": {
+        "socketio.emit_rate": 11,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995380079,
+      "firstHistogramAt": 1731995380080,
+      "lastCounterAt": 1731995389728,
+      "lastHistogramAt": 1731995389729,
+      "firstMetricAt": 1731995380079,
+      "lastMetricAt": 1731995389729,
+      "period": "1731995380000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 104,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.9,
+          "p999": 0.9
+        },
+        "http.response_time": {
+          "min": 361,
+          "max": 610,
+          "count": 5,
+          "mean": 476.6,
+          "p50": 487.9,
+          "median": 487.9,
+          "p75": 518.1,
+          "p90": 518.1,
+          "p95": 518.1,
+          "p99": 518.1,
+          "p999": 518.1
+        },
+        "http.response_time.2xx": {
+          "min": 361,
+          "max": 610,
+          "count": 5,
+          "mean": 476.6,
+          "p50": 487.9,
+          "median": 487.9,
+          "p75": 518.1,
+          "p90": 518.1,
+          "p95": 518.1,
+          "p99": 518.1,
+          "p999": 518.1
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 104,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.9,
+          "p999": 0.9
+        },
+        "http.response_time": {
+          "min": 361,
+          "max": 610,
+          "count": 5,
+          "mean": 476.6,
+          "p50": 487.9,
+          "median": 487.9,
+          "p75": 518.1,
+          "p90": 518.1,
+          "p95": 518.1,
+          "p99": 518.1,
+          "p999": 518.1
+        },
+        "http.response_time.2xx": {
+          "min": 361,
+          "max": 610,
+          "count": 5,
+          "mean": 476.6,
+          "p50": 487.9,
+          "median": 487.9,
+          "p75": 518.1,
+          "p90": 518.1,
+          "p95": 518.1,
+          "p99": 518.1,
+          "p999": 518.1
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 130,
+        "vusers.created_by_name.WebSocket Test": 5,
+        "vusers.created": 5,
+        "http.requests": 5,
+        "http.codes.201": 5,
+        "http.responses": 5,
+        "http.downloaded_bytes": 555
+      },
+      "rates": {
+        "socketio.emit_rate": 13,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995390047,
+      "firstHistogramAt": 1731995390047,
+      "lastCounterAt": 1731995399736,
+      "lastHistogramAt": 1731995399737,
+      "firstMetricAt": 1731995390047,
+      "lastMetricAt": 1731995399737,
+      "period": "1731995390000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 130,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 0.9
+        },
+        "http.response_time": {
+          "min": 346,
+          "max": 393,
+          "count": 5,
+          "mean": 375.2,
+          "p50": 376.2,
+          "median": 376.2,
+          "p75": 391.6,
+          "p90": 391.6,
+          "p95": 391.6,
+          "p99": 391.6,
+          "p999": 391.6
+        },
+        "http.response_time.2xx": {
+          "min": 346,
+          "max": 393,
+          "count": 5,
+          "mean": 375.2,
+          "p50": 376.2,
+          "median": 376.2,
+          "p75": 391.6,
+          "p90": 391.6,
+          "p95": 391.6,
+          "p99": 391.6,
+          "p999": 391.6
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 130,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 0.9
+        },
+        "http.response_time": {
+          "min": 346,
+          "max": 393,
+          "count": 5,
+          "mean": 375.2,
+          "p50": 376.2,
+          "median": 376.2,
+          "p75": 391.6,
+          "p90": 391.6,
+          "p95": 391.6,
+          "p99": 391.6,
+          "p999": 391.6
+        },
+        "http.response_time.2xx": {
+          "min": 346,
+          "max": 393,
+          "count": 5,
+          "mean": 375.2,
+          "p50": 376.2,
+          "median": 376.2,
+          "p75": 391.6,
+          "p90": 391.6,
+          "p95": 391.6,
+          "p99": 391.6,
+          "p999": 391.6
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 155,
+        "vusers.created_by_name.WebSocket Test": 5,
+        "vusers.created": 5,
+        "http.requests": 5,
+        "http.codes.201": 5,
+        "http.responses": 5,
+        "http.downloaded_bytes": 555
+      },
+      "rates": {
+        "socketio.emit_rate": 16,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995400028,
+      "firstHistogramAt": 1731995400028,
+      "lastCounterAt": 1731995409742,
+      "lastHistogramAt": 1731995409742,
+      "firstMetricAt": 1731995400028,
+      "lastMetricAt": 1731995409742,
+      "period": "1731995400000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 155,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.7,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.9
+        },
+        "http.response_time": {
+          "min": 348,
+          "max": 558,
+          "count": 5,
+          "mean": 426.2,
+          "p50": 407.5,
+          "median": 407.5,
+          "p75": 441.5,
+          "p90": 441.5,
+          "p95": 441.5,
+          "p99": 441.5,
+          "p999": 441.5
+        },
+        "http.response_time.2xx": {
+          "min": 348,
+          "max": 558,
+          "count": 5,
+          "mean": 426.2,
+          "p50": 407.5,
+          "median": 407.5,
+          "p75": 441.5,
+          "p90": 441.5,
+          "p95": 441.5,
+          "p99": 441.5,
+          "p999": 441.5
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 155,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.7,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.9
+        },
+        "http.response_time": {
+          "min": 348,
+          "max": 558,
+          "count": 5,
+          "mean": 426.2,
+          "p50": 407.5,
+          "median": 407.5,
+          "p75": 441.5,
+          "p90": 441.5,
+          "p95": 441.5,
+          "p99": 441.5,
+          "p999": 441.5
+        },
+        "http.response_time.2xx": {
+          "min": 348,
+          "max": 558,
+          "count": 5,
+          "mean": 426.2,
+          "p50": 407.5,
+          "median": 407.5,
+          "p75": 441.5,
+          "p90": 441.5,
+          "p95": 441.5,
+          "p99": 441.5,
+          "p999": 441.5
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 174,
+        "vusers.created_by_name.WebSocket Test": 5,
+        "vusers.created": 5,
+        "http.requests": 5,
+        "http.codes.201": 5,
+        "http.responses": 5,
+        "http.downloaded_bytes": 555
+      },
+      "rates": {
+        "socketio.emit_rate": 18,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995410035,
+      "firstHistogramAt": 1731995410036,
+      "lastCounterAt": 1731995419542,
+      "lastHistogramAt": 1731995419543,
+      "firstMetricAt": 1731995410035,
+      "lastMetricAt": 1731995419543,
+      "period": "1731995410000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 1.4,
+          "count": 174,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.5,
+          "p90": 0.7,
+          "p95": 0.8,
+          "p99": 1,
+          "p999": 1.4
+        },
+        "http.response_time": {
+          "min": 392,
+          "max": 724,
+          "count": 5,
+          "mean": 587.4,
+          "p50": 685.5,
+          "median": 685.5,
+          "p75": 713.5,
+          "p90": 713.5,
+          "p95": 713.5,
+          "p99": 713.5,
+          "p999": 713.5
+        },
+        "http.response_time.2xx": {
+          "min": 392,
+          "max": 724,
+          "count": 5,
+          "mean": 587.4,
+          "p50": 685.5,
+          "median": 685.5,
+          "p75": 713.5,
+          "p90": 713.5,
+          "p95": 713.5,
+          "p99": 713.5,
+          "p999": 713.5
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 1.4,
+          "count": 174,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.5,
+          "p90": 0.7,
+          "p95": 0.8,
+          "p99": 1,
+          "p999": 1.4
+        },
+        "http.response_time": {
+          "min": 392,
+          "max": 724,
+          "count": 5,
+          "mean": 587.4,
+          "p50": 685.5,
+          "median": 685.5,
+          "p75": 713.5,
+          "p90": 713.5,
+          "p95": 713.5,
+          "p99": 713.5,
+          "p999": 713.5
+        },
+        "http.response_time.2xx": {
+          "min": 392,
+          "max": 724,
+          "count": 5,
+          "mean": 587.4,
+          "p50": 685.5,
+          "median": 685.5,
+          "p75": 713.5,
+          "p90": 713.5,
+          "p95": 713.5,
+          "p99": 713.5,
+          "p999": 713.5
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 195,
+        "vusers.created_by_name.WebSocket Test": 1,
+        "vusers.created": 1,
+        "http.requests": 1,
+        "http.codes.201": 1,
+        "http.responses": 1,
+        "http.downloaded_bytes": 111
+      },
+      "rates": {
+        "socketio.emit_rate": 20,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995420060,
+      "firstHistogramAt": 1731995420061,
+      "lastCounterAt": 1731995429893,
+      "lastHistogramAt": 1731995429894,
+      "firstMetricAt": 1731995420060,
+      "lastMetricAt": 1731995429894,
+      "period": "1731995420000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 195,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.8
+        },
+        "http.response_time": {
+          "min": 1072,
+          "max": 1072,
+          "count": 1,
+          "mean": 1072,
+          "p50": 1064.4,
+          "median": 1064.4,
+          "p75": 1064.4,
+          "p90": 1064.4,
+          "p95": 1064.4,
+          "p99": 1064.4,
+          "p999": 1064.4
+        },
+        "http.response_time.2xx": {
+          "min": 1072,
+          "max": 1072,
+          "count": 1,
+          "mean": 1072,
+          "p50": 1064.4,
+          "median": 1064.4,
+          "p75": 1064.4,
+          "p90": 1064.4,
+          "p95": 1064.4,
+          "p99": 1064.4,
+          "p999": 1064.4
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 0.9,
+          "count": 195,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.8
+        },
+        "http.response_time": {
+          "min": 1072,
+          "max": 1072,
+          "count": 1,
+          "mean": 1072,
+          "p50": 1064.4,
+          "median": 1064.4,
+          "p75": 1064.4,
+          "p90": 1064.4,
+          "p95": 1064.4,
+          "p99": 1064.4,
+          "p999": 1064.4
+        },
+        "http.response_time.2xx": {
+          "min": 1072,
+          "max": 1072,
+          "count": 1,
+          "mean": 1072,
+          "p50": 1064.4,
+          "median": 1064.4,
+          "p75": 1064.4,
+          "p90": 1064.4,
+          "p95": 1064.4,
+          "p99": 1064.4,
+          "p999": 1064.4
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 164
+      },
+      "rates": {
+        "socketio.emit_rate": 17
+      },
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995430049,
+      "firstHistogramAt": 1731995430049,
+      "lastCounterAt": 1731995439901,
+      "lastHistogramAt": 1731995439901,
+      "firstMetricAt": 1731995430049,
+      "lastMetricAt": 1731995439901,
+      "period": "1731995430000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1,
+          "count": 164,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.6,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.9
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1,
+          "count": 164,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.6,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.9
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 164
+      },
+      "rates": {
+        "socketio.emit_rate": 17
+      },
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995440056,
+      "firstHistogramAt": 1731995440057,
+      "lastCounterAt": 1731995449761,
+      "lastHistogramAt": 1731995449762,
+      "firstMetricAt": 1731995440056,
+      "lastMetricAt": 1731995449762,
+      "period": "1731995440000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.8,
+          "count": 164,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.6,
+          "p90": 0.7,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.9
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.8,
+          "count": 164,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.6,
+          "p90": 0.7,
+          "p95": 0.7,
+          "p99": 0.8,
+          "p999": 0.9
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 144
+      },
+      "rates": {
+        "socketio.emit_rate": 15
+      },
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995450107,
+      "firstHistogramAt": 1731995450107,
+      "lastCounterAt": 1731995459912,
+      "lastHistogramAt": 1731995459913,
+      "firstMetricAt": 1731995450107,
+      "lastMetricAt": 1731995459913,
+      "period": "1731995450000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.3,
+          "max": 1.2,
+          "count": 144,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.6,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 1,
+          "p999": 1.1
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.3,
+          "max": 1.2,
+          "count": 144,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.6,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 1,
+          "p999": 1.1
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 141
+      },
+      "rates": {
+        "socketio.emit_rate": 15
+      },
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995460112,
+      "firstHistogramAt": 1731995460113,
+      "lastCounterAt": 1731995469573,
+      "lastHistogramAt": 1731995469574,
+      "firstMetricAt": 1731995460112,
+      "lastMetricAt": 1731995469574,
+      "period": "1731995460000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 141,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.8,
+          "p99": 0.9,
+          "p999": 0.9
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 141,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.8,
+          "p99": 0.9,
+          "p999": 0.9
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 143
+      },
+      "rates": {
+        "socketio.emit_rate": 15
+      },
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995470071,
+      "firstHistogramAt": 1731995470071,
+      "lastCounterAt": 1731995479565,
+      "lastHistogramAt": 1731995479565,
+      "firstMetricAt": 1731995470071,
+      "lastMetricAt": 1731995479565,
+      "period": "1731995470000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 143,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.6,
+          "p99": 0.7,
+          "p999": 0.7
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 143,
+          "mean": 0.5,
+          "p50": 0.5,
+          "median": 0.5,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.6,
+          "p99": 0.7,
+          "p999": 0.7
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 149
+      },
+      "rates": {
+        "socketio.emit_rate": 15
+      },
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995480121,
+      "firstHistogramAt": 1731995480121,
+      "lastCounterAt": 1731995489928,
+      "lastHistogramAt": 1731995489928,
+      "firstMetricAt": 1731995480121,
+      "lastMetricAt": 1731995489928,
+      "period": "1731995480000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 149,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.6,
+          "p99": 1,
+          "p999": 1
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 149,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.6,
+          "p99": 1,
+          "p999": 1
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 148
+      },
+      "rates": {
+        "socketio.emit_rate": 16
+      },
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995490083,
+      "firstHistogramAt": 1731995490083,
+      "lastCounterAt": 1731995499574,
+      "lastHistogramAt": 1731995499574,
+      "firstMetricAt": 1731995490083,
+      "lastMetricAt": 1731995499574,
+      "period": "1731995490000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.5,
+          "count": 148,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.6,
+          "p99": 0.8,
+          "p999": 0.8
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.5,
+          "count": 148,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.6,
+          "p99": 0.8,
+          "p999": 0.8
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 146,
+        "http.requests": 5
+      },
+      "rates": {
+        "socketio.emit_rate": 15,
+        "http.request_rate": 2
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995500088,
+      "firstHistogramAt": 1731995500088,
+      "lastCounterAt": 1731995509935,
+      "lastHistogramAt": 1731995509936,
+      "firstMetricAt": 1731995500088,
+      "lastMetricAt": 1731995509936,
+      "period": "1731995500000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 0.9,
+          "count": 146,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.6,
+          "p99": 0.8,
+          "p999": 0.8
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 0.9,
+          "count": 146,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.6,
+          "p99": 0.8,
+          "p999": 0.8
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 117,
+        "http.requests": 1,
+        "vusers.failed": 5
+      },
+      "rates": {
+        "socketio.emit_rate": 12,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995510137,
+      "firstHistogramAt": 1731995510137,
+      "lastCounterAt": 1731995519595,
+      "lastHistogramAt": 1731995519595,
+      "firstMetricAt": 1731995510137,
+      "lastMetricAt": 1731995519595,
+      "period": "1731995510000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 117,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 1
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.1,
+          "count": 117,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 1
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 106,
+        "vusers.failed": 1,
+        "http.requests": 4
+      },
+      "rates": {
+        "socketio.emit_rate": 11,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995520096,
+      "firstHistogramAt": 1731995520097,
+      "lastCounterAt": 1731995529598,
+      "lastHistogramAt": 1731995529598,
+      "firstMetricAt": 1731995520096,
+      "lastMetricAt": 1731995529598,
+      "period": "1731995520000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.4,
+          "count": 106,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.6,
+          "p99": 1,
+          "p999": 1.1
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1.4,
+          "count": 106,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.6,
+          "p99": 1,
+          "p999": 1.1
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 90,
+        "http.requests": 6,
+        "vusers.failed": 4
+      },
+      "rates": {
+        "socketio.emit_rate": 9,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995530103,
+      "firstHistogramAt": 1731995530104,
+      "lastCounterAt": 1731995539600,
+      "lastHistogramAt": 1731995539601,
+      "firstMetricAt": 1731995530103,
+      "lastMetricAt": 1731995539601,
+      "period": "1731995530000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1,
+          "count": 90,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.9,
+          "p999": 0.9
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.2,
+          "max": 1,
+          "count": 90,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.9,
+          "p999": 0.9
+        }
+      }
+    },
+    {
+      "counters": {
+        "socketio.emit": 50,
+        "http.requests": 6,
+        "vusers.failed": 6
+      },
+      "rates": {
+        "socketio.emit_rate": 5,
+        "http.request_rate": 1
+      },
+      "socketio.emit_rate": null,
+      "http.request_rate": null,
+      "firstCounterAt": 1731995540108,
+      "firstHistogramAt": 1731995540108,
+      "lastCounterAt": 1731995549512,
+      "lastHistogramAt": 1731995549513,
+      "firstMetricAt": 1731995540108,
+      "lastMetricAt": 1731995549513,
+      "period": "1731995540000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 1.3,
+          "count": 50,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 0.7
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.1,
+          "max": 1.3,
+          "count": 50,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 0.7
+        }
+      }
+    },
+    {
+      "counters": {
+        "http.requests": 3,
+        "socketio.emit": 26,
+        "vusers.failed": 6
+      },
+      "rates": {
+        "http.request_rate": 1,
+        "socketio.emit_rate": 3
+      },
+      "http.request_rate": null,
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995550386,
+      "firstHistogramAt": 1731995550513,
+      "lastCounterAt": 1731995559953,
+      "lastHistogramAt": 1731995559953,
+      "firstMetricAt": 1731995550386,
+      "lastMetricAt": 1731995559953,
+      "period": "1731995550000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.3,
+          "max": 1.5,
+          "count": 26,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.6,
+          "p99": 0.6,
+          "p999": 0.6
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.3,
+          "max": 1.5,
+          "count": 26,
+          "mean": 0.4,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.5,
+          "p95": 0.6,
+          "p99": 0.6,
+          "p999": 0.6
+        }
+      }
+    },
+    {
+      "counters": {
+        "http.requests": 5,
+        "vusers.failed": 3,
+        "socketio.emit": 12
+      },
+      "rates": {
+        "http.request_rate": 1,
+        "socketio.emit_rate": 2
+      },
+      "http.request_rate": null,
+      "socketio.emit_rate": null,
+      "firstCounterAt": 1731995560322,
+      "firstHistogramAt": 1731995560517,
+      "lastCounterAt": 1731995568522,
+      "lastHistogramAt": 1731995567521,
+      "firstMetricAt": 1731995560322,
+      "lastMetricAt": 1731995568522,
+      "period": "1731995560000",
+      "summaries": {
+        "socketio.response_time": {
+          "min": 0.3,
+          "max": 0.8,
+          "count": 12,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 0.7
+        }
+      },
+      "histograms": {
+        "socketio.response_time": {
+          "min": 0.3,
+          "max": 0.8,
+          "count": 12,
+          "mean": 0.5,
+          "p50": 0.4,
+          "median": 0.4,
+          "p75": 0.5,
+          "p90": 0.6,
+          "p95": 0.7,
+          "p99": 0.7,
+          "p999": 0.7
+        }
+      }
+    },
+    {
+      "counters": {
+        "vusers.failed": 5
+      },
+      "rates": {},
+      "firstCounterAt": 1731995570324,
+      "lastCounterAt": 1731995578525,
+      "firstMetricAt": 1731995570324,
+      "lastMetricAt": 1731995578525,
+      "period": "1731995570000",
+      "summaries": {},
+      "histograms": {}
+    }
+  ]
+}
