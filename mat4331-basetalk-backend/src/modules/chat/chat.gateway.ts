@@ -122,19 +122,7 @@ export class ChatGateway {
       );
 
       // client.broadcast.to(String(chatroomId)).emit('chat', chatDto);
-      this.server.of('/chat').to(String(chatroomId)).emit('chat', chatDto);
-
-      // log
-      const roomClients = this.server
-        .of('/chat')
-        .adapter.rooms.get(String(chatroomId));
-      if (roomClients) {
-        this.logger.debug(
-          `Broadcasted to ${roomClients.size} clients in room: ${chatroomId}`,
-        );
-      } else {
-        this.logger.debug(`No clients in room: ${chatroomId}`);
-      }
+      this.server.to(String(chatroomId)).emit('chat', chatDto);
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while sending chat: ${error.message}`,
