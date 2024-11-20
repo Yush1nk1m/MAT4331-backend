@@ -61,6 +61,7 @@ async function bootstrap() {
       'https://www.basetalk.org',
       'https://basetalk.org',
     ],
+    methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
 

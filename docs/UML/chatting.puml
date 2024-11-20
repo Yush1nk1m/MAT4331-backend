@@ -1,0 +1,40 @@
+@startuml OAuth2
+
+!$ICONURL = "https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons"
+!include $ICONURL/common.puml
+!include $ICONURL/devicons2/nestjs_original.puml
+!include $ICONURL/devicons2/oauth.puml
+!include $ICONURL/font-awesome/user.puml
+
+skinparam defaultTextAlignment center
+skinparam participantFontAlignment center
+
+FA_USER(Client, "Client", participant, SkyBlue) #White
+DEV2_NESTJS_ORIGINAL(Backend, "Backend", participant, #E0234E) #White
+
+Client -> Client: 채팅방 입장 시도
+Client -> Backend: [CR-02] 채팅방 입장 API 요청
+
+Client <-- Backend: 인원 20명 초과 시 실패 응답
+Client <-- Client: 실패 알림 띄움
+
+Client <- Backend: 인원 20명 미만이고 유효한 요청이면 성공 응답
+Client <- Client: 채팅방 페이지로 이동
+
+Client -> Backend: [WS-01] 소켓 연결 요청
+Client <- Backend: 소켓 연결 성공
+
+Client -> Backend: [WS-02] 채팅방 연결 요청
+Client <- Backend: 채팅방 연결 성공
+
+Client -> Backend: [WS-04] 채팅 메시지 전송 ...
+Client <- Backend: 웹 소켓 브로드캐스트
+
+Client -> Client: CASE 1: '뒤로가기' 버튼 클릭
+Client -> Backend: CASE 1: [WS-03] 채팅방 연결 해제 요청
+
+Client -> Client: CASE 2: '나가기' 버튼 클릭 ('뒤로가기' 아님)
+Client -> Backend: CASE 2: [WS-03] 채팅방 연결 해제, [CR-03] 채팅방 퇴장 API 요청
+
+
+@enduml
