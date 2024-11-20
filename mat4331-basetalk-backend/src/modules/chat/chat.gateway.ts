@@ -4,9 +4,10 @@ import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Member } from '../member/member.entity';
 import { SaveChatDto } from './dto/save-chat.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -37,6 +38,8 @@ dotenv.config();
 })
 export class ChatGateway {
   private logger: Logger = new Logger(ChatGateway.name);
+
+  @WebSocketServer() server: Server;
 
   constructor(
     private readonly chatService: ChatService,
@@ -115,7 +118,8 @@ export class ChatGateway {
 
       this.logger.debug(`saved chat: ${JSON.stringify(chatDto)}`);
 
-      client.broadcast.to(String(chatroomId)).emit('chat', chatDto);
+      // client.broadcast.to(String(chatroomId)).emit('chat', chatDto);
+      this.server.to(String(chatroomId)).emit('chat', chatDto);
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while sending chat: ${error.message}`,
