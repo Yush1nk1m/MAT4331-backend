@@ -116,10 +116,24 @@ export class ChatGateway {
         excludeExtraneousValues: true,
       });
 
-      this.logger.debug(`saved chat: ${JSON.stringify(chatDto)}`);
+      this.logger.debug(
+        `Client's joined rooms: ${JSON.stringify(client.rooms)}`,
+      );
 
       // client.broadcast.to(String(chatroomId)).emit('chat', chatDto);
       this.server.of('/chat').to(String(chatroomId)).emit('chat', chatDto);
+
+      // log
+      const roomClients = this.server
+        .of('/chat')
+        .adapter.rooms.get(String(chatroomId));
+      if (roomClients) {
+        this.logger.debug(
+          `Broadcasted to ${roomClients.size} clients in room: ${chatroomId}`,
+        );
+      } else {
+        this.logger.debug(`No clients in room: ${chatroomId}`);
+      }
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while sending chat: ${error.message}`,

@@ -147,7 +147,9 @@ export class ChatroomGateway implements OnGatewayConnection {
       // join member to the chatroom through Socket.io
       await client.join(String(chatroomId));
 
-      this.logger.debug(`client joined the chatroom id: ${chatroomId}`);
+      this.logger.debug(
+        `client's joined rooms: ${JSON.stringify(client.rooms)}`,
+      );
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while joining chatroom: ${error.message}`,
