@@ -117,9 +117,7 @@ export class ChatGateway {
         excludeExtraneousValues: true,
       });
 
-      this.logger.debug(
-        `Client's joined rooms: ${JSON.stringify(client.rooms)}`,
-      );
+      this.logger.debug(`Client's joined rooms: ${Array.from(client.rooms)}`);
 
       // client.broadcast.to(String(chatroomId)).emit('chat', chatDto);
       this.server.to(String(chatroomId)).emit('chat', chatDto);

@@ -152,7 +152,7 @@ export class ChatroomGateway implements OnGatewayConnection {
       await client.join(String(chatroomId));
 
       this.logger.debug(
-        `JoinRoom: Client's joined rooms: ${JSON.stringify(client.rooms)}`,
+        `JoinRoom: Client's joined rooms: ${Array.from(client.rooms)}`,
       );
     } catch (error) {
       client.emit('error', {
