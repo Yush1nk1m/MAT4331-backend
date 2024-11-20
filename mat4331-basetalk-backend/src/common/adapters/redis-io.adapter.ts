@@ -3,9 +3,11 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import { createClient } from 'redis';
 import { ServerOptions } from 'socket.io';
 import * as dotenv from 'dotenv';
+import { Logger } from '@nestjs/common';
 dotenv.config();
 
 export class RedisIoAdapter extends IoAdapter {
+  private logger: Logger = new Logger(RedisIoAdapter.name);
   private adapterConstructor: ReturnType<typeof createAdapter>;
 
   async connectToRedis(): Promise<void> {
@@ -14,7 +16,15 @@ export class RedisIoAdapter extends IoAdapter {
     });
     const subClient = pubClient.duplicate();
 
-    await Promise.all([pubClient.connect(), subClient.connect()]);
+    try {
+      await Promise.all([pubClient.connect(), subClient.connect()]);
+
+      this.logger.debug(`Redis PubClient isOpen: ${pubClient.isOpen}`);
+      this.logger.debug(`Redis SubClient isOpen: ${subClient.isOpen}`);
+    } catch (error) {
+      this.logger.debug('Error occurred while connecting redis broker');
+      throw error;
+    }
 
     this.adapterConstructor = createAdapter(pubClient, subClient);
   }

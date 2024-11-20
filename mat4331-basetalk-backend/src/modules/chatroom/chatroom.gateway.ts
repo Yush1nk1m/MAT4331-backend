@@ -4,8 +4,9 @@ import {
   OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../../common/types/jwt-payload.type';
@@ -34,6 +35,9 @@ dotenv.config();
 })
 export class ChatroomGateway implements OnGatewayConnection {
   private logger: Logger = new Logger(ChatroomGateway.name);
+
+  @WebSocketServer()
+  private readonly server: Server;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -148,7 +152,7 @@ export class ChatroomGateway implements OnGatewayConnection {
       await client.join(String(chatroomId));
 
       this.logger.debug(
-        `client's joined rooms: ${JSON.stringify(client.rooms)}`,
+        `JoinRoom: Client's joined rooms: ${JSON.stringify(client.rooms)}`,
       );
     } catch (error) {
       client.emit('error', {

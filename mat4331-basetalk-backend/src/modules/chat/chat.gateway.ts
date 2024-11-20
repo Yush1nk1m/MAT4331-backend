@@ -39,7 +39,8 @@ dotenv.config();
 export class ChatGateway {
   private logger: Logger = new Logger(ChatGateway.name);
 
-  @WebSocketServer() server: Server;
+  @WebSocketServer()
+  private readonly server: Server;
 
   constructor(
     private readonly chatService: ChatService,
