@@ -119,7 +119,7 @@ export class ChatGateway {
       this.logger.debug(`saved chat: ${JSON.stringify(chatDto)}`);
 
       // client.broadcast.to(String(chatroomId)).emit('chat', chatDto);
-      this.server.to(String(chatroomId)).emit('chat', chatDto);
+      this.server.of('/chat').to(String(chatroomId)).emit('chat', chatDto);
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while sending chat: ${error.message}`,
