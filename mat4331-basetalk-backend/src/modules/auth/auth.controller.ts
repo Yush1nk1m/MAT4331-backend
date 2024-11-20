@@ -91,7 +91,7 @@ export class AuthController {
       process.env.NODE_ENV === 'production'
         ? 'https://www.basetalk.org'
         : 'http://localhost:3000';
-    return res.redirect(`https://${redirectURL}/login/?code=${code}`);
+    return res.redirect(`${redirectURL}/login/?code=${code}`);
   }
 
   @ApiOperation({
