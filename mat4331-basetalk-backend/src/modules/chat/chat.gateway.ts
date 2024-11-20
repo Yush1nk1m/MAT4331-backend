@@ -119,7 +119,7 @@ export class ChatGateway {
 
       this.logger.debug(`Client's joined rooms: ${Array.from(client.rooms)}`);
 
-      // client.broadcast.to(String(chatroomId)).emit('chat', chatDto);
+      // broadcast chat to the clients
       this.server.to(String(chatroomId)).emit('chat', chatDto);
     } catch (error) {
       client.emit('error', {
