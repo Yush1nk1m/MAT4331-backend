@@ -5,7 +5,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Game } from './game.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Events } from 'src/common/constants/event.constant';
-import { CalculateAverageDto } from './dto/calculate-average.dto';
+import { GameCidDto } from './dto/game-cid.dto';
 import { CreateGameDto } from './dto/create-game.dto';
 
 @Injectable()
@@ -68,26 +68,27 @@ export class GameService {
 
   /**
    * method for predicting games' score not yet predicted
+   * this method has high cost if there's no AI model integrated, so DON'T SCHEDULE BEFORE AI MODEL IS INTEGRATED
    */
-  @Cron(CronExpression.EVERY_DAY_AT_5AM)
+  // @Cron(CronExpression.EVERY_DAY_AT_5AM)
   async predictGameScore(): Promise<void> {
     // find games not yet predicted
     const games: Game[] = await this.gameRepository.findGamesNotPredicted();
 
     this.logger.debug(
-      `found games not yet predicted: ${JSON.stringify(games)}`,
+      `found games not yet predicted: ${Array.from(games.map((game) => game.gameCid))}`,
     );
 
-    // send request to calculate average statistics for AI model prediction
+    // send request to aggregate statistics for AI model prediction
     await Promise.all(
       games.map((game) => {
         // create DTO for request
-        const calculateAverageDto: CalculateAverageDto = {
+        const gameCidDto: GameCidDto = {
           gameId: game.gameCid,
         };
 
         // emit request to crawler service
-        this.rmqClient.emit(Events.GAME_CACULATE_AVERAGE, calculateAverageDto);
+        this.rmqClient.emit(Events.GAME_AGGREGATE_STATISTICS, gameCidDto);
       }),
     );
   }

@@ -7,13 +7,13 @@ import mongoose, { Connection } from 'mongoose';
 import { GameStatsDto } from '../common/dto/game-stats.dto';
 import { CreateGamesDto } from '../common/dto/create-games.dto';
 import { GameStatus } from 'src/common/types/game-status.enum';
-import { ClientProxy, EventPattern } from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import { Games } from 'src/schemas/games.schema';
 import { EmissionGameDto } from './dto/emission-game.dto';
 import { Events } from 'src/common/constants/event.constant';
 import { KBOTeam } from 'src/common/types/KBO-team.enum';
-import { EmissionGameAverageDto } from './dto/emmision-game-average.dto';
-import { CalculateAverageDto } from './dto/calculate-average.dto';
+import { EmissionGameStatisticsDto } from './dto/emmision-game-statistics.dto';
+import { GameCidDto } from './dto/game-cid.dto';
 
 @Injectable()
 export class GameService {
@@ -27,8 +27,6 @@ export class GameService {
     private readonly connection: Connection,
     @Inject('CrawlerToMain')
     private readonly rmqCrawlerToMainClient: ClientProxy,
-    @Inject('CrawlerToAi')
-    private readonly rmqCralwerToAiClient: ClientProxy,
   ) {}
 
   /**
@@ -138,12 +136,11 @@ export class GameService {
    * @param gameId game's id
    * @returns statistics' DTO for emission
    */
-  @EventPattern(Events.GAME_CACULATE_AVERAGE)
   async getAverageStats(
-    calculateAverageDto: CalculateAverageDto,
-  ): Promise<void> {
+    gameCidDto: GameCidDto,
+  ): Promise<EmissionGameStatisticsDto> {
     // destruct DTO
-    const { gameId } = calculateAverageDto;
+    const { gameId } = gameCidDto;
 
     // find the game
     const game: Games = await this.gamesRepository.findGameByGameId(gameId);
@@ -153,47 +150,52 @@ export class GameService {
     const homeTeam: KBOTeam = game.home_team;
 
     // find average stats
-    const [awayBatStat, homeBatStat, awayPitchStat, homePitchStat] =
+    const count: number = 30;
+    const [awayBatStats, homeBatStats, awayPitchStats, homePitchStats] =
       await Promise.all([
-        this.batStatsRepository.findAverageStatsByTeamAndDate(
+        this.batStatsRepository.findRecentStatsByTeam(
           awayTeam,
           game.game_date,
+          count,
         ),
-        this.batStatsRepository.findAverageStatsByTeamAndDate(
+        this.batStatsRepository.findRecentStatsByTeam(
           homeTeam,
           game.game_date,
+          count,
         ),
-        this.pitchStatsRepository.findAverageStatsByTeamAndDate(
+        this.pitchStatsRepository.findRecentStatsByTeam(
           awayTeam,
           game.game_date,
+          count,
         ),
-        this.pitchStatsRepository.findAverageStatsByTeamAndDate(
+        this.pitchStatsRepository.findRecentStatsByTeam(
           homeTeam,
           game.game_date,
+          count,
         ),
       ]);
 
+    // create arrays of game statistics with the form preferred by AI service
+    const away_team_stats = [],
+      home_team_stats = [];
+    for (let i = 0; i < count; i++) {
+      away_team_stats.push({
+        bat_info: awayBatStats[i],
+        pitch_info: awayPitchStats[i],
+      });
+      home_team_stats.push({
+        bat_info: homeBatStats[i],
+        pitch_info: homePitchStats[i],
+      });
+    }
+
     // create DTO with the found information
-    const emissionGameAverageDto: EmissionGameAverageDto = {
+    const emissionGameStatisticsDto: EmissionGameStatisticsDto = {
       game_id: gameId,
-      away_team: {
-        bat_info: awayBatStat,
-        pitch_info: awayPitchStat,
-      },
-      home_team: {
-        bat_info: homeBatStat,
-        pitch_info: homePitchStat,
-      },
+      away_team_stats,
+      home_team_stats,
     };
 
-    this.logger.debug(
-      `emissionGameAverageDto: ${JSON.stringify(emissionGameAverageDto)}`,
-    );
-
-    // emit DTO to AI service
-    this.rmqCralwerToAiClient.emit(
-      Events.GAME_PREDICT_SCORE,
-      emissionGameAverageDto,
-    );
+    return emissionGameStatisticsDto;
   }
 }

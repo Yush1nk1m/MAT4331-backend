@@ -24,14 +24,14 @@
 
 `Basetalk`의 마이크로서비스들 간 정의된 이벤트는 다음과 같다.
 
-| Event ID | Event Name             |     Source      |   Destination   | Description                                                           |
-| :------: | :--------------------- | :-------------: | :-------------: | :-------------------------------------------------------------------- |
-|   E-01   | Game.Updated           | Crawler service |  Main service   | 업데이트된 경기 정보를 알린다.                                        |
-|   E-02   | Game.Calculate.Average |  Main service   | Crawler service | 특정 경기에 대한 각 팀의 평균 타격/투구 통계량 계산을 요청한다.       |
-|   E-03   | Game.Predict.Score     | Crawler service |   AI service    | 어웨이/홈 팀의 평균 타격/투구 통계량을 바탕으로 점수 예측을 요청한다. |
-|   E-04   | Game.Save.Prediction   |   AI service    |  Main service   | 특정 경기의 어웨이/홈 팀 예측 점수를 DB에 저장할 것을 요청한다.       |
-|   E-05   | Chat.Predict.Profanity |  Main service   |   AI service    | 채팅 내용의 비속어 필터링을 요청한다.                                 |
-|   E-06   | Chat.Save.Prediction   |   AI service    |  Main service   | 채팅 내용의 비속어 필터링 결과의 저장을 요청한다.                     |
+| Event ID | Event Name                |     Source      |   Destination   | Description                                                      |
+| :------: | :------------------------ | :-------------: | :-------------: | :--------------------------------------------------------------- |
+|   E-01   | Game.Updated              | Crawler service |  Main service   | 업데이트된 경기 정보를 알린다.                                   |
+|   E-02   | Game.Aggregate.Statistics |  Main service   | Crawler service | 특정 경기 이전 수집된 각 팀의 최근 타격/투구 통계량을 요청한다.  |
+|   E-03   | Game.Predict.Score        | Crawler service |   AI service    | 어웨이/홈 팀의 타격/투구 통계량을 바탕으로 점수 예측을 요청한다. |
+|   E-04   | Game.Save.Prediction      |   AI service    |  Main service   | 특정 경기의 어웨이/홈 팀 예측 점수를 DB에 저장할 것을 요청한다.  |
+|   E-05   | Chat.Predict.Profanity    |  Main service   |   AI service    | 채팅 내용의 비속어 필터링을 요청한다.                            |
+|   E-06   | Chat.Save.Prediction      |   AI service    |  Main service   | 채팅 내용의 비속어 필터링 결과의 저장을 요청한다.                |
 
 ## Events Detail
 
@@ -61,7 +61,7 @@ Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
 
 ### [E-02], [E-03], [E-04]: KBO 경기 점수 예측 파이프라인
 
-메인 서비스가 주기적으로 취소되지 않은 경기들 중 점수 예측이 진행되지 않은 경기들의 데이터를 조회하고 경기의 크롤링 ID를 크롤링 서비스에 전송한다. 크롤링 서비스는 어웨이 팀과 홈 팀의 해당 경기 날짜까지의 평균 타격/투구 데이터를 계산하고 이를 AI 서비스에 전송한다. AI 서비스는 평균 통계량을 바탕으로 점수를 예측하고 이를 메인 서비스에 전송한다.
+메인 서비스가 주기적으로 취소되지 않은 경기들 중 점수 예측이 진행되지 않은 경기들의 데이터를 조회하고 경기의 크롤링 ID를 크롤링 서비스에 전송한다. 크롤링 서비스는 경기 날짜 전 수집된 어웨이 팀과 홈 팀의 타격/투구 데이터를 수집하고 이를 AI 서비스에 전송한다. AI 서비스는 통계량을 바탕으로 점수를 예측하고 이를 메인 서비스에 전송한다.
 
 ![Event234: [E-02], [E-03], [E-04]](images/Event234.png)
 
@@ -80,56 +80,60 @@ Data Queue를 통해 전송되는 데이터의 형식은 다음과 같다.
 ```json
 {
   "game_id": "Game's crawling ID",
-  "away_team": {
-    "bat_info": {
-      "PA": "bat data",
-      "AB": "bat data",
-      "R": "bat data",
-      "H": "bat data",
-      "HR": "bat data",
-      "RBI": "bat data",
-      "BB": "bat data",
-      "HBP": "bat data",
-      "SO": "bat data",
-      "GO": "bat data",
-      "FO": "bat data",
-      "NP": "bat data",
-      "GDP": "bat data",
-      "LOB": "bat data",
-      "ABG": "bat data",
-      "OPS": "bat data",
-      "LI": "bat data",
-      "WPA": "bat data",
-      "RE24": "bat data"
-    },
-    "pitch_info": {
-      "IP": "pitch data",
-      "TBF": "pitch data",
-      "H": "pitch data",
-      "R": "pitch data",
-      "ER": "pitch data",
-      "BB": "pitch data",
-      "HBP": "pitch data",
-      "K": "pitch data",
-      "HR": "pitch data",
-      "GO": "pitch data",
-      "FO": "pitch data",
-      "NP": "pitch data",
-      "S": "pitch data",
-      "IR": "pitch data",
-      "IS": "pitch data",
-      "GSC": "pitch data",
-      "ERA": "pitch data",
-      "WHIP": "pitch data",
-      "LI": "pitch data",
-      "WPA": "pitch data",
-      "RE24": "pitch data"
+  "away_team_stats": [
+    {
+      "bat_info": {
+        "PA": "bat data",
+        "AB": "bat data",
+        "R": "bat data",
+        "H": "bat data",
+        "HR": "bat data",
+        "RBI": "bat data",
+        "BB": "bat data",
+        "HBP": "bat data",
+        "SO": "bat data",
+        "GO": "bat data",
+        "FO": "bat data",
+        "NP": "bat data",
+        "GDP": "bat data",
+        "LOB": "bat data",
+        "ABG": "bat data",
+        "OPS": "bat data",
+        "LI": "bat data",
+        "WPA": "bat data",
+        "RE24": "bat data"
+      },
+      "pitch_info": {
+        "IP": "pitch data",
+        "TBF": "pitch data",
+        "H": "pitch data",
+        "R": "pitch data",
+        "ER": "pitch data",
+        "BB": "pitch data",
+        "HBP": "pitch data",
+        "K": "pitch data",
+        "HR": "pitch data",
+        "GO": "pitch data",
+        "FO": "pitch data",
+        "NP": "pitch data",
+        "S": "pitch data",
+        "IR": "pitch data",
+        "IS": "pitch data",
+        "GSC": "pitch data",
+        "ERA": "pitch data",
+        "WHIP": "pitch data",
+        "LI": "pitch data",
+        "WPA": "pitch data",
+        "RE24": "pitch data"
+      }
     }
-  },
-  "home_team": {
-    "bat_info": "The same as above",
-    "pitch_info": "The same as above"
-  }
+  ],
+  "home_team_stats": [
+    {
+      "bat_info": "The same as above",
+      "pitch_info": "The same as above"
+    }
+  ]
 }
 ```
 

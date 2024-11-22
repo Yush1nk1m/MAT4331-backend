@@ -109,4 +109,107 @@ export class PitchStatsRepository {
 
     return pitchInfo;
   }
+
+  /**
+   * method for finding the recent N(count) games' statistics
+   * @param team KBO team
+   * @param game_date game's date
+   * @param count the number of games needed to be tracked
+   * @returns array of statistics
+   */
+  async findRecentStatsByTeam(
+    team: KBOTeam,
+    game_date: Date,
+    count: number,
+  ): Promise<PitchInfo[]> {
+    // find the specified team's recent statistics
+    const pitchStats: PitchStats[] = await this.model.aggregate([
+      { $match: { team, game_date: { $lt: game_date } } },
+      { $sort: { game_date: -1 } },
+      { $limit: count },
+      {
+        $project: {
+          _id: 0,
+          IP: 1,
+          TBF: 1,
+          H: 1,
+          R: 1,
+          ER: 1,
+          BB: 1,
+          HBP: 1,
+          K: 1,
+          HR: 1,
+          GO: 1,
+          FO: 1,
+          NP: 1,
+          S: 1,
+          IR: 1,
+          IS: 1,
+          GSC: 1,
+          ERA: 1,
+          WHIP: 1,
+          LI: 1,
+          WPA: 1,
+          RE24: 1,
+        },
+      },
+    ]);
+
+    // map to the array of PitchInfo type
+    const mappedStats: PitchInfo[] = pitchStats.map((pitchStat) => ({
+      IP: pitchStat.IP || 0,
+      TBF: pitchStat.TBF || 0,
+      H: pitchStat.H || 0,
+      R: pitchStat.R || 0,
+      ER: pitchStat.ER || 0,
+      BB: pitchStat.BB || 0,
+      HBP: pitchStat.HBP || 0,
+      K: pitchStat.K || 0,
+      HR: pitchStat.HR || 0,
+      GO: pitchStat.GO || 0,
+      FO: pitchStat.FO || 0,
+      NP: pitchStat.NP || 0,
+      S: pitchStat.S || 0,
+      IR: pitchStat.IR || 0,
+      IS: pitchStat.IS || 0,
+      GSC: pitchStat.GSC || 0,
+      ERA: pitchStat.ERA || 0,
+      WHIP: pitchStat.WHIP || 0,
+      LI: pitchStat.LI || 0,
+      WPA: pitchStat.WPA || 0,
+      RE24: pitchStat.RE24 || 0,
+    }));
+
+    // empty data for filling
+    const defaultPitchInfo: PitchInfo = {
+      IP: 0,
+      TBF: 0,
+      H: 0,
+      R: 0,
+      ER: 0,
+      BB: 0,
+      HBP: 0,
+      K: 0,
+      HR: 0,
+      GO: 0,
+      FO: 0,
+      NP: 0,
+      S: 0,
+      IR: 0,
+      IS: 0,
+      GSC: 0,
+      ERA: 0,
+      WHIP: 0,
+      LI: 0,
+      WPA: 0,
+      RE24: 0,
+    };
+
+    // fill in the array with the default data
+    while (mappedStats.length < count) {
+      mappedStats.push(defaultPitchInfo);
+    }
+
+    return mappedStats;
+  }
 }

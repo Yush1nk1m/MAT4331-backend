@@ -111,4 +111,101 @@ export class BatStatsRepository {
 
     return batInfo;
   }
+
+  /**
+   * method for finding the recent N(count) games' statistics
+   * @param team KBO team
+   * @param game_date game's date
+   * @param count the number of games needed to be tracked
+   * @returns array of statistics
+   */
+  async findRecentStatsByTeam(
+    team: KBOTeam,
+    game_date: Date,
+    count: number,
+  ): Promise<BatInfo[]> {
+    // find the specified team's recent statistics
+    const batStats: BatStats[] = await this.model.aggregate([
+      { $match: { team, game_date: { $lt: game_date } } },
+      { $sort: { game_date: -1 } },
+      { $limit: count },
+      {
+        $project: {
+          _id: 0,
+          PA: 1,
+          AB: 1,
+          R: 1,
+          H: 1,
+          HR: 1,
+          RBI: 1,
+          BB: 1,
+          HBP: 1,
+          SO: 1,
+          GO: 1,
+          FO: 1,
+          NP: 1,
+          GDP: 1,
+          LOB: 1,
+          ABG: 1,
+          OPS: 1,
+          LI: 1,
+          WPA: 1,
+          RE24: 1,
+        },
+      },
+    ]);
+
+    // map to the array of BatInfo type
+    const mappedStats: BatInfo[] = batStats.map((batStat) => ({
+      PA: batStat.PA || 0,
+      AB: batStat.AB || 0,
+      R: batStat.R || 0,
+      H: batStat.H || 0,
+      HR: batStat.HR || 0,
+      RBI: batStat.RBI || 0,
+      BB: batStat.BB || 0,
+      HBP: batStat.HBP || 0,
+      SO: batStat.SO || 0,
+      GO: batStat.GO || 0,
+      FO: batStat.FO || 0,
+      NP: batStat.NP || 0,
+      GDP: batStat.GDP || 0,
+      LOB: batStat.LOB || 0,
+      ABG: batStat.ABG || 0,
+      OPS: batStat.OPS || 0,
+      LI: batStat.LI || 0,
+      WPA: batStat.WPA || 0,
+      RE24: batStat.RE24 || 0,
+    }));
+
+    // empty data for filling
+    const defaultBatInfo: BatInfo = {
+      PA: 0,
+      AB: 0,
+      R: 0,
+      H: 0,
+      HR: 0,
+      RBI: 0,
+      BB: 0,
+      HBP: 0,
+      SO: 0,
+      GO: 0,
+      FO: 0,
+      NP: 0,
+      GDP: 0,
+      LOB: 0,
+      ABG: 0,
+      OPS: 0,
+      LI: 0,
+      WPA: 0,
+      RE24: 0,
+    };
+
+    // fill in the array with the default data
+    while (mappedStats.length < count) {
+      mappedStats.push(defaultBatInfo);
+    }
+
+    return mappedStats;
+  }
 }

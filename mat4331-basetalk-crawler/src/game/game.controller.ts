@@ -9,15 +9,18 @@ import {
 import { ClientProxy, EventPattern } from '@nestjs/microservices';
 import { GameService } from './game.service';
 import { Events } from 'src/common/constants/event.constant';
-import { CalculateAverageDto } from './dto/calculate-average.dto';
+import { GameCidDto } from './dto/game-cid.dto';
+import { EmissionGameStatisticsDto } from './dto/emmision-game-statistics.dto';
 
 @Controller('v1/game')
 export class GameController {
   private readonly logger = new Logger(GameController.name);
   constructor(
     @Inject('CrawlerToMain')
-    private readonly client: ClientProxy,
+    private readonly rmqCrawlerToMainClient: ClientProxy,
     private readonly gameService: GameService,
+    @Inject('CrawlerToAi')
+    private readonly rmqCrawlerToAiClient: ClientProxy,
   ) {}
 
   // rmq test method
@@ -26,21 +29,27 @@ export class GameController {
     this.logger.debug('Producer received data:', data);
 
     data.date = new Date();
-    this.client.emit('data', data);
+    this.rmqCrawlerToMainClient.emit('data', data);
 
     return {
       code: HttpStatus.ACCEPTED,
     };
   }
 
-  @EventPattern(Events.GAME_CACULATE_AVERAGE)
-  async handleGameCalculateAverage(
-    calculateAverageDto: CalculateAverageDto,
-  ): Promise<void> {
+  @EventPattern(Events.GAME_AGGREGATE_STATISTICS)
+  async handleGameCalculateAverage(gameCidDto: GameCidDto): Promise<void> {
     this.logger.debug(
-      `Accept Events.GAME_CALCULATE_AVERAGE gameId: ${calculateAverageDto.gameId}`,
+      `Accept Events.GAME_AGGREGATE_STATISTICS gameId: ${gameCidDto.gameId}`,
     );
 
-    return this.gameService.getAverageStats(calculateAverageDto);
+    // get the recent N games' statistics
+    const emissionGameStatisticsDto: EmissionGameStatisticsDto =
+      await this.gameService.getAverageStats(gameCidDto);
+
+    // emit event to the AI service
+    this.rmqCrawlerToAiClient.emit(
+      Events.GAME_PREDICT_SCORE,
+      emissionGameStatisticsDto,
+    );
   }
 }
