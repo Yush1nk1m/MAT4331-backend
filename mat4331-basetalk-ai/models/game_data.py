@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 # 타격 데이터
@@ -54,5 +55,5 @@ class TeamData(BaseModel):
 # 최종 요청 모델 (어웨이 팀과 홈 팀 데이터 포함)
 class GamePredictionRequest(BaseModel):
     game_id: str
-    away_team: TeamData
-    home_team: TeamData
+    away_team_stats: List[TeamData]
+    home_team_stats: List[TeamData]

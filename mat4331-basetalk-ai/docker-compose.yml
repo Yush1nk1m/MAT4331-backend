@@ -6,3 +6,6 @@ services:
     env_file:
       - .env
     network_mode: "host"
+    volumes:
+      - ./:/app # 로컬 디렉토리를 컨테이너에 마운트
+    command: uvicorn main:app --host 0.0.0.0 --port 8078 --reload

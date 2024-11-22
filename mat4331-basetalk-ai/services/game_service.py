@@ -4,17 +4,17 @@ from models.game_data import GamePredictionRequest
 # 주어진 팀 데이터를 바탕으로 양 팀의 점수를 예측하고 반환한다.
 def predict_outcome(data: GamePredictionRequest):
     # 데이터 확인을 위한 로그
-    # print(f"전체 데이터: {data}")
-    
-    # print(f"어웨이 팀 데이터: {data.away_team}")
-    # print(f"홈 팀 데이터: {data.home_team}")
-    
-    # print(f"어웨이 팀 타격 데이터: {data.away_team.bat_info}")
-    # print(f"어웨이 팀 투구 데이터: {data.away_team.pitch_info}")
-    
-    # print(f"홈 팀 타격 데이터: {data.home_team.bat_info}")
-    # print(f"홈 팀 투구 데이터: {data.home_team.pitch_info}")
+    print(f"전체 데이터: {data}")
 
+    print(f"어웨이 팀 데이터: {data.away_team_stats}")
+    print(f"홈 팀 데이터: {data.home_team_stats}")
+    
+    print("가장 최근의 게임 데이터")
+    print(f"어웨이 팀 | 타격 {data.away_team_stats[0].bat_info}")
+    print(f"어웨이 팀 | 투구 {data.away_team_stats[0].pitch_info}")
+    print(f"홈 팀 | 타격 {data.away_team_stats[0].bat_info}")
+    print(f"홈 팀 | 투구 {data.away_team_stats[0].pitch_info}")
+    
     # 결과 데이터: 모델을 실행하고 아래 이름의 변수를 반환    
     predicted_away_score = 1
     predicted_home_score = 2

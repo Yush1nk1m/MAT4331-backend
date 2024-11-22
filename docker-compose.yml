@@ -2,11 +2,11 @@ version: "3.8"
 services:
   basetalk-ai:
     build:
-      context: ./mat4331-basetalk-AI
+      context: ./mat4331-basetalk-ai
     ports:
       - "8078:8078"
     env_file:
-      - ./mat4331-basetalk-AI/src/.env
+      - ./mat4331-basetalk-ai/.env
     restart: always
 
   basetalk-main:
