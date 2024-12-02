@@ -10,10 +10,20 @@ import { Chatroom } from '../chatroom/chatroom.entity';
 import { ClientProxy } from '@nestjs/microservices';
 import { PredictProfanityDto } from './dto/predict-profanity.dto';
 import { Events } from '../../common/constants/event.constant';
+import { Server } from 'socket.io';
+import { ChatDto } from './dto/chat.dto';
+import { Transactional } from 'typeorm-transactional';
+import { plainToInstance } from 'class-transformer';
+import { ChatSavePredictionDto } from './dto/chat-save-prediction.dto';
 
 @Injectable()
 export class ChatService {
   private readonly logger: Logger = new Logger(ChatService.name);
+
+  private server: Server;
+  setServer(server: Server) {
+    this.server = server;
+  }
 
   constructor(
     private readonly chatRepository: ChatRepository,
@@ -28,7 +38,8 @@ export class ChatService {
    * @param saveChatDto chat's writer, chatroom's id, content
    * @returns created chat
    */
-  async saveChat(saveChatDto: SaveChatDto): Promise<Chat> {
+  @Transactional()
+  async saveChat(saveChatDto: SaveChatDto): Promise<void> {
     // destruct DTO
     const { member, chatroom, content } = saveChatDto;
 
@@ -42,7 +53,11 @@ export class ChatService {
     // request AI service to predict profanity
     await this.requestProfanityPrediction(chat);
 
-    return chat;
+    // broadcast chat to the chatroom
+    const chatDto: ChatDto = plainToInstance(ChatDto, chat, {
+      excludeExtraneousValues: true,
+    });
+    await this.broadcastChatToChatroom(String(chatroom.id), chatDto);
   }
 
   /**
@@ -62,6 +77,31 @@ export class ChatService {
 
     // emit event to AI service
     this.rmqClient.emit(Events.CHAT_PREDICT_PROFANITY, predictProfanityDto);
+  }
+
+  @Transactional()
+  async saveChatPrediction(
+    chatSavePredictionDto: ChatSavePredictionDto,
+  ): Promise<void> {
+    // destruct DTO
+    const { chat_id, is_profane } = chatSavePredictionDto;
+
+    // find chat by its id
+    const chat: Chat =
+      await this.chatRepository.findChatAndChatroomById(chat_id);
+    // find chat's chatroom
+    const chatroom: Chatroom = chat.chatroom;
+
+    await this.chatRepository.updateChatProfanity(chat_id, is_profane);
+
+    this.logger.debug(`Received profanity: ${chat_id}: ${is_profane}`);
+
+    if (is_profane) {
+      await this.broadcastProfanityToChatroom(String(chatroom.id), chat.id);
+      this.logger.debug(
+        `broadcasted to chatroom: ${chatroom.id}, chat: ${chat.id}`,
+      );
+    }
   }
 
   /**
@@ -91,5 +131,29 @@ export class ChatService {
     }
 
     return this.chatRepository.findChatsByPagination(chatPaginationDto);
+  }
+
+  /**
+   * method for broadcasting chat to the chatroom
+   * @param chatroomId chatroom's id
+   * @param chatDto chat DTO
+   */
+  async broadcastChatToChatroom(
+    chatroomId: string,
+    chatDto: ChatDto,
+  ): Promise<void> {
+    this.server.to(chatroomId).emit('chat', chatDto);
+  }
+
+  /**
+   * method for broadcasting chat's profanity to the chatroom
+   * @param chatroomId chatroom's id
+   * @param chatId chat's id
+   */
+  async broadcastProfanityToChatroom(
+    chatroomId: string,
+    chatId: number,
+  ): Promise<void> {
+    this.server.to(chatroomId).emit('profane', chatId);
   }
 }

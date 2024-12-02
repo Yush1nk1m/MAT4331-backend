@@ -9,16 +9,16 @@ router = APIRouter()
 @router.get("/profanity-check")
 async def mock_profanity_check():
     # 가짜 데이터를 사용하여 비속어 판별 함수 호출
-    mock_text = "나쁜말나쁜말나쁜말나쁜말나쁜말"
+    mock_text = "Fuck you."
     
-    mock_data = ProfanityCheckRequest(content=mock_text)
+    mock_data = ProfanityCheckRequest(chat_id=1, content=mock_text)
     
     # 모델을 실행하고 결과를 받아온다.
     result = detect_profanity(mock_data)
     
     return {
         "text": mock_text,
-        "is_profane": result,
+        "result": result,
     }
     
     

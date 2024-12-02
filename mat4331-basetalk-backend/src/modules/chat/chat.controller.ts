@@ -54,9 +54,7 @@ export class ChatController {
   async handleSavePrediction(
     chatSavePredictionDto: ChatSavePredictionDto,
   ): Promise<void> {
-    this.logger.debug(
-      `handle event ${Events.CHAT_SAVE_PREDICTION}: ${JSON.stringify(chatSavePredictionDto)}`,
-    );
+    await this.chatService.saveChatPrediction(chatSavePredictionDto);
   }
 
   @ApiBearerAuth()

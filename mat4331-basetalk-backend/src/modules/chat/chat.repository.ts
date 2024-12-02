@@ -38,6 +38,18 @@ export class ChatRepository {
   }
 
   /**
+   * method for finding chat by its id
+   * @param id chat's id
+   * @returns found Chat
+   */
+  async findChatAndChatroomById(id: number): Promise<Chat> {
+    return this.repository.findOne({
+      where: { id },
+      relations: { chatroom: true },
+    });
+  }
+
+  /**
    * method for finding chats by pagination
    * @param chatPaginationDto chatroom's id, chat's id, load count
    * @returns found Chats
@@ -68,5 +80,17 @@ export class ChatRepository {
     this.logger.debug(`found chat pagination: ${JSON.stringify(result)}`);
 
     return result;
+  }
+
+  /**
+   * method for update chat's profanity
+   * @param id chat's id
+   * @param profanity chat's profanity
+   */
+  async updateChatProfanity(id: number, profanity: boolean): Promise<void> {
+    await this.repository.update(id, {
+      status: profanity === true ? ChatStatus.FILTERED : ChatStatus.FILTERED,
+      filteredAt: new Date(),
+    });
   }
 }

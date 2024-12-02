@@ -4,3 +4,9 @@ pika
 pydantic
 aio_pika
 python-dotenv
+transformers
+numpy
+pandas
+scikit-learn
+tensorflow==2.17.1
+tf-keras

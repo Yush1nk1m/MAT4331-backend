@@ -13,13 +13,10 @@ import { SaveChatDto } from './dto/save-chat.dto';
 import { JwtService } from '@nestjs/jwt';
 import { MemberService } from '../member/member.service';
 import { JwtPayload } from '../../common/types/jwt-payload.type';
-import { Chat } from './chat.entity';
 import { ChatService } from './chat.service';
 import { jwtAccessOptions } from '../../config/jwt.config';
-import { ChatDto } from './dto/chat.dto';
 import { ChatroomService } from '../chatroom/chatroom.service';
 import { Chatroom } from '../chatroom/chatroom.entity';
-import { plainToInstance } from 'class-transformer';
 import * as dotenv from 'dotenv';
 import { SendChatDto } from './dto/send-chat.dto';
 dotenv.config();
@@ -48,6 +45,10 @@ export class ChatGateway {
     private readonly chatroomService: ChatroomService,
     private readonly jwtService: JwtService,
   ) {}
+
+  afterInit() {
+    this.chatService.setServer(this.server);
+  }
 
   /**
    * method for validating if the client's socket has access token
@@ -111,16 +112,8 @@ export class ChatGateway {
         content: content,
       };
 
-      // create chat and convert it to DTO
-      const chat: Chat = await this.chatService.saveChat(SaveChatDto);
-      const chatDto: ChatDto = plainToInstance(ChatDto, chat, {
-        excludeExtraneousValues: true,
-      });
-
-      this.logger.debug(`Client's joined rooms: ${Array.from(client.rooms)}`);
-
-      // broadcast chat to the clients
-      this.server.to(String(chatroomId)).emit('chat', chatDto);
+      // save chat, request to predict profanity, and broadcast to chatroom
+      await this.chatService.saveChat(SaveChatDto);
     } catch (error) {
       client.emit('error', {
         message: `Error occurred while sending chat: ${error.message}`,

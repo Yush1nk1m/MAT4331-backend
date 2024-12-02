@@ -35,6 +35,7 @@
     <button id="sendButton">Send Message</button>
     <script>
       let socket;
+      let messages = [];
 
       const tokenInput = document.getElementById("tokenInput");
       const connectButton = document.getElementById("connectButton");
@@ -46,11 +47,19 @@
       const chatDiv = document.getElementById("chat");
 
       // Function to add messages to the chat div
-      function addMessage(message) {
+      function addMessage(message, id) {
         const messageElement = document.createElement("div");
         messageElement.textContent = message;
+        messageElement.setAttribute("data-message-id", id);
         chatDiv.appendChild(messageElement);
         chatDiv.scrollTop = chatDiv.scrollHeight;
+
+        // 메시지 저장
+        messages.push({
+          id: id,
+          element: messageElement,
+          content: message,
+        });
       }
 
       // Connect to the Socket.IO server with the provided token
@@ -68,7 +77,23 @@
           // Listen for chat events and display messages
           socket.on("chat", (message) => {
             console.log(`received chat: ${JSON.stringify(message)}`);
-            addMessage(`${message.writer.nickname}: ${message.content}`);
+            addMessage(
+              `${message.writer.nickname}: ${message.content}`,
+              message.id
+            );
+          });
+
+          // Listen for profanity events
+          socket.on("profane", (chatId) => {
+            console.log(`profanity detected for message id: ${chatId}`);
+            const message = messages.find((m) => m.id === chatId);
+            if (message) {
+              message.element.textContent = message.element.textContent.replace(
+                /:.+$/,
+                ": [비속어 필터링됨]"
+              );
+              message.content = "[비속어 필터링됨]";
+            }
           });
 
           // Handle connection errors

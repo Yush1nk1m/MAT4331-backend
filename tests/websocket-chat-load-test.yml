@@ -1,14 +1,14 @@
 config:
-  target: "http://localhost:8080"
+  target: "https://api.basetalk.org"
   phases:
     - duration: 60
-      arrivalCount: 30
+      arrivalCount: 20
   variables:
-    host: "http://localhost:8080"
-    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsIm5pY2tuYW1lIjoic3RyaW5nIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxOTA5ODUyLCJleHAiOjE3MzI1MTQ2NTJ9.xke55ec1Za9eVUelABFlnvIq8zBPlwDdvLqdXXjd_k4"
+    host: "https://api.basetalk.org"
+    accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsIm5pY2tuYW1lIjoic3RyaW5nIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMyMzc5Njg4LCJleHAiOjE3MzI5ODQ0ODh9.DmaIUy-3WS_-TVXgEhLyemxl60oodcrG9WYT8oW60Ic"
   socketio:
     auth:
-      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsIm5pY2tuYW1lIjoic3RyaW5nIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMxOTA5ODUyLCJleHAiOjE3MzI1MTQ2NTJ9.xke55ec1Za9eVUelABFlnvIq8zBPlwDdvLqdXXjd_k4"
+      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsIm5pY2tuYW1lIjoic3RyaW5nIiwicHJvZmlsZSI6bnVsbCwicHJlZmVyVGVhbSI6IkxHIiwiaWF0IjoxNzMyMzc5Njg4LCJleHAiOjE3MzI5ODQ0ODh9.DmaIUy-3WS_-TVXgEhLyemxl60oodcrG9WYT8oW60Ic"
 
 scenarios:
   - name: "WebSocket Test"
@@ -30,7 +30,7 @@ scenarios:
             as: "chatroomId"
 
       # pause
-      - think: 1
+      - think: 2
 
       # 채팅방 연결
       - loop:
@@ -38,7 +38,7 @@ scenarios:
             emit:
               channel: "joinRoom"
               data: "{{ chatroomId }}"
-          - think: 1
+          - think: 2
         count: 20
 
       # pause
@@ -52,7 +52,7 @@ scenarios:
               data:
                 chatroomId: "{{ chatroomId }}"
                 content: "Chat Test Content"
-          - think: "{{$randomNumber(1, 3)}}"
+          - think: "{{$randomNumber(2, 5)}}"
         count: 60
 
       # pause
