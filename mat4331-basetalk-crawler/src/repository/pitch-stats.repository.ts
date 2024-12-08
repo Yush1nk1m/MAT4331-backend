@@ -130,6 +130,7 @@ export class PitchStatsRepository {
       {
         $project: {
           _id: 0,
+          game_date: 1,
           IP: 1,
           TBF: 1,
           H: 1,
@@ -154,6 +155,10 @@ export class PitchStatsRepository {
         },
       },
     ]);
+
+    this.logger.debug(
+      Array.from(pitchStats.map((pitchStat) => pitchStat.game_date)),
+    );
 
     // map to the array of PitchInfo type
     const mappedStats: PitchInfo[] = pitchStats.map((pitchStat) => ({

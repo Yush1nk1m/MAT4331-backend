@@ -12,8 +12,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - project: mat4331-basetalk-ai
-            path: mat4331-basetalk-ai/
+          # - project: mat4331-basetalk-ai
+          #   path: mat4331-basetalk-ai/
           - project: mat4331-basetalk-backend
             path: mat4331-basetalk-backend/
           - project: mat4331-basetalk-crawler
@@ -25,9 +25,6 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-
-      - name: Pull LFS files
-        run: git lfs pull
 
       - name: Determine if project has changed
         id: check_changes

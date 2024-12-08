@@ -89,7 +89,7 @@ export class ChatRepository {
    */
   async updateChatProfanity(id: number, profanity: boolean): Promise<void> {
     await this.repository.update(id, {
-      status: profanity === true ? ChatStatus.FILTERED : ChatStatus.FILTERED,
+      status: profanity === true ? ChatStatus.FILTERED : ChatStatus.ACCEPT,
       filteredAt: new Date(),
     });
   }

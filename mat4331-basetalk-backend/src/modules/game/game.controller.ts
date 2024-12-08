@@ -56,7 +56,9 @@ export class GameController {
   @Post('test')
   @HttpCode(HttpStatus.CREATED)
   async createGame(@Body() createGameDto: CreateGameDto): Promise<Game> {
-    return this.gameService.createGame(createGameDto);
+    const game: Game = await this.gameService.createGame(createGameDto);
+
+    return game;
   }
 
   /**
@@ -79,8 +81,9 @@ export class GameController {
     gameSavePredictionDto: GameSavePredictionDto,
   ): Promise<void> {
     this.logger.debug(
-      `Passed prediction: ${JSON.stringify(gameSavePredictionDto)}`,
+      `Received prediction of game ${gameSavePredictionDto.game_id}`,
     );
+    await this.gameService.savePredictedScores(gameSavePredictionDto);
   }
 
   @ApiOperation({

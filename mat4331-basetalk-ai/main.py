@@ -51,7 +51,7 @@ def on_message(channel, method, properties, body):
         model = request_models[event_pattern]
         parsed_data = model.parse_obj(data)
         
-        print(f"parsed_data: {parsed_data}")
+        # print(f"parsed_data: {parsed_data}")
 
         result_data = event_handlers[event_pattern](parsed_data)
         

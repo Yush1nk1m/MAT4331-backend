@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './game.entity';
-import { Between, MoreThan, Not, Repository } from 'typeorm';
+import { Between, IsNull, Not, Repository } from 'typeorm';
 import { EmissionGameUpdatedDto } from './dto/emission-game-updated.dto';
 import { GameStatus } from '../../common/types/game-status.enum';
 import { CreateGameDto } from './dto/create-game.dto';
@@ -65,9 +65,8 @@ export class GameRepository {
    */
   async findGamesNotPredicted(): Promise<Game[]> {
     return this.repository.findBy({
-      predictedAwayScore: null,
+      predictedAwayScore: IsNull(),
       gameStatus: Not(GameStatus.CANCELED),
-      gameCid: MoreThan('10000000'),
     });
   }
 
@@ -83,5 +82,27 @@ export class GameRepository {
     );
 
     return this.repository.findBy({ gameDate: Between(startOfDay, endOfDay) });
+  }
+
+  /**
+   * method for updating game's prediction
+   * @param gameCid game's crawling id
+   * @param predictedAwayScore predicted score of the away team
+   * @param predictedHomeScore predicted score of the home team
+   */
+  async updatePredictedScores(
+    gameCid: string,
+    predictedAwayScore: number,
+    predictedHomeScore: number,
+  ): Promise<void> {
+    await this.repository.update(
+      {
+        gameCid,
+      },
+      {
+        predictedAwayScore,
+        predictedHomeScore,
+      },
+    );
   }
 }

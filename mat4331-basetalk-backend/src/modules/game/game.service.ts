@@ -7,6 +7,8 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { Events } from 'src/common/constants/event.constant';
 import { GameCidDto } from './dto/game-cid.dto';
 import { CreateGameDto } from './dto/create-game.dto';
+import { GameSavePredictionDto } from './dto/game-save-prediction.dto';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class GameService {
@@ -70,14 +72,10 @@ export class GameService {
    * method for predicting games' score not yet predicted
    * this method has high cost if there's no AI model integrated, so DON'T SCHEDULE BEFORE AI MODEL IS INTEGRATED
    */
-  // @Cron(CronExpression.EVERY_DAY_AT_5AM)
+  @Cron(CronExpression.EVERY_MINUTE)
   async predictGameScore(): Promise<void> {
     // find games not yet predicted
     const games: Game[] = await this.gameRepository.findGamesNotPredicted();
-
-    this.logger.debug(
-      `found games not yet predicted: ${Array.from(games.map((game) => game.gameCid))}`,
-    );
 
     // send request to aggregate statistics for AI model prediction
     await Promise.all(
@@ -100,5 +98,23 @@ export class GameService {
    */
   async findGamesByDate(date: Date): Promise<Game[]> {
     return this.gameRepository.findGamesByDate(date);
+  }
+
+  /**
+   * method for saving predicted game scores
+   * @param gameSavePredictionDto game's cid,
+   */
+  @Transactional()
+  async savePredictedScores(
+    gameSavePredictionDto: GameSavePredictionDto,
+  ): Promise<void> {
+    const { game_id, predicted_away_score, predicted_home_score } =
+      gameSavePredictionDto;
+
+    await this.gameRepository.updatePredictedScores(
+      game_id,
+      predicted_away_score,
+      predicted_home_score,
+    );
   }
 }

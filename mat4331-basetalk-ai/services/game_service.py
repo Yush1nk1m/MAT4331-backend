@@ -19,7 +19,7 @@ def preprocess_input(data: GamePredictionRequest):
     # away_team_stats: List[TeamData] away team의 최근 50경기 데이터
     # home_team_stats: List[TeamData] home team의 최근 50경기 데이터
     
-    n = 10      # window size = 10
+    n = 5      # window size = 5
     away_team_stats = data.away_team_stats[:n]
     home_team_stats = data.home_team_stats[:n]
     
@@ -38,8 +38,10 @@ def preprocess_input(data: GamePredictionRequest):
             if is_bat_info:
                 AVG = game.bat_info.ABG
                 feature_list.append([
-                    game.bat_info.PA, AVG, game.bat_info.OPS, game.bat_info.R,
-                    game.bat_info.HR, game.bat_info.BB, game.bat_info.SO
+                    game.bat_info.PA, game.bat_info.R, game.bat_info.H, game.bat_info.HR, 
+		            game.bat_info.BB, game.bat_info.HBP, game.bat_info.SO, game.bat_info.GO, 
+                    game.bat_info.FO, game.bat_info.GDP, game.bat_info.LOB, game.bat_info.ABG, 
+                    game.bat_info.OPS, game.bat_info.LI, game.bat_info.WPA, game.bat_info.RE24
                 ])
                 '''
                 game.bat_info.PA, game.bat_info.AB, game.bat_info.R, game.bat_info.H,
@@ -50,7 +52,12 @@ def preprocess_input(data: GamePredictionRequest):
                 '''
             else:
                 feature_list.append([
-                    game.pitch_info.ERA, game.pitch_info.WHIP
+                    game.pitch_info.IP, game.pitch_info.ER, game.pitch_info.R, game.pitch_info.H,
+                    game.pitch_info.HR, game.pitch_info.BB, game.pitch_info.HBP, game.pitch_info.GO, 
+		            game.pitch_info.FO, game.pitch_info.NP, game.pitch_info.S, game.pitch_info.IR,
+                    game.pitch_info.IS, game.pitch_info.GSC, game.pitch_info.ERA, game.pitch_info.WHIP,
+                    game.pitch_info.LI, game.pitch_info.WPA, game.pitch_info.RE24
+
                 ])
                 '''
                 game.pitch_info.IP, game.pitch_info.TBF, game.pitch_info.H, game.pitch_info.R,
@@ -92,6 +99,7 @@ def predict_outcome(data: GamePredictionRequest):
     #print(f"홈 팀 데이터: {data.home_team_stats}")
 
     input_data = preprocess_input(data)
+    print("Input data shape:", input_data.shape)
 
     # 모델을 통해 점수 예측
     predicted_score = model.predict(input_data)
