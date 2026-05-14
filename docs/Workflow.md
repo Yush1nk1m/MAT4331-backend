@@ -10,14 +10,12 @@
 
 - [x] Google OAuth2 인증
 - [x] JWT 인증
-- [ ] Kakao OAuth2 인증
-- [ ] Naver OAuth2 인증
 
 ### 경기 관련 기능
 
 - [x] 메시지 큐로 크롤링 서비스로부터 경기 정보 받아오기
 - [x] 지정된 날짜의 경기 정보들을 제공하는 API
-- [ ] 승패 예측 AI 모델 통합
+- [x] 승패 예측 AI 모델 통합
 
 ### 사용자 관련 기능
 
@@ -27,7 +25,7 @@
 
 - [x] 기본적인 CRUD API
 - [x] Web Socket 사용한 기본적인 채팅
-- [ ] 비속어 판별 AI 모델 통합
+- [x] 비속어 판별 AI 모델 통합
 - [x] Web Socket & Redis 연동하여 Scalable하게 확장
 
 ## Crawler App
@@ -46,7 +44,7 @@
 ### Common
 
 - [x] API 스켈레톤 코드 구현 및 과제 할당
-- [ ] AI 모델 통합
+- [x] AI 모델 통합
 
 ## Common
 
