@@ -3,7 +3,6 @@
 !define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v18.0/dist
 !include AWSPuml/AWSCommon.puml
 !include AWSPuml/AWSSimplified.puml
-!include AWSPuml/Compute/EC2.puml
 !include AWSPuml/Compute/EC2Instance.puml
 !include AWSPuml/Compute/EC2DBInstance.puml
 !include AWSPuml/Groups/AWSCloud.puml
@@ -11,22 +10,12 @@
 !include AWSPuml/Groups/AvailabilityZone.puml
 !include AWSPuml/Groups/PublicSubnet.puml
 !include AWSPuml/Groups/PrivateSubnet.puml
-!include AWSPuml/NetworkingContentDelivery/VPCNATGateway.puml
 !include AWSPuml/NetworkingContentDelivery/VPCInternetGateway.puml
 !include AWSPuml/NetworkingContentDelivery/ElasticLoadBalancingApplicationLoadBalancer.puml
-!include AWSPuml/Database/MemoryDBforRedis.puml
-!include AWSPuml/Storage/SimpleStorageService.puml
-!include AWSPuml/NetworkingContentDelivery/CloudFront.puml
-!include AWSPuml/General/Users.puml
-!include AWSPuml/General/User.puml
 
 hide stereotype
 top to bottom direction
 skinparam linetype ortho
-skinparam rectangle {
-    BorderColor Black
-    BorderThickness 1
-}
 
 AWSCloudGroup(cloud) {
   VPCGroup(vpc) {
@@ -34,53 +23,59 @@ AWSCloudGroup(cloud) {
 
     AvailabilityZoneGroup(az_a, "Availability Zone A") {
       PublicSubnetGroup(az_a_public, "Public Subnet") {
+        EC2Instance(bastion, "Bastion", "") #Transparent
         ElasticLoadBalancingApplicationLoadBalancer(alb_a, "ALB", "") #Transparent
         EC2Instance(nat_instance, "NAT Instance", "") #Transparent
-        EC2DBInstance(mongo_db, "MongoDB", "") #Transparent
-        EC2Instance(rmq, "RabbitMQ", "") #Transparent
       }
 
       PrivateSubnetGroup(az_a_private, "Private Subnet") {
         EC2Instance(main_service_1, "Main Service", "") #Transparent
+        EC2DBInstance(mongo_db, "MongoDB", "") #Transparent
+        EC2Instance(rmq, "RabbitMQ", "") #Transparent
       }
     }
 
     AvailabilityZoneGroup(az_b, "Availability Zone B") {
       PublicSubnetGroup(az_b_public, "Public Subnet") {
         ElasticLoadBalancingApplicationLoadBalancer(alb_b, "ALB", "") #Transparent
-        EC2Instance(bastion, "Bastion", "") #Transparent
-        EC2DBInstance(postgres_db, "PostgresDB", "") #Transparent
-        EC2DBInstance(redis, "Redis", "") #Transparent
       }
 
       PrivateSubnetGroup(az_b_private, "Private Subnet") {
         EC2Instance(main_service_2, "Main Service", "") #Transparent
         EC2Instance(crawler_service, "Crawler Service", "") #Transparent
         EC2Instance(ai_service, "AI Service", "") #Transparent
+        EC2DBInstance(postgres_db, "PostgresDB", "") #Transparent
+        EC2DBInstance(redis, "Redis", "") #Transparent
       }
     }
   }
 }
 
-internet_gateway .right. az_a_public #Purple
-internet_gateway .right. az_b_public #Purple
-
-main_service_1 <.up.> postgres_db #Blue
-main_service_2 <.up.> postgres_db #Blue
-
-main_service_1 <.up.> redis #Red
-main_service_2 <.up.> redis #Red
-
-crawler_service .up. mongo_db #Green
-
-main_service_1 <.down.> rmq #Orange
-main_service_2 <.down.> rmq #Orange
-crawler_service <.down.> rmq #Orange
-ai_service <.down.> rmq #Orange
-
+' 트래픽 흐름 (보라색)
+internet_gateway .down.> alb_a #Purple
+internet_gateway .down.> alb_b #Purple
+alb_a .down.> main_service_1 #Purple
+alb_a .down.> main_service_2 #Purple
 alb_b .down.> main_service_1 #Purple
 alb_b .down.> main_service_2 #Purple
-alb_a .up.> main_service_1 #Purple
-alb_a .up.> main_service_2 #Purple
+
+' 서비스 간 통신 (주황색)
+main_service_1 <.> postgres_db #Orange
+main_service_2 <.> postgres_db #Orange
+main_service_1 <.> redis #Orange
+main_service_2 <.> redis #Orange
+crawler_service <.> mongo_db #Orange
+main_service_1 <.> rmq #Orange
+main_service_2 <.> rmq #Orange
+crawler_service <.> rmq #Orange
+ai_service <.> rmq #Orange
+
+legend right
+  | 색상 | 의미 |
+  | <#Purple> | 인터넷 트래픽 흐름 |
+  | <#Orange> | 서비스 간 통신 |
+  |  | Bastion: Private Subnet 관리 접근 |
+  |  | NAT Instance: Private → 외부 아웃바운드 |
+endlegend
 
 @enduml
